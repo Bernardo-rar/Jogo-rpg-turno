@@ -1,0 +1,112 @@
+Status base:
+	Força:Aumenta mod de ataque,1 pouco mod de defesa fisica, aumenta vida.
+		4,6,8:Atkfmod:+2 ,deffmod:+1, mod de vida:+2.
+		10,11:atkmod:+4 ,deffmod:+2, mod de vida:+4.
+
+	Dex:Aumenta um pouco mod de defesa fisica,Aumenta mod de dano, aumenta chance de critico.
+		4,6,8:Atkfmod:+2 ,deffmod:+1, chance de critico:10%.
+		10,11:atkfmod:+4 ,deffmod:+2, chance de critico:20%.
+
+	Con:Aumenta um pouco mod de defesa fisica e magica, aumenta mod de vida,aumenta regen de vida por turno,stamina.
+		4,6,8:HPmod:+2 ,deffmod:+1, defMmod:+1,Hpregenmod:+1.
+		10,11:HPmod:+4 ,deffmod:+2, defMmod:+2,Hpregenmod:+2.
+
+
+	Wis:Aumenta mod de defesa magica,aumenta numero de efeitos numa skill,aumenta cura.
+		4,6,8:Ndeefeitos:+1 ,defMmod:+2, Healmod:+2,Mind:+1 .
+		10,11:Ndeefeitos:+1 ,defMmod:+4, Healmod:+4,Mind:+2 .
+
+	Int:Aumenta mana,Aumenta mod de dano magico,aumenta um pouco mod de defesa.
+		4,6,8: Moddmana:+2 ,defMmod:+1, AtkMmod:+2,Mind:+1. ver e vai tirar o mod de mana
+		10,11:Moddmana:+4 ,defMmod:+2, AtkMmod:+4,Mind:+2.
+
+	Cha:Aumenta mod de dano magico, aumenta o numero de itens magicos possiveis de serem equipados,aumenta mind.
+		4,6,8: Mind:+1 ,Itensmagicos:+1, AtkMmod:+2.
+		10,11: Mind:+2 ,Itensmagicos:+1, AtkMmod:+4.
+
+Status secundarios:
+	HP:calculado atraves 	
+
+	Mana: (int+wis+cha)*5*nvl+1
+		Gue 14 14 14=6*5*2=60 ok
+		Wizard 18 16 18= 4+3+4*5*2=110 ok
+			se afetar o scale: 11*5+4*2=202 krlho
+			Se afetar linearmente= 11+4*5*2=150 ok
+
+Mind:Aumenta mto a mana, aumenta a quantidad de mana q pode ser usada,aumenta chance de critico magico.
+	
+	
+	Mod de mind e hp serao aumentados cm os atributos, pór default eles serao 10 e 5.
+	
+	Dxar mod de vida para a progressãoi ser mais suave.
+
+
+
+
+
+	HP teste barbaro lvl 1 18 for 18 con
+	(12+4+2)*11*(10+2)=18*12*2=432
+	teste barbaro 30 for 30 con
+
+	lvl 10
+
+	(12+10+10)*10+1*(10+10)=32*11*20= 64*11*10= 7040 mais bonus esta hiper razoavel krlho.
+
+	Redução de dano fisico teste lvl 1 18,16,18:Aumentar cm o nvl:?
+	
+	ReduçãoScale:(4+3+4)*5+2*2=11*14= 154?  redução lvl 10 30 26 30-> (10+8+10)*5+5+3+5*10+1=28*18*11=28*198=5600-396=5204 0-0
+	ReduçãoLinear:(4+3+4+2)*5*2=13*10= 130? lvl 10 30 26 30 -> 10+8+10+5+3+5=41*5*11=200+5 *11=2050+205=2255 MELHOROU MTO
+	
+	Ataq Scale: (1d10+4+3)*10+2*2= 8*12*2~~17*12*2=192~408(mto alto) dividindo por 2?,noop pq redução pode reduzir tudo.
+		lvl 10 30 26 30->(4d10+10+8)*10+10+6*11=22~58*26*11=Q ISSO KRA 10k mais de dano
+		Sem striking runes média= 22*26*11=24²-4 *11 572*11=6k mais de dano(altissimo).
+	Linear: 1d10+4+3+2*10=100~190 ok.
+
+Foco no momento:
+
+	
+
+	1- determinar as passivas(q mexem nas habs e nos status) de cada sub-classe, determinar passivas da classe tbm?
+
+
+	Gues e rougues:Cabeça fria: por exemplo podem ter um slot de hab extra.
+
+	Clerigos:potencializar buffs talvez…
+
+ideia:A classe recebera buffs em % baseado na seguinte tabela
+
+10%,5% primario/secundario
+20%,10%
+
+	3-Marciais puros poderem ter skills cm aura (autobuff’s), e se curar a partir da aura tbm(ao gastar hitdice).
+	E com isso interaçoes unicas cm buff’s caso virem meio conjuradores.
+
+
+
+	4-5 skills por classe, 5 por subclasse? cada skill ter4a uma parte base q n mudara e outras q vc pode add dependendo do custo disponivel.
+
+	N, esse numero pode ser maior ou menor dependendo da classe
+
+	talvez seja uma boa colocar o paladino cm poucos slots naturais
+
+	ver um numero de 1 ou 2, gues cm 3, coisas do tipo.
+
+	5-Classes terem interaçoes especiais ao critar? pode ser interessante pra algumas mais focadas nisso(marciais de dps por exemplo.)
+
+
+
+Paladino da buff’s de aura baseados na divindade
+
+Gue se autobuffa ainda mais.
+
+Rougue aumenta speed.
+
+Ranger pode ter ataques extras on crit.
+
+Bruxo potencializar o efeito do debuff como em darkest dungeon
+
+and so on
+
+6-Evitar o scale desigual das classes?nesse sentido o jogador poderia escolher a comp q quer sem precisar ficar trocando alguem early por ser mto fraco, ou outrem late por estar outclassed.
+
+Sim
