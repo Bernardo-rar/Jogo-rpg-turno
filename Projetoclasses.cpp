@@ -14,17 +14,46 @@ class arma{
     int DardanoFisico(int str,int dex){// ver comno usa a rand.
         rand();
     }
+
+};
+class armardura{
+    public:
+        int vida,mana,DefesaF,DefesaM;
+
+    armardura(){
+        vida=10;
+        mana=10;
+        DefesaF=10;
+        DefesaM=10;
+    }
+
+
 };
 
+class itensconsumiveis{
+    int vida,mana,buff;
+    //ver como vai fazer
+};
 
+class inventario{
+    itensconsumiveis itens[20];
+    armardura armor[20];
+    arma weapon[20];
+};
+
+class skill{
+    public:
+        int dano,cura,efeito;
+};
 class personagem{
 
     //unificar os mods de hp,stamina contara cm hit dice como no exemplo do homebrew.
     
     
     public:
-        int lvl,str,dex,con,imt,wis,cha,stamina,gold,dadoinicialHP,mana,HPregen,MPregen;
-        arma inicial;
+        int lvl,str,dex,con,imt,wis,cha,stamina,gold,dadoinicialHP,HP,mana,HPregen,MPregen;
+        arma espadaequipada;
+        armardura armaduraequipada;
 
     //hp regen valer para stamina?
 
@@ -45,14 +74,14 @@ class personagem{
 		tough=Calculabonus(str);
         modHP=Calculabonus(con);
     //ver teste no diretrizes, assim como no 2e, vida dobrada lvl 1 
-		return (dadoinicialHP+con+tough)*(lvl+1)*(10+modHP);    
+		return (dadoinicialHP+con+tough)*(lvl+1)*(10+modHP)+armaduraequipada.vida;    
     }
 
 
    int CalculaMana(){
         int mind=Calculabonus(wis)+Calculabonus(imt)+Calculabonus(cha);
         
-        return (wis+cha+imt+mind)*(lvl+1)*5; 
+        return (wis+cha+imt+mind)*(lvl+1)*5+armaduraequipada.mana; 
 
     }
     
@@ -70,34 +99,41 @@ class personagem{
 
     }
 
-    personagem(int nvl,int f,int d,int c,int i,int w,int ch,int ddIHP){
-        lvl=nvl;
-        str=f;
-        dex=d;
-        con=c;
-        imt=i;
-        wis=w;
-        cha=ch;
-        dadoinicialHP=ddIHP;
-
-    };
+    personagem(){
+        lvl=1;
+        str=10;
+        dex=10;
+        con=10;
+        imt=10;
+        wis=10;
+        cha=10;
+        dadoinicialHP=10;
+        gold=10;
+    }
 };
 
 
-class guerreiro:public personagem{
-   
+class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
+   public:
+    guerreiro(){
+        str=4;
+        dex=3;
+        con=4;
+        wis=1;
+        imt=1;
+        cha=1;
+    }
 };
 
 //calsses darem buffs em % pros atributos.
     //lvl 1
 
 int main(){
-    personagem batata(10,10,10,10,10,10,10,10);
+    personagem batata;
+    guerreiro kaiqotario;
     batata.str=14;
-    batata.inicial.dano=10;
-    batata.CalculaHP();
-    printf("hlo word\n");
-    printf("teste\n");
-    printf("%d",batata.CalculaHP());
+    batata.espadaequipada.dano=10;
+    printf("%d,%d,%d\n",batata.CalculaHP(),batata.con,batata.str);
+    printf("%d,%d,%d",kaiqotario.CalculaHP(),kaiqotario.gold,kaiqotario.CalculaMana());
 }
 
