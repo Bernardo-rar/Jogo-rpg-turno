@@ -30,6 +30,10 @@ class armardura{
 
 };
 
+class acessorio{
+    int vida,mana,stauts;
+};
+
 class itensconsumiveis{
     int vida,mana,buff;
     //ver como vai fazer
