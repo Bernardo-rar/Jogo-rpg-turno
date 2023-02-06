@@ -104,13 +104,18 @@ class personagem{
 
     }
 
-    void morte{
+    void morte(){
 
     }
 
-    int Dardano(inimigo alvo){
-        if(tipoddano==f){
-            alvo.hp+=espadaequipada.dano+str+dex*10
+    void Dardano(personagem alvo){
+        if(tipoddano=='f'){
+            alvo.HP+=espadaequipada.dano+str+dex*10;
+            if(alvo.HP<=0){
+
+            }
+
+        }else{
 
         }
         
@@ -133,14 +138,25 @@ class personagem{
 
 
 class inimigo:public personagem{
+    inimigo(){
+        lvl=1;
+        str=5;
+        dex=5;
+        con=5;
+        imt=5;
+        wis=10;
+        cha=10;
+        dadoinicialHP=10;
+        gold=lvl*10;
 
+    }
 
-}
+};
 
 class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
    public:
     guerreiro(){
-        tipoddano=f;
+        tipoddano='f';
         str=4;
         dex=3;
         con=4;
