@@ -56,6 +56,7 @@ class personagem{
     
     public:
         int lvl,str,dex,con,imt,wis,cha,stamina,gold,dadoinicialHP,HP,mana,HPregen,MPregen;
+        char tipoddano;
         arma espadaequipada;
         armardura armaduraequipada;
 
@@ -103,6 +104,20 @@ class personagem{
 
     }
 
+    void morte{
+
+    }
+
+    int Dardano(inimigo alvo){
+        if(tipoddano==f){
+            alvo.hp+=espadaequipada.dano+str+dex*10
+
+        }
+        
+    }
+
+    
+
     personagem(){
         lvl=1;
         str=10;
@@ -117,9 +132,15 @@ class personagem{
 };
 
 
+class inimigo:public personagem{
+
+
+}
+
 class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
    public:
     guerreiro(){
+        tipoddano=f;
         str=4;
         dex=3;
         con=4;
