@@ -82,6 +82,9 @@ class personagem{
 		return (dadoinicialHP+con+tough)*(lvl+1)*(10+modHP)+armaduraequipada.vida;    
     }
 
+    int setHP(int bleu){
+        return HP-bleu;
+    }
 
    int CalculaMana(){
         int mind=Calculabonus(wis)+Calculabonus(imt)+Calculabonus(cha);
@@ -92,7 +95,7 @@ class personagem{
     
     int CalculaArmor(){//ver como vao ficar os sclaes
         int armor=Calculabonus(str)+Calculabonus(dex)+Calculabonus(con);
-        return str+con+dex+armor/2;
+        return (str+con+dex+armor/2)*5;
     }
      
      int CalculaMR(){
@@ -104,15 +107,16 @@ class personagem{
 
     }
 
-    void morte(){
+    void morte(personagem morto){
 
     }
 
     void Dardano(personagem alvo){
         if(tipoddano=='f'){
-            alvo.HP+=espadaequipada.dano+str+dex*10;
+            alvo.setHP((espadaequipada.dano+str+dex*10));
             if(alvo.HP<=0){
-
+                morte(alvo);
+                gold+=alvo.gold;
             }
 
         }else{
@@ -125,6 +129,7 @@ class personagem{
 
     personagem(){
         lvl=1;
+       
         str=10;
         dex=10;
         con=10;
@@ -132,6 +137,8 @@ class personagem{
         wis=10;
         cha=10;
         dadoinicialHP=10;
+        HP=CalculaHP();
+        mana=CalculaMana();
         gold=10;
     }
 };
@@ -175,6 +182,13 @@ int main(){
     batata.str=14;
     batata.espadaequipada.dano=10;
     printf("%d,%d,%d\n",batata.CalculaHP(),batata.con,batata.str);
-    printf("%d,%d,%d",kaiqotario.CalculaHP(),kaiqotario.gold,kaiqotario.CalculaMana());
+    printf(
+            "KaiqOtario status\n Hp= %d\ngold= %d\nMana= %d\n",kaiqotario.CalculaHP(),kaiqotario.gold,kaiqotario.CalculaMana());
+
+    batata.Dardano(kaiqotario);
+    printf("%d\n", kaiqotario.HP);
+    printf("Dano = %d",(batata.espadaequipada.dano+batata.str+batata.dex)*10);
+    batata.Dardano(kaiqotario);
+    printf("%d", kaiqotario.HP);
 }
 
