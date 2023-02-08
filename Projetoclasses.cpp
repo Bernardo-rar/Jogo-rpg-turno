@@ -3,16 +3,18 @@
 #include <stdlib.h>
 #include <math.h>
 
+
 class arma{
     public://simplificar por enquanto.
         int dano;
         char Tipo;
-    int UparArma(arma a){
-        a.dano+=a.dano;
-    }
-
-    int DardanoFisico(int str,int dex){// ver comno usa a rand.
-        rand();
+    /*/int UparArma(){
+        dano+=dano;
+    }/*/
+    
+    arma(){
+        dano=10;
+        Tipo='f';
     }
 
 };
@@ -82,9 +84,7 @@ class personagem{
 		return (dadoinicialHP+con+tough)*(lvl+1)*(10+modHP)+armaduraequipada.vida;    
     }
 
-    int setHP(int bleu){
-        return HP-bleu;
-    }
+   
 
    int CalculaMana(){
         int mind=Calculabonus(wis)+Calculabonus(imt)+Calculabonus(cha);
@@ -104,20 +104,22 @@ class personagem{
     }
 
     int Resistdebuffmagico(){// sistema de darkest dungeon de %.
-
+        return 0;
     }
 
-    void morte(personagem morto){
-
+     void setHP(int dano){
+        HP=HP-dano;
     }
 
-    void Dardano(personagem alvo){
-        if(tipoddano=='f'){
-            alvo.setHP((espadaequipada.dano+str+dex*10));
+    int Dardano(personagem alvo){
+        //if(tipoddano=='f'){
+            alvo.HP=alvo.HP-(espadaequipada.dano+str+dex*10);
+            printf("dentro da f %d\n",alvo.HP);
+            return alvo.HP;
             if(alvo.HP<=0){
-                morte(alvo);
+               
                 gold+=alvo.gold;
-            }
+            //}
 
         }else{
 
@@ -173,6 +175,14 @@ class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
     }
 };
 
+
+class jogo{
+    public:
+    personagem a,b;
+
+
+};
+
 //calsses darem buffs em % pros atributos.
     //lvl 1
 
@@ -182,13 +192,16 @@ int main(){
     batata.str=14;
     batata.espadaequipada.dano=10;
     printf("%d,%d,%d\n",batata.CalculaHP(),batata.con,batata.str);
-    printf(
-            "KaiqOtario status\n Hp= %d\ngold= %d\nMana= %d\n",kaiqotario.CalculaHP(),kaiqotario.gold,kaiqotario.CalculaMana());
+    printf("KaiqOtario status\n Hp= %d\n",kaiqotario.HP);
 
-    batata.Dardano(kaiqotario);
+    printf(
+            "batata status\n Hp= %d\n",batata.CalculaHP());
+
     printf("%d\n", kaiqotario.HP);
-    printf("Dano = %d",(batata.espadaequipada.dano+batata.str+batata.dex)*10);
-    batata.Dardano(kaiqotario);
-    printf("%d", kaiqotario.HP);
+    kaiqotario.HP=batata.Dardano(kaiqotario);
+    printf("%d\n", kaiqotario.HP);
+    printf("Dano = %d\n",(batata.espadaequipada.dano+batata.str+batata.dex)*10);
+    kaiqotario.HP=batata.Dardano(kaiqotario);
+    printf("%d\n", kaiqotario.HP);
 }
 
