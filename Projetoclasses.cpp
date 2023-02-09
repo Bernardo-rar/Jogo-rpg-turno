@@ -92,6 +92,10 @@ class personagem{
         return (wis+cha+imt+mind)*(lvl+1)*5+armaduraequipada.mana; 
 
     }
+
+    int CalculaDano(){
+        return espadaequipada.dano+str+dex*10;
+    }
     
     int CalculaArmor(){//ver como vao ficar os sclaes
         int armor=Calculabonus(str)+Calculabonus(dex)+Calculabonus(con);
@@ -113,7 +117,9 @@ class personagem{
 
     int Dardano(personagem alvo){
         //if(tipoddano=='f'){
-            alvo.HP=alvo.HP-(espadaequipada.dano+str+dex*10);
+            if(alvo.CalculaArmor()>CalculaDano())
+                return alvo.HP;
+            alvo.HP=alvo.HP-CalculaDano()+alvo.CalculaArmor();
             printf("dentro da f %d\n",alvo.HP);
             return alvo.HP;
             if(alvo.HP<=0){
