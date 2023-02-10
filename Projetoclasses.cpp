@@ -99,7 +99,7 @@ class personagem{
     
     int CalculaArmor(){//ver como vao ficar os sclaes
         int armor=Calculabonus(str)+Calculabonus(dex)+Calculabonus(con);
-        return (str+con+dex+armor/2)*5;
+        return ((str+con+dex+armor/2)+armaduraequipada.DefesaF)*5;
     }
      
      int CalculaMR(){
@@ -120,7 +120,6 @@ class personagem{
             if(alvo.CalculaArmor()>CalculaDano())
                 return alvo.HP;
             alvo.HP=alvo.HP-CalculaDano()+alvo.CalculaArmor();
-            printf("dentro da f %d\n",alvo.HP);
             return alvo.HP;
             if(alvo.HP<=0){
                
