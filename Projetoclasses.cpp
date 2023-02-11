@@ -47,10 +47,7 @@ class inventario{
     arma weapon[20];
 };
 
-class skill{
-    public:
-        int dano,cura,efeito;
-};
+
 class personagem{
 
     //unificar os mods de hp,stamina contara cm hit dice como no exemplo do homebrew.
@@ -179,6 +176,15 @@ class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
         cha=1;
     }
 };
+
+class skill{
+    public:
+        int dano,cura,efeito;
+
+    int cura(personagem alvo){
+        return alvo.con+cura;
+    }
+}; 
 
 
 class jogo{
