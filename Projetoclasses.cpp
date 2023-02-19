@@ -190,7 +190,7 @@ class skill{
 class jogo{
     public:
     personagem a,b;
-    int fase;
+    int fase,dificuldade;
     
 
 
