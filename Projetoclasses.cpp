@@ -191,6 +191,7 @@ class jogo{
     public:
     personagem a,b;
     int fase,dificuldade;
+    arma recompensa;
     
 
 
