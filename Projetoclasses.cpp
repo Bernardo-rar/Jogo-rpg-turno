@@ -18,11 +18,11 @@ class arma{
     }
 
 };
-class armardura{
+class armadura{
     public:
         int vida,mana,DefesaF,DefesaM;
 
-    armardura(){
+    armadura(){
         vida=10;
         mana=10;
         DefesaF=10;
@@ -43,7 +43,7 @@ class itensconsumiveis{
 
 class inventario{
     itensconsumiveis itens[20];
-    armardura armor[20];
+    armadura armor[20];
     arma weapon[20];
 };
 
@@ -57,7 +57,7 @@ class personagem{
         int lvl,str,dex,con,imt,wis,cha,stamina,gold,dadoinicialHP,HP,mana,HPregen,MPregen;
         char tipoddano;
         arma espadaequipada;
-        armardura armaduraequipada;
+        armadura armaduraequipada;
 
     //hp regen valer para stamina?
 
@@ -181,8 +181,9 @@ class skill{
     public:
         int dano,cura,efeito;
 
-    int cura(personagem alvo){
-        return alvo.con+cura;
+    int curarecebida(personagem alvo){
+        int hp=alvo.con+cura;
+        return hp;
     }
 }; 
 
@@ -190,9 +191,11 @@ class skill{
 class jogo{
     public:
     personagem a,b;
-    int fase,dificuldade;
-    arma recompensa;
-    
+    int fase,dificuldade,goldrecompensa;
+    arma armarecompensa;
+    armadura recompensaarmadura;
+
+    //inventario=new armadura(armadura);
 
 
     void iniciaFase(){
