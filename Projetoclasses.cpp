@@ -182,7 +182,7 @@ class skill{
         int dano,cura,efeito;
 
     int curarecebida(personagem alvo){
-        int hp=alvo.con+cura;
+        int hp=alvo.con+cura;//ver o q e cura
         return hp;
     }
 }; 
