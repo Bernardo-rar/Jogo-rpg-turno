@@ -181,8 +181,8 @@ class skill{
     public:
         int dano,cura,efeito;
 
-    int curarecebida(personagem alvo){
-        int hp=alvo.con+cura;//ver o q e cura
+    int curarecebida(personagem alvo,personagem caster){
+        int hp=alvo.con+caster.wis;
         return hp;
     }
 }; 
