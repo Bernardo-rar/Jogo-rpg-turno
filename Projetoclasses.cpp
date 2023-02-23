@@ -174,6 +174,7 @@ class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
         wis=1;
         imt=1;
         cha=1;
+        dadoinicialHP=12;
     }
 };
 
