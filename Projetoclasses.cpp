@@ -45,6 +45,7 @@ class inventario{
     itensconsumiveis itens[20];
     armadura armor[20];
     arma weapon[20];
+    char equipado;
 };
 
 
