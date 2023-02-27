@@ -147,7 +147,15 @@ class personagem{
         gold=10;
     }
 };
+class skill{
+    public:
+        int dano,cura,efeito;
 
+    int curarecebida(personagem alvo,personagem caster){
+        int hp=alvo.con+caster.wis;
+        return hp;
+    }
+}; 
 
 class inimigo:public personagem{
     inimigo(){
@@ -177,17 +185,10 @@ class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
         cha=1;
         dadoinicialHP=12;
     }
-};
+    skill warriorskils;
+};  
 
-class skill{
-    public:
-        int dano,cura,efeito;
 
-    int curarecebida(personagem alvo,personagem caster){
-        int hp=alvo.con+caster.wis;
-        return hp;
-    }
-}; 
 
 
 class jogo{
