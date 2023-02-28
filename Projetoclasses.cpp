@@ -193,7 +193,7 @@ class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
 
 class jogo{
     public:
-    personagem a,b;
+    personagem a,b,c,d;
     int fase,dificuldade,goldrecompensa;
     arma armarecompensa;
     armadura recompensaarmadura;
