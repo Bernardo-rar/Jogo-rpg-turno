@@ -197,6 +197,7 @@ class jogo{
     int fase,dificuldade,goldrecompensa;
     arma armarecompensa;
     armadura recompensaarmadura;
+    itensconsumiveis itemrecompensa;
 
     //inventario=new armadura(armadura);
 
