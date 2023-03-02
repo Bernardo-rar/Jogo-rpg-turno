@@ -189,6 +189,19 @@ class guerreiro:public personagem{//10% a mais de hp,e dano fisico.
 };  
 
 
+class mago : public personagem{
+    mago(){
+        tipoddano='m';
+        str=0;
+        dex=2;
+        con=2;
+        wis=3;
+        imt=4;
+        cha=2;
+        dadoinicialHP=6;
+    }
+};
+
 
 
 class jogo{
