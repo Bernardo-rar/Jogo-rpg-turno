@@ -202,6 +202,19 @@ class mago : public personagem{
     }
 };
 
+class ranger : public personagem{
+    ranger(){
+        tipoddano='f';// mesclado ver
+        str=3;
+        dex=4;
+        con=3;
+        wis=3;
+        imt=2;
+        cha=1;
+        dadoinicialHP=10;
+    }
+};
+
 
 
 class jogo{
