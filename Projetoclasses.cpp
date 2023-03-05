@@ -130,17 +130,62 @@ class personagem{
         
     }
 
+    int getStr() {
+         return str;
+          }
+
+    void setStr(int s) {
+         str = s; 
+         }
     
+    int getCon() { 
+        return con; 
+        }
+
+    void setCon(int c) { 
+        con = c; 
+        }
+    
+    int getDe() { 
+        return dex; 
+        }
+    void setDe(int d) {
+         dex = d; 
+         }
+    
+    int getImt() { 
+        return imt; 
+        }
+
+    void setImt(int i) {
+         imt = i; 
+         }
+    
+    int getCha() {
+         return cha;
+          }
+
+    void setCha(int ch) { 
+        cha = ch;
+         }
+    
+    int getWis() { 
+        return wis;
+         }
+
+    void setWis(int w) {
+         wis = w;
+          }
 
     personagem(){
         lvl=1;
        
-        str=10;
-        dex=10;
-        con=10;
-        imt=10;
-        wis=10;
-        cha=10;
+        str=2;
+        dex=1;
+        con=2;
+        imt=1;
+        wis=1;
+        cha=1;
         dadoinicialHP=10;
         HP=CalculaHP();
         mana=CalculaMana();
