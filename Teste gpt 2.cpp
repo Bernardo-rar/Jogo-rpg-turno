@@ -36,12 +36,12 @@ class Arma {
 
 class Personagem {
   private:
-    std::string nome_;
-    int vida_;
-    Arma arma_;
+    string nome;
+    int vida;
+    Arma arma;
 
   public:
-    Personagem(std::string nome, int vida, Arma arma) {
+    Personagem(string nome, int vida, Arma arma) {
         nome_ = nome;
         vida_ = vida;
         arma_ = arma;
