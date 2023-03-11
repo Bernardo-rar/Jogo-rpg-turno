@@ -23,7 +23,7 @@ class armadura{
         int vida,mana,DefesaF,DefesaM;
 
     armadura(){
-        vida=10;
+        vida=12;
         mana=10;
         DefesaF=10;
         DefesaM=10;
