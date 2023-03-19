@@ -3,77 +3,77 @@
 
 class Arma {
   private:
-    std::string nome_;
-    int dano_;
+    string nome[20];
+    int dano;
 
   public:
     Arma(std::string nome, int dano) {
-        nome_ = nome;
-        dano_ = dano;
+        nome = nome;
+        dano = dano;
     }
 
     int getDano() const {
-        return dano_;
+        return dano;
     }
 
     std::string getNome() const {
-        return nome_;
+        return nome;
     }
 
     void setDano(int dano) {
-        dano_ = dano;
+        dano = dano;
     }
 
     void setNome(std::string nome) {
-        nome_ = nome;
+        nome = nome;
     }
 
     void atacar(Personagem& alvo) {
-        std::cout << "A arma " << nome_ << " ataca " << alvo.getNome() << " e causa " << dano_ << " de dano!\n";
-        alvo.receberDano(dano_);
+        std::cout << "A arma " << nome << " ataca " << alvo.getNome() << " e causa " << dano_ << " de dano!\n";
+        alvo.receberDano(dano);
     }
 };
 
 class Personagem {
   private:
-    string nome;
+    string nome[20];
     int vida;
     Arma arma;
 
   public:
     Personagem(string nome, int vida, Arma arma) {
-        nome_ = nome;
-        vida_ = vida;
-        arma_ = arma;
+        nome = nome;
+        vida = vida;
+        arma = arma;
     }
 
     int getVida() const {
-        return vida_;
+        return vida;
     }
 
     std::string getNome() const {
-        return nome_;
+        return nome;
     }
 
     void setVida(int vida) {
-        vida_ = vida;
+        vida = vida;
     }
 
     void setNome(std::string nome) {
-        nome_ = nome;
+        nome= nome;
     }
 
     void setArma(Arma arma) {
-        arma_ = arma;
+        arma= arma;
     }
 
     void receberDano(int dano) {
-        vida_ -= dano;
-        std::cout << nome_ << " recebe " << dano << " de dano e tem " << vida_ << " de vida restante.\n";
+        vida-= dano;
+        std::cout << nome << " recebe " << dano << " de dano e tem " << vida_ << " de vida restante.\n";
     }
 
     void atacar(Personagem& alvo) {
-        arma_.atacar(alvo);
+        arma.atacar(alvo);
     }
 };
 
