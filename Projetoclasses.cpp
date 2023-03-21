@@ -7,13 +7,13 @@
 class arma{
     public://simplificar por enquanto.
         int dano;
-        char Tipo;
+        char Tipo; //mudar pra string?
     /*/int UparArma(){
         dano+=dano;
     }/*/
     
     arma(){
-        dano=15;
+        dano=16;
         Tipo='f';
     }
 
