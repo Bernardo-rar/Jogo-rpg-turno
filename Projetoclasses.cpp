@@ -13,7 +13,7 @@ class arma{
     }/*/
     
     arma(){
-        dano=19;
+        dano=20;
         Tipo='f';
     }
 
