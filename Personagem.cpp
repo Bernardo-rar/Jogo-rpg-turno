@@ -4,34 +4,6 @@
 #include <math.h>
 
 
-class arma{
-    public://simplificar por enquanto.
-        int dano;
-        char Tipo; //mudar pra string?
-    /*/int UparArma(){
-        dano+=dano;
-    }/*/
-    
-    arma(){
-        dano=30;
-        Tipo='f';
-    }
-
-};
-class armadura{
-    public:
-        int vida,mana,DefesaF,DefesaM;
-
-    armadura(){
-        vida=12;
-        mana=10;
-        DefesaF=10;
-        DefesaM=10;
-    }
-
-
-};
-
 class acessorio{
     int vida,mana,stauts;
 };
