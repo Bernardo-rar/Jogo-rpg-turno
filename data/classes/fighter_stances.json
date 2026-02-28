@@ -1,0 +1,5 @@
+{
+  "NORMAL": {"atk_multiplier": 1.0, "def_multiplier": 1.0},
+  "OFFENSIVE": {"atk_multiplier": 1.2, "def_multiplier": 0.8},
+  "DEFENSIVE": {"atk_multiplier": 0.8, "def_multiplier": 1.2}
+}
