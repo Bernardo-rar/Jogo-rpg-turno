@@ -6,6 +6,13 @@ from pathlib import Path
 
 from src.core.attributes.attribute_types import AttributeType
 
+BONUS_HP = "hp_mod"
+BONUS_ATK_PHYSICAL = "atk_physical_mod"
+BONUS_ATK_MAGICAL = "atk_magical_mod"
+BONUS_DEF_PHYSICAL = "def_physical_mod"
+BONUS_DEF_MAGICAL = "def_magical_mod"
+BONUS_HP_REGEN = "hp_regen_mod"
+
 
 @dataclass(frozen=True)
 class ThresholdEntry:
