@@ -1,0 +1,59 @@
+{
+  "STRENGTH": {
+    "thresholds": [
+      {"value": 18, "tier": 1, "bonuses": {"atk_physical_mod": 2, "def_physical_mod": 1, "hp_mod": 2}},
+      {"value": 22, "tier": 1, "bonuses": {"atk_physical_mod": 2, "def_physical_mod": 1, "hp_mod": 2}},
+      {"value": 26, "tier": 1, "bonuses": {"atk_physical_mod": 2, "def_physical_mod": 1, "hp_mod": 2}},
+      {"value": 30, "tier": 2, "bonuses": {"atk_physical_mod": 4, "def_physical_mod": 2, "hp_mod": 4}},
+      {"value": 32, "tier": 2, "bonuses": {"atk_physical_mod": 4, "def_physical_mod": 2, "hp_mod": 4}}
+    ]
+  },
+  "DEXTERITY": {
+    "thresholds": [
+      {"value": 18, "tier": 1, "bonuses": {"atk_physical_mod": 2, "def_physical_mod": 1, "crit_chance_pct": 10}},
+      {"value": 22, "tier": 1, "bonuses": {"atk_physical_mod": 2, "def_physical_mod": 1, "crit_chance_pct": 10}},
+      {"value": 26, "tier": 1, "bonuses": {"atk_physical_mod": 2, "def_physical_mod": 1, "crit_chance_pct": 10}},
+      {"value": 30, "tier": 2, "bonuses": {"atk_physical_mod": 4, "def_physical_mod": 2, "crit_chance_pct": 20}},
+      {"value": 32, "tier": 2, "bonuses": {"atk_physical_mod": 4, "def_physical_mod": 2, "crit_chance_pct": 20}}
+    ]
+  },
+  "CONSTITUTION": {
+    "thresholds": [
+      {"value": 18, "tier": 1, "bonuses": {"hp_mod": 2, "def_physical_mod": 1, "def_magical_mod": 1, "hp_regen_mod": 1, "stamina_mod": 1}},
+      {"value": 22, "tier": 1, "bonuses": {"hp_mod": 2, "def_physical_mod": 1, "def_magical_mod": 1, "hp_regen_mod": 1, "stamina_mod": 1}},
+      {"value": 26, "tier": 1, "bonuses": {"hp_mod": 2, "def_physical_mod": 1, "def_magical_mod": 1, "hp_regen_mod": 1, "stamina_mod": 1}},
+      {"value": 30, "tier": 2, "bonuses": {"hp_mod": 4, "def_physical_mod": 2, "def_magical_mod": 2, "hp_regen_mod": 2, "stamina_mod": 2}},
+      {"value": 32, "tier": 2, "bonuses": {"hp_mod": 4, "def_physical_mod": 2, "def_magical_mod": 2, "hp_regen_mod": 2, "stamina_mod": 2}}
+    ]
+  },
+  "INTELLIGENCE": {
+    "thresholds": [
+      {"value": 18, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2}},
+      {"value": 22, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2}},
+      {"value": 26, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2}},
+      {"value": 30, "tier": 2, "bonuses": {"mana_mod": 4, "def_magical_mod": 2, "atk_magical_mod": 4}},
+      {"value": 32, "tier": 2, "bonuses": {"mana_mod": 4, "def_magical_mod": 2, "atk_magical_mod": 4}}
+    ]
+  },
+  "WISDOM": {
+    "thresholds": [
+      {"value": 18, "tier": 1, "bonuses": {"num_effects": 1, "def_magical_mod": 2, "heal_mod": 2}},
+      {"value": 22, "tier": 1, "bonuses": {"num_effects": 1, "def_magical_mod": 2, "heal_mod": 2}},
+      {"value": 26, "tier": 1, "bonuses": {"num_effects": 1, "def_magical_mod": 2, "heal_mod": 2}},
+      {"value": 30, "tier": 2, "bonuses": {"num_effects": 1, "def_magical_mod": 4, "heal_mod": 4}},
+      {"value": 32, "tier": 2, "bonuses": {"num_effects": 1, "def_magical_mod": 4, "heal_mod": 4}}
+    ]
+  },
+  "CHARISMA": {
+    "thresholds": [
+      {"value": 18, "tier": 1, "bonuses": {"mind_bonus": 1, "magic_item_slots": 1, "atk_magical_mod": 2}},
+      {"value": 22, "tier": 1, "bonuses": {"mind_bonus": 1, "magic_item_slots": 1, "atk_magical_mod": 2}},
+      {"value": 26, "tier": 1, "bonuses": {"mind_bonus": 1, "magic_item_slots": 1, "atk_magical_mod": 2}},
+      {"value": 30, "tier": 2, "bonuses": {"mind_bonus": 2, "magic_item_slots": 1, "atk_magical_mod": 4}},
+      {"value": 32, "tier": 2, "bonuses": {"mind_bonus": 2, "magic_item_slots": 1, "atk_magical_mod": 4}}
+    ]
+  },
+  "MIND": {
+    "thresholds": []
+  }
+}
