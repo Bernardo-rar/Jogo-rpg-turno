@@ -17,3 +17,4 @@ class TickResult:
     healing: int = 0
     mana_change: int = 0
     message: str = ""
+    skip_turn: bool = False

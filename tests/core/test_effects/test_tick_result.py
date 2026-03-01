@@ -32,3 +32,12 @@ class TestTickResult:
         assert dataclasses.is_dataclass(result)
         with pytest.raises(dataclasses.FrozenInstanceError):
             result.damage = 20  # type: ignore[misc]
+
+    def test_skip_turn_defaults_to_false(self):
+        result = TickResult()
+        assert result.skip_turn is False
+
+    def test_create_with_skip_turn_true(self):
+        result = TickResult(skip_turn=True, message="Frozen!")
+        assert result.skip_turn is True
+        assert result.message == "Frozen!"
