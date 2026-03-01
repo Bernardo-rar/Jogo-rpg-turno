@@ -1,0 +1,60 @@
+{
+    "FIRE": {
+        "target_effects": [
+            {"type": "burn", "params": {"damage_per_tick": 10, "duration": 3}}
+        ],
+        "description": "Fire burns the target!"
+    },
+    "WATER": {
+        "self_effects": [
+            {"type": "percent_buff", "params": {"stat": "MAGICAL_ATTACK", "percent": 20.0, "duration": 2}}
+        ],
+        "description": "Water potentiates magic!"
+    },
+    "ICE": {
+        "target_effects": [
+            {"type": "cold", "params": {"duration": 3, "reduction_percent": 20.0}},
+            {"type": "percent_debuff", "params": {"stat": "PHYSICAL_DEFENSE", "percent": 15.0, "duration": 3}}
+        ],
+        "description": "Ice chills the target!"
+    },
+    "LIGHTNING": {
+        "target_effects": [
+            {"type": "paralysis", "params": {"duration": 2}},
+            {"type": "sickness", "params": {"duration": 3, "reduction_percent": 50.0}}
+        ],
+        "description": "Lightning shocks the target!"
+    },
+    "EARTH": {
+        "self_effects": [
+            {"type": "flat_buff", "params": {"stat": "PHYSICAL_DEFENSE", "flat": 15, "duration": 3}}
+        ],
+        "description": "Earth strengthens defenses!"
+    },
+    "HOLY": {
+        "party_healing_percent": 0.15,
+        "description": "Holy light heals the party!"
+    },
+    "DARKNESS": {
+        "target_effects": [
+            {"type": "burn", "params": {"damage_per_tick": 12, "duration": 3}}
+        ],
+        "description": "Necrotic energy burns the target!"
+    },
+    "CELESTIAL": {
+        "party_healing_percent": 0.10,
+        "description": "Celestial energy heals the party!"
+    },
+    "PSYCHIC": {
+        "target_effects": [
+            {"type": "confusion", "params": {"duration": 2}},
+            {"type": "injury", "params": {"duration": 3, "reduction_percent": 20.0}}
+        ],
+        "description": "Psychic forces disrupt the target!"
+    },
+    "FORCE": {
+        "bonus_damage_percent": 0.25,
+        "breaks_shield": true,
+        "description": "Force shatters through defenses!"
+    }
+}

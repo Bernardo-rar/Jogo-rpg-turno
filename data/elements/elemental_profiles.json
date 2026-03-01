@@ -1,0 +1,24 @@
+{
+    "neutral": {},
+    "fire_creature": {
+        "FIRE": 0.5,
+        "ICE": 1.5,
+        "WATER": 1.5
+    },
+    "ice_creature": {
+        "ICE": 0.5,
+        "FIRE": 1.5,
+        "LIGHTNING": 1.5
+    },
+    "undead": {
+        "HOLY": 2.0,
+        "CELESTIAL": 1.5,
+        "FIRE": 1.5,
+        "DARKNESS": 0.0
+    },
+    "construct": {
+        "LIGHTNING": 1.5,
+        "FORCE": 1.5,
+        "PSYCHIC": 0.0
+    }
+}
