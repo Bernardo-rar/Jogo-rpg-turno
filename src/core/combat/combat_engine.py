@@ -7,9 +7,18 @@ from typing import Protocol
 from src.core.characters.character import Character
 from src.core.combat.action_economy import ActionEconomy
 from src.core.combat.damage import DamageResult
+from src.core.combat.effect_phase import (
+    EffectLogEntry,
+    apply_tick_results,
+    create_skip_entry,
+    process_effect_ticks,
+    should_skip_turn,
+)
+from src.core.effects.tick_result import TickResult
 from src.core.combat.turn_order import Combatant, TurnOrder
 
 MAX_ROUNDS = 100
+DEFAULT_SKIP_MESSAGE = "Cannot act"
 
 
 class CombatResult(Enum):
@@ -68,6 +77,7 @@ class CombatEngine:
         self._participants = {c.name: c for c in all_combatants}
         self._round = 0
         self._events: list[CombatEvent] = []
+        self._effect_log: list[EffectLogEntry] = []
         self._result: CombatResult | None = None
 
     def run_round(self) -> CombatResult | None:
@@ -88,14 +98,36 @@ class CombatEngine:
         combatant = self._participants[combatant_proto.name]
         economy = self._economies[combatant.name]
         economy.reset()
+        tick_results = process_effect_ticks(combatant.effect_manager)
+        self._effect_log.extend(
+            apply_tick_results(combatant, tick_results, self._round),
+        )
+        skip = should_skip_turn(tick_results)
+        if combatant.is_alive and not skip:
+            self._execute_handler(combatant, economy)
+        elif combatant.is_alive and skip:
+            self._log_skip(combatant, tick_results)
+        self._result = self._check_result()
+        return self._result
+
+    def _execute_handler(
+        self, combatant: Character, economy: ActionEconomy,
+    ) -> None:
         allies, enemies = self._get_teams(combatant)
         context = TurnContext(
             combatant=combatant, allies=allies, enemies=enemies,
             action_economy=economy, round_number=self._round,
         )
         self._events.extend(self._handler.execute_turn(context))
-        self._result = self._check_result()
-        return self._result
+
+    def _log_skip(
+        self, combatant: Character, tick_results: list[TickResult],
+    ) -> None:
+        skip_msgs = [r.message for r in tick_results if r.skip_turn]
+        msg = skip_msgs[0] if skip_msgs else DEFAULT_SKIP_MESSAGE
+        self._effect_log.append(
+            create_skip_entry(combatant.name, self._round, msg),
+        )
 
     def run_combat(self) -> CombatResult:
         """Executa combate completo ate vitoria, derrota ou empate."""
@@ -117,6 +149,10 @@ class CombatEngine:
     @property
     def result(self) -> CombatResult | None:
         return self._result
+
+    @property
+    def effect_log(self) -> list[EffectLogEntry]:
+        return list(self._effect_log)
 
     def _get_teams(
         self, combatant: Character

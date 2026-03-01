@@ -17,6 +17,11 @@ _TEXT_TEMPLATES: dict[EventType, str] = {
     EventType.CHANNEL_DIVINITY: "[Round {r}] {actor} channels divinity",
     EventType.MANA_RESTORE: "[Round {r}] {actor} restores {value} mana",
     EventType.DEATH: "[Round {r}] {actor} has fallen",
+    EventType.EFFECT_APPLY: "[Round {r}] {actor} is affected by {detail}",
+    EventType.EFFECT_TICK: "[Round {r}] {actor}: {detail} ({value})",
+    EventType.EFFECT_EXPIRE: "[Round {r}] {detail} wears off from {actor}",
+    EventType.ELEMENTAL_DAMAGE: "[Round {r}] {actor} deals {value} {detail} damage to {target}",
+    EventType.SKIP_TURN: "[Round {r}] {actor} cannot act! ({detail})",
 }
 
 

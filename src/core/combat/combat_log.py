@@ -20,6 +20,11 @@ class EventType(Enum):
     CHANNEL_DIVINITY = auto()
     MANA_RESTORE = auto()
     DEATH = auto()
+    EFFECT_APPLY = auto()
+    EFFECT_TICK = auto()
+    EFFECT_EXPIRE = auto()
+    ELEMENTAL_DAMAGE = auto()
+    SKIP_TURN = auto()
 
 
 @dataclass(frozen=True)
