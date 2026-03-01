@@ -4,6 +4,7 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
+from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
 from src.core.classes.mage.barrier import BARRIER_EFFICIENCY
@@ -23,6 +24,11 @@ MAGE_MODS = ClassModifiers(
 )
 
 EMPTY_THRESHOLDS = ThresholdCalculator({})
+MAGE_CONFIG = CharacterConfig(
+    class_modifiers=MAGE_MODS,
+    threshold_calculator=EMPTY_THRESHOLDS,
+    position=Position.BACK,
+)
 
 
 @pytest.fixture
@@ -43,8 +49,7 @@ def mage(mage_attrs) -> Mage:
     return Mage(
         name="Merlin",
         attributes=mage_attrs,
-        class_modifiers=MAGE_MODS,
-        threshold_calculator=EMPTY_THRESHOLDS,
+        config=MAGE_CONFIG,
     )
 
 

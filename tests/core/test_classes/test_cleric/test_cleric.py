@@ -4,6 +4,7 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
+from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
 from src.core.classes.cleric.cleric import (
@@ -30,6 +31,11 @@ CLERIC_MODS = ClassModifiers(
 )
 
 EMPTY_THRESHOLDS = ThresholdCalculator({})
+CLERIC_CONFIG = CharacterConfig(
+    class_modifiers=CLERIC_MODS,
+    threshold_calculator=EMPTY_THRESHOLDS,
+    position=Position.BACK,
+)
 
 
 @pytest.fixture
@@ -50,8 +56,7 @@ def cleric(cleric_attrs) -> Cleric:
     return Cleric(
         name="Aurelia",
         attributes=cleric_attrs,
-        class_modifiers=CLERIC_MODS,
-        threshold_calculator=EMPTY_THRESHOLDS,
+        config=CLERIC_CONFIG,
         divinity=Divinity.HOLY,
     )
 
@@ -61,8 +66,7 @@ def wounded_ally(cleric_attrs) -> Character:
     ally = Character(
         name="Ally",
         attributes=cleric_attrs,
-        class_modifiers=CLERIC_MODS,
-        threshold_calculator=EMPTY_THRESHOLDS,
+        config=CLERIC_CONFIG,
     )
     ally.take_damage(200)
     return ally
@@ -139,8 +143,7 @@ class TestClericDivinity:
         fire_cleric = Cleric(
             name="Ignis",
             attributes=cleric_attrs,
-            class_modifiers=CLERIC_MODS,
-            threshold_calculator=EMPTY_THRESHOLDS,
+            config=CLERIC_CONFIG,
             divinity=Divinity.FIRE,
         )
         assert fire_cleric.divinity == Divinity.FIRE
@@ -164,8 +167,7 @@ class TestClericHealing:
         fire_cleric = Cleric(
             name="Ignis",
             attributes=cleric_attrs,
-            class_modifiers=CLERIC_MODS,
-            threshold_calculator=EMPTY_THRESHOLDS,
+            config=CLERIC_CONFIG,
             divinity=Divinity.FIRE,
         )
         # 9 * 3 * 1.0 = 27

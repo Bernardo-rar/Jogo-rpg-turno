@@ -4,6 +4,7 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
+from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
 from src.core.classes.fighter.action_points import ActionPoints
@@ -19,6 +20,10 @@ from src.core.classes.fighter.stance import Stance
 
 FIGHTER_MODIFIERS = ClassModifiers.from_json("data/classes/fighter.json")
 EMPTY_THRESHOLDS = ThresholdCalculator({})
+FIGHTER_CONFIG = CharacterConfig(
+    class_modifiers=FIGHTER_MODIFIERS,
+    threshold_calculator=EMPTY_THRESHOLDS,
+)
 
 
 def _fighter_attrs() -> Attributes:
@@ -38,8 +43,7 @@ def fighter() -> Fighter:
     return Fighter(
         "Warrior",
         _fighter_attrs(),
-        FIGHTER_MODIFIERS,
-        threshold_calculator=EMPTY_THRESHOLDS,
+        FIGHTER_CONFIG,
     )
 
 
@@ -80,10 +84,12 @@ class TestFighterActionPoints:
         assert fighter.action_points.current == 0
 
     def test_action_points_limit_by_level(self):
-        f = Fighter(
-            "F", _fighter_attrs(), FIGHTER_MODIFIERS,
-            threshold_calculator=EMPTY_THRESHOLDS, level=3,
+        config_lvl3 = CharacterConfig(
+            class_modifiers=FIGHTER_MODIFIERS,
+            threshold_calculator=EMPTY_THRESHOLDS,
+            level=3,
         )
+        f = Fighter("F", _fighter_attrs(), config_lvl3)
         assert f.action_points.limit == 6  # level 3 = limit 6
 
 

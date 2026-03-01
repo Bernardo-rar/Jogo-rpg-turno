@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 from src.core.attributes.attributes import Attributes
-from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
-from src.core.characters.class_modifiers import ClassModifiers
-from src.core.characters.position import Position
+from src.core.characters.character_config import CharacterConfig
 from src.core.classes.fighter.action_points import ActionPoints
 from src.core.classes.fighter.stance import Stance, StanceModifier, load_stance_modifiers
 
@@ -18,18 +16,10 @@ class Fighter(Character):
         self,
         name: str,
         attributes: Attributes,
-        class_modifiers: ClassModifiers,
-        *,
-        threshold_calculator: ThresholdCalculator,
-        level: int = 1,
-        position: Position = Position.FRONT,
+        config: CharacterConfig,
     ) -> None:
-        super().__init__(
-            name, attributes, class_modifiers,
-            threshold_calculator=threshold_calculator,
-            level=level, position=position,
-        )
-        self._action_points = ActionPoints(level)
+        super().__init__(name, attributes, config)
+        self._action_points = ActionPoints(config.level)
         self._stance = Stance.NORMAL
 
     @property

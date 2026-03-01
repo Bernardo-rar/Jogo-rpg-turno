@@ -9,8 +9,12 @@ from src.core.attributes.threshold_calculator import (
     ThresholdCalculator,
 )
 from src.core.characters.character import Character
+from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
+from src.core.effects.buff_factory import create_flat_buff
+from src.core.effects.effect_manager import EffectManager
+from src.core.effects.modifiable_stat import ModifiableStat
 
 FIGHTER_MODS = ClassModifiers(
     hit_dice=12,
@@ -46,12 +50,11 @@ def threshold_calc() -> ThresholdCalculator:
 
 @pytest.fixture
 def fighter(fighter_attrs, threshold_calc) -> Character:
-    return Character(
-        name="Roland",
-        attributes=fighter_attrs,
+    config = CharacterConfig(
         class_modifiers=FIGHTER_MODS,
         threshold_calculator=threshold_calc,
     )
+    return Character(name="Roland", attributes=fighter_attrs, config=config)
 
 
 class TestCharacterCreation:
@@ -68,23 +71,21 @@ class TestCharacterCreation:
         assert fighter.is_alive is True
 
     def test_character_with_custom_level(self, fighter_attrs, threshold_calc):
-        char = Character(
-            name="Roland",
-            attributes=fighter_attrs,
+        config = CharacterConfig(
             class_modifiers=FIGHTER_MODS,
             threshold_calculator=threshold_calc,
             level=5,
         )
+        char = Character(name="Roland", attributes=fighter_attrs, config=config)
         assert char.level == 5
 
     def test_character_with_back_position(self, fighter_attrs, threshold_calc):
-        char = Character(
-            name="Gandalf",
-            attributes=fighter_attrs,
+        config = CharacterConfig(
             class_modifiers=FIGHTER_MODS,
             threshold_calculator=threshold_calc,
             position=Position.BACK,
         )
+        char = Character(name="Gandalf", attributes=fighter_attrs, config=config)
         assert char.position == Position.BACK
 
 
@@ -95,13 +96,12 @@ class TestCharacterHp:
         assert fighter.max_hp == 340
 
     def test_max_hp_level_2_no_doubling(self, fighter_attrs, threshold_calc):
-        char = Character(
-            name="Roland",
-            attributes=fighter_attrs,
+        config = CharacterConfig(
             class_modifiers=FIGHTER_MODS,
             threshold_calculator=threshold_calc,
             level=2,
         )
+        char = Character(name="Roland", attributes=fighter_attrs, config=config)
         # (12 + 5 + 0) * 10 = 170
         assert char.max_hp == 170
 
@@ -225,6 +225,26 @@ class TestCharacterManaSpend:
         assert fighter.current_mana == fighter.max_mana
 
 
+class TestCharacterManaDrain:
+    def test_drain_mana_reduces_current(self, fighter: Character):
+        mana_before = fighter.current_mana
+        actual = fighter.drain_mana(10)
+        assert actual == 10
+        assert fighter.current_mana == mana_before - 10
+
+    def test_drain_mana_clamps_to_available(self, fighter: Character):
+        fighter.spend_mana(fighter.current_mana - 5)
+        actual = fighter.drain_mana(20)
+        assert actual == 5
+        assert fighter.current_mana == 0
+
+    def test_drain_mana_returns_zero_when_empty(self, fighter: Character):
+        fighter.drain_mana(fighter.current_mana)
+        actual = fighter.drain_mana(10)
+        assert actual == 0
+        assert fighter.current_mana == 0
+
+
 class TestCharacterPosition:
     def test_change_position_to_back(self, fighter: Character):
         fighter.change_position(Position.BACK)
@@ -268,12 +288,11 @@ class TestCharacterThresholdBonuses:
             AttributeType.CHARISMA: 3,
             AttributeType.MIND: 4,
         })
-        char = Character(
-            name="Strong",
-            attributes=attrs,
+        config = CharacterConfig(
             class_modifiers=FIGHTER_MODS,
             threshold_calculator=threshold_calc,
         )
+        char = Character(name="Strong", attributes=attrs, config=config)
         bonuses = char.get_threshold_bonuses()
         assert bonuses[BONUS_ATK_PHYSICAL] == 2
         assert bonuses[BONUS_DEF_PHYSICAL] == 1
@@ -289,12 +308,11 @@ class TestCharacterThresholdBonuses:
             AttributeType.CHARISMA: 3,
             AttributeType.MIND: 4,
         })
-        char = Character(
-            name="Strong",
-            attributes=attrs,
+        config = CharacterConfig(
             class_modifiers=FIGHTER_MODS,
             threshold_calculator=threshold_calc,
         )
+        char = Character(name="Strong", attributes=attrs, config=config)
         # def_physical base: (8+5+18) * 5 = 155
         # threshold bonus: +1 def_physical_mod
         # total: (8+5+18) * (5+1) = 186
@@ -310,14 +328,52 @@ class TestCharacterThresholdBonuses:
             AttributeType.CHARISMA: 3,
             AttributeType.MIND: 4,
         })
-        char = Character(
-            name="Tank",
-            attributes=attrs,
+        config = CharacterConfig(
             class_modifiers=FIGHTER_MODS,
             threshold_calculator=threshold_calc,
         )
+        char = Character(name="Tank", attributes=attrs, config=config)
         bonuses = char.get_threshold_bonuses()
         # STR 18: def_physical_mod +1
         # DEX 18: def_physical_mod +1
         # CON 18: def_physical_mod +1
         assert bonuses[BONUS_DEF_PHYSICAL] == 3
+
+
+class TestCharacterDependencyInjection:
+    def test_accepts_injected_effect_manager(
+        self, fighter_attrs, threshold_calc,
+    ):
+        custom_manager = EffectManager()
+        config = CharacterConfig(
+            class_modifiers=FIGHTER_MODS,
+            threshold_calculator=threshold_calc,
+            effect_manager=custom_manager,
+        )
+        char = Character(name="Injected", attributes=fighter_attrs, config=config)
+        assert char.effect_manager is custom_manager
+
+
+class TestCharacterAddEffect:
+
+    def test_add_effect_delegates_to_manager(self, fighter: Character) -> None:
+        buff = create_flat_buff(ModifiableStat.PHYSICAL_ATTACK, 5, 3)
+        fighter.add_effect(buff)
+        assert fighter.effect_manager.count == 1
+
+    def test_has_active_effects_false_by_default(self, fighter: Character) -> None:
+        assert fighter.has_active_effects() is False
+
+    def test_has_active_effects_true_after_add(self, fighter: Character) -> None:
+        buff = create_flat_buff(ModifiableStat.SPEED, 5, 3)
+        fighter.add_effect(buff)
+        assert fighter.has_active_effects() is True
+
+
+class TestCharacterThresholdCacheInvalidation:
+
+    def test_invalidate_threshold_cache(self, fighter: Character) -> None:
+        bonuses_before = fighter.get_threshold_bonuses()
+        fighter.invalidate_threshold_cache()
+        bonuses_after = fighter.get_threshold_bonuses()
+        assert bonuses_before == bonuses_after

@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
-from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
-from src.core.characters.class_modifiers import ClassModifiers
-from src.core.characters.position import Position
+from src.core.characters.character_config import CharacterConfig
 from src.core.classes.cleric.divinity import Divinity, load_divinity_configs
 from src.core.classes.cleric.holy_power import HOLY_POWER_PER_HEAL, HolyPower
 
@@ -25,18 +23,11 @@ class Cleric(Character):
         self,
         name: str,
         attributes: Attributes,
-        class_modifiers: ClassModifiers,
+        config: CharacterConfig,
         *,
-        threshold_calculator: ThresholdCalculator,
         divinity: Divinity = Divinity.HOLY,
-        level: int = 1,
-        position: Position = Position.BACK,
     ) -> None:
-        super().__init__(
-            name, attributes, class_modifiers,
-            threshold_calculator=threshold_calculator,
-            level=level, position=position,
-        )
+        super().__init__(name, attributes, config)
         self._divinity = divinity
         self._holy_power = HolyPower()
         self._channeling = False
