@@ -2,6 +2,7 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
+from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.combat.action_economy import ActionEconomy
 from src.core.combat.basic_attack_handler import BasicAttackHandler
@@ -24,7 +25,8 @@ def _make_char(name: str) -> Character:
         AttributeType.WISDOM: 5, AttributeType.CHARISMA: 5,
         AttributeType.MIND: 5,
     })
-    return Character(name, attrs, MODS, threshold_calculator=EMPTY)
+    config = CharacterConfig(class_modifiers=MODS, threshold_calculator=EMPTY)
+    return Character(name, attrs, config)
 
 
 DUMMY_DAMAGE = DamageResult(raw_damage=0, defense_value=0, is_critical=False, final_damage=0)

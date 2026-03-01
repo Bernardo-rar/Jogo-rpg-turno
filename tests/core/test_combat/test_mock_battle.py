@@ -6,7 +6,9 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
+from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
+from src.core.characters.position import Position
 from src.core.classes.cleric.cleric import HEAL_MANA_COST, Cleric
 from src.core.classes.cleric.divinity import Divinity
 from src.core.classes.fighter.fighter import Fighter
@@ -192,21 +194,35 @@ def battle_setup():
     """Cria party + enemies + engine + combat log pronta para rodar."""
     fighter = Fighter(
         name="Gareth", attributes=_fighter_attrs(),
-        class_modifiers=FIGHTER_MODS, threshold_calculator=EMPTY_THRESHOLDS,
+        config=CharacterConfig(
+            class_modifiers=FIGHTER_MODS,
+            threshold_calculator=EMPTY_THRESHOLDS,
+        ),
     )
     mage = Mage(
         name="Merlin", attributes=_mage_attrs(),
-        class_modifiers=MAGE_MODS, threshold_calculator=EMPTY_THRESHOLDS,
+        config=CharacterConfig(
+            class_modifiers=MAGE_MODS,
+            threshold_calculator=EMPTY_THRESHOLDS,
+            position=Position.BACK,
+        ),
     )
     cleric = Cleric(
         name="Aurelia", attributes=_cleric_attrs(),
-        class_modifiers=CLERIC_MODS, threshold_calculator=EMPTY_THRESHOLDS,
+        config=CharacterConfig(
+            class_modifiers=CLERIC_MODS,
+            threshold_calculator=EMPTY_THRESHOLDS,
+            position=Position.BACK,
+        ),
         divinity=Divinity.HOLY,
     )
     enemies = [
         Character(
             name=f"Goblin_{i}", attributes=_enemy_attrs(),
-            class_modifiers=ENEMY_MODS, threshold_calculator=EMPTY_THRESHOLDS,
+            config=CharacterConfig(
+                class_modifiers=ENEMY_MODS,
+                threshold_calculator=EMPTY_THRESHOLDS,
+            ),
         )
         for i in range(3)
     ]

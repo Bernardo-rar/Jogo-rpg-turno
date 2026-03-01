@@ -1,10 +1,5 @@
 import pytest
 
-from src.core.attributes.attribute_types import AttributeType
-from src.core.attributes.attributes import Attributes
-from src.core.attributes.threshold_calculator import ThresholdCalculator
-from src.core.characters.character import Character
-from src.core.characters.class_modifiers import ClassModifiers
 from src.core.combat.action_economy import ActionType
 from src.core.combat.basic_attack_handler import BasicAttackHandler
 from src.core.combat.combat_engine import (
@@ -16,6 +11,8 @@ from src.core.combat.combat_engine import (
 )
 from src.core.combat.damage import DamageResult
 
+from tests.core.test_combat.conftest import _build_char as _make_char
+
 # -- Stats de teste --
 # Todos attrs = 10, mod_atk=2, mod_def=1, regen=0
 # HP = ((10+10+0)*2)*1 = 40
@@ -23,32 +20,6 @@ from src.core.combat.damage import DamageResult
 # DEF = (10+10+10)*1 = 30
 # DMG = 40-30 = 10 por hit, 4 rounds pra matar
 # Ordem: mesmo speed (10), desempate por nome (alfabetico)
-
-SIMPLE_MODIFIERS = ClassModifiers(
-    hit_dice=10,
-    vida_mod=0,
-    mod_hp=1,
-    mana_multiplier=1,
-    mod_atk_physical=2,
-    mod_atk_magical=1,
-    mod_def_physical=1,
-    mod_def_magical=1,
-    regen_hp_mod=0,
-    regen_mana_mod=0,
-)
-
-EMPTY_THRESHOLDS = ThresholdCalculator({})
-
-
-def _make_char(name: str, speed: int = 10) -> Character:
-    attrs = Attributes()
-    for attr_type in AttributeType:
-        attrs.set(attr_type, 10)
-    if speed != 10:
-        attrs.set(AttributeType.DEXTERITY, speed)
-    return Character(
-        name, attrs, SIMPLE_MODIFIERS, threshold_calculator=EMPTY_THRESHOLDS
-    )
 
 
 class DoNothingHandler:
@@ -91,13 +62,13 @@ def handler():
 
 class TestCombatResult:
     def test_has_party_victory(self):
-        assert CombatResult.PARTY_VICTORY is not None
+        assert isinstance(CombatResult.PARTY_VICTORY, CombatResult)
 
     def test_has_party_defeat(self):
-        assert CombatResult.PARTY_DEFEAT is not None
+        assert isinstance(CombatResult.PARTY_DEFEAT, CombatResult)
 
     def test_has_draw(self):
-        assert CombatResult.DRAW is not None
+        assert isinstance(CombatResult.DRAW, CombatResult)
 
     def test_has_three_values(self):
         assert len(list(CombatResult)) == 3
@@ -252,3 +223,14 @@ class TestCombatEngineDeadSkip:
         assert len(engine.events) == 1
         assert engine.events[0].actor_name == "Alpha"
         assert engine.result == CombatResult.PARTY_VICTORY
+
+
+class TestCombatEngineDuplicateNames:
+
+    def test_duplicate_names_raises_value_error(self, handler) -> None:
+        with pytest.raises(ValueError, match="unique"):
+            CombatEngine(
+                [_make_char("Alpha")],
+                [_make_char("Alpha")],
+                handler,
+            )
