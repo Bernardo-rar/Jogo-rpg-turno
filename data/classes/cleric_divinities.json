@@ -1,0 +1,9 @@
+{
+  "FIRE": {"healing_bonus": 1.0},
+  "WATER": {"healing_bonus": 1.1},
+  "ICE": {"healing_bonus": 1.0},
+  "EARTH": {"healing_bonus": 1.0},
+  "LIGHTNING": {"healing_bonus": 1.0},
+  "HOLY": {"healing_bonus": 1.3},
+  "CHAOS": {"healing_bonus": 0.8}
+}

@@ -1,0 +1,12 @@
+{
+  "hit_dice": 8,
+  "vida_mod": 0,
+  "mod_hp": 8,
+  "mana_multiplier": 8,
+  "mod_atk_physical": 5,
+  "mod_atk_magical": 8,
+  "mod_def_physical": 3,
+  "mod_def_magical": 4,
+  "regen_hp_mod": 3,
+  "regen_mana_mod": 4
+}
