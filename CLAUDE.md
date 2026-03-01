@@ -126,6 +126,13 @@ def test_<o_que_esta_sendo_testado>_<cenario>_<resultado_esperado>():
 - Sem imports circulares (a arquitetura em camadas previne isso)
 - `src/core/` NUNCA importa de `src/ui/` (dependencia unidirecional)
 
+### Validacao de dados JSON
+
+- Arquivos JSON em `data/` NAO usam jsonschema ou validacao de schema externa.
+- A validacao e feita implicitamente via dataclasses frozen + Enum[name] parsing nos loaders.
+- Isso e intencional: o projeto nao tem dependencias externas alem do pytest. Adicionar jsonschema seria over-engineering para JSONs internos cujo formato e controlado pelo proprio projeto.
+- Se no futuro os JSONs forem editados por ferramentas externas ou usuarios, reconsiderar.
+
 ## Comandos
 ```bash
 # Rodar todos os testes

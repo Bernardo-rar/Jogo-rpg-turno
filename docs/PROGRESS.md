@@ -163,34 +163,118 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 ### Bloco A - Sistemas Base (antes das classes)
 
 #### Task 2.0 - Effects Framework (base para Buffs/Debuffs/Ailments)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Criar framework generico de efeitos temporarios com duracao em turnos (Strategy pattern)
 - **Criterio de aceite**: Effect base class com apply/tick/expire, EffectManager que gerencia efeitos ativos num personagem, integracao com turno (tick no inicio do turno, expire automatico)
 - **Dependencias**: Nenhuma (base para tudo da Fase 2)
+- **Arquivos criados**:
+  - `src/core/effects/modifiable_stat.py` - ModifiableStat enum (9 stats derivados modificaveis)
+  - `src/core/effects/stat_modifier.py` - StatModifier frozen dataclass (flat + percent)
+  - `src/core/effects/tick_result.py` - TickResult frozen dataclass (damage, healing, mana_change)
+  - `src/core/effects/stacking.py` - StackingPolicy enum (REPLACE, STACK, REFRESH)
+  - `src/core/effects/effect.py` - Effect ABC com Template Method lifecycle (apply/tick/expire)
+  - `src/core/effects/effect_manager.py` - EffectManager com stacking rules e modifier aggregation
+  - `tests/core/test_effects/test_modifiable_stat.py` - 9 testes
+  - `tests/core/test_effects/test_stat_modifier.py` - 7 testes
+  - `tests/core/test_effects/test_tick_result.py` - 5 testes
+  - `tests/core/test_effects/test_stacking.py` - 3 testes
+  - `tests/core/test_effects/test_effect.py` - 20 testes
+  - `tests/core/test_effects/test_effect_manager.py` - 30 testes
+- **Notas**: 468 testes totais (394+74). Effect ABC define lifecycle hooks (on_apply, _do_tick, on_expire, get_modifiers). EffectManager gerencia stacking (REPLACE/STACK/REFRESH), tick_all, aggregate_modifier. Guard contra on_expire duplo via _expire_handled flag. StatModifier formula: final = (base + flat) * (1.0 + percent/100). PERMANENT_DURATION = -1 para efeitos sem expiracao.
 
 #### Task 2.1 - Buffs e Debuffs (RF05.1, RF05.2)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Implementar buffs flat/percentuais e debuffs com duracao em turnos
 - **Criterio de aceite**: Buff que modifica stats (ex: +2 STR, +10% ataque), debuff que reduz stats, stacking rules, duracao em turnos com expire automatico
 - **Dependencias**: Task 2.0
+- **Arquivos criados**:
+  - `src/core/effects/effect_category.py` - EffectCategory enum (BUFF, DEBUFF)
+  - `src/core/effects/stat_buff.py` - StatBuff(Effect) com validacao, nome e stacking key auto-gerados
+  - `src/core/effects/stat_debuff.py` - StatDebuff(Effect) espelho com validacao invertida
+  - `src/core/effects/buff_factory.py` - 4 factory functions ergonomicas (create_flat_buff, etc)
+  - `tests/core/test_effects/test_effect_category.py` - 3 testes
+  - `tests/core/test_effects/test_stat_buff.py` - 22 testes (criacao, validacao, properties, behavior, manager)
+  - `tests/core/test_effects/test_stat_debuff.py` - 22 testes (espelho do buff)
+  - `tests/core/test_effects/test_buff_factory.py` - 16 testes (4 factories x 4 testes)
+- **Notas**: 531 testes totais (468+63). StatBuff valida flat/percent >= 0, StatDebuff valida <= 0. Nomes auto-gerados ("Physical Attack Up"/"Down"). Stacking keys auto-gerados ("buff_speed"/"debuff_speed", com source opcional). Factory de debuff recebe valores positivos e nega internamente. _format_stat_name e _validate_duration compartilhados entre StatBuff e StatDebuff. Escopo: apenas stat buffs/debuffs. Buffs comportamentais (Haste, Angel Idol, Moral) ficam para tasks futuras.
 
 #### Task 2.2 - Status Ailments (RF05.3)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Implementar status ailments (DoTs, CC, debuffs de recurso)
 - **Criterio de aceite**: DoTs (Burn, Poison, Bleed), CC (Freeze, Paralysis), debuffs de recurso (Amnesia, Sickness), aplicacao e remocao funcionando
 - **Dependencias**: Task 2.0
+- **Arquivos modificados**:
+  - `src/core/effects/effect_category.py` - Adicionado AILMENT ao enum
+  - `src/core/effects/tick_result.py` - Adicionado skip_turn: bool = False
+  - `src/core/effects/modifiable_stat.py` - Adicionado HEALING_RECEIVED
+- **Arquivos criados**:
+  - `src/core/effects/ailments/__init__.py` - Package marker
+  - `src/core/effects/ailments/status_ailment.py` - StatusAilment ABC (category=AILMENT, stacking_key=ailment_{id})
+  - `src/core/effects/ailments/dot_ailment.py` - DotAilment ABC (damage_per_tick, _do_tick)
+  - `src/core/effects/ailments/cc_ailment.py` - CcAilment ABC (is_crowd_control)
+  - `src/core/effects/ailments/debuff_ailment.py` - DebuffAilment ABC (modifier validation, get_modifiers)
+  - `src/core/effects/ailments/resource_lock_ailment.py` - ResourceLockAilment ABC (blocks_mana/aura)
+  - `src/core/effects/ailments/poison.py` - Poison DoT
+  - `src/core/effects/ailments/virus.py` - Virus DoT (Poison potencializado)
+  - `src/core/effects/ailments/bleed.py` - Bleed DoT
+  - `src/core/effects/ailments/burn.py` - Burn DoT + reducao de cura (HEALING_RECEIVED)
+  - `src/core/effects/ailments/scorch.py` - Scorch DoT + reducao de MAX_HP (cumulativo)
+  - `src/core/effects/ailments/freeze.py` - Freeze CC (skip_turn=True + HEALING_RECEIVED)
+  - `src/core/effects/ailments/paralysis.py` - Paralysis CC (chance-based skip, random injetavel)
+  - `src/core/effects/ailments/cold.py` - Cold debuff (SPEED)
+  - `src/core/effects/ailments/weakness.py` - Weakness debuff (PHYS_DEF + MAG_DEF)
+  - `src/core/effects/ailments/injury.py` - Injury debuff (PHYS_ATK + MAG_ATK)
+  - `src/core/effects/ailments/sickness.py` - Sickness debuff (HEALING_RECEIVED)
+  - `src/core/effects/ailments/amnesia.py` - Amnesia lock (blocks mana skills)
+  - `src/core/effects/ailments/curse.py` - Curse lock (blocks aura skills)
+  - `src/core/effects/ailments/ailment_factory.py` - 13 factory functions
+  - `tests/core/test_effects/test_ailments/` - 19 arquivos de teste
+- **Notas**: 703 testes totais (531+172). Hierarquia: StatusAilment -> DotAilment/CcAilment/DebuffAilment/ResourceLockAilment -> 13 concretos. 3 arquivos existentes modificados (1 campo/membro cada). Burn e Scorch combinam DoT + get_modifiers (dual behavior). Freeze sempre pula turno. Paralysis com random injetavel para testes deterministicos. Weakness/Injury afetam ambos phys+mag. TickResult.skip_turn e ModifiableStat.HEALING_RECEIVED preparados para integracao com combat engine (Task 2.4).
 
-#### Task 2.3 - Sistema Elemental (RF04.1)
-- **Status**: PENDENTE
+#### Task 2.3 - Sistema Elemental (RF04.1 + RF04.2)
+- **Status**: CONCLUIDA
 - **Descricao**: Implementar enum de elementos, efeitos on-hit por elemento, fraquezas/resistencias
-- **Criterio de aceite**: ElementType enum (10 elementos), cada elemento com efeito on-hit, DamageResult integrado com elemento, fraqueza/resistencia modificam dano
+- **Criterio de aceite**: ElementType enum (10 elementos), cada elemento com efeito on-hit, ElementalDamageResult com fraqueza/resistencia modificando dano
 - **Dependencias**: Task 2.2 (efeitos on-hit aplicam ailments)
+- **Arquivos criados**:
+  - `src/core/elements/element_type.py` - ElementType enum (10 elementos: FIRE, WATER, ICE, LIGHTNING, EARTH, HOLY, DARKNESS, CELESTIAL, PSYCHIC, FORCE)
+  - `src/core/elements/elemental_profile.py` - ElementalProfile frozen dataclass (fraquezas/resistencias via multiplier 0.0-2.0)
+  - `src/core/elements/elemental_damage.py` - ElementalDamageResult wrapping DamageResult + resolve_elemental_damage()
+  - `src/core/elements/on_hit/__init__.py` - Package marker
+  - `src/core/elements/on_hit/on_hit_result.py` - OnHitResult frozen dataclass (effects, self_effects, bonus_damage, party_healing, breaks_shield)
+  - `src/core/elements/on_hit/on_hit_config.py` - OnHitConfig + EffectSpec frozen dataclasses + load_on_hit_configs() do JSON
+  - `src/core/elements/on_hit/on_hit_generator.py` - generate_on_hit() com dispatch table de factories
+  - `src/core/effects/ailments/confusion.py` - Confusion CcAilment (redirects_target=True, nao pula turno)
+  - `data/elements/elemental_profiles.json` - Profiles de fraqueza/resistencia (neutral, fire_creature, undead, etc)
+  - `data/elements/on_hit_defaults.json` - Config data-driven dos 10 on-hits elementais
+  - `tests/core/test_elements/` - 6 arquivos de teste
+  - `tests/core/test_effects/test_ailments/test_confusion.py` - 12 testes do Confusion
+- **Arquivos modificados**:
+  - `src/core/effects/ailments/ailment_factory.py` - Adicionado create_confusion() (+5 linhas)
+  - `tests/core/test_effects/test_ailments/test_ailment_factory.py` - Adicionado TestCreateConfusion (+2 testes)
+- **Notas**: 811 testes totais (703+108). Abordagem DATA-DRIVEN para on-hits: configs em JSON, dispatch table de factories no generator. Nenhuma classe por elemento - cada on-hit e composicao de ailments/buffs existentes. **Decisao catalogada**: Se no futuro algum elemento precisar de logica condicional complexa, podemos extrair para classes concretas com OnHitProvider Protocol sem quebrar o existente. ElementalDamageResult WRAPS DamageResult (OCP - resolve_damage() e DamageResult intocados). ElementType separado de Divinity do Cleric (conceitos diferentes, mapeamento futuro). Confusion e unico ailment novo (CcAilment com redirects_target, diferente de Freeze/Paralysis). Darkness reusa Burn mecanicamente (description distingue).
 
 #### Task 2.4 - Integracao Effects + Combat Engine
-- **Status**: PENDENTE
+
+- **Status**: CONCLUIDA
 - **Descricao**: Integrar EffectManager no loop de combate (tick/expire por turno) e elemental no dano
 - **Criterio de aceite**: Efeitos tickam no inicio do turno, expiram automaticamente, dano elemental aplica efeitos on-hit, mock battle com elementos
 - **Dependencias**: Tasks 2.0-2.3
+- **Arquivos modificados**:
+  - `src/core/characters/character.py` - EffectManager composicao interna, ElementalProfile kwarg, _apply_effect_modifiers(), 8 stat properties modificadas
+  - `src/core/combat/combat_engine.py` - Effect tick phase no inicio do turno, _execute_handler() extraido, _log_skip(), effect_log property
+  - `src/core/combat/combat_log.py` - 5 novos EventTypes (EFFECT_APPLY, EFFECT_TICK, EFFECT_EXPIRE, ELEMENTAL_DAMAGE, SKIP_TURN)
+  - `src/core/combat/log_formatter.py` - 5 novos templates de texto
+- **Arquivos criados**:
+  - `src/core/combat/effect_phase.py` - Funcoes puras: process_effect_ticks(), apply_tick_results(), should_skip_turn(), EffectLogEntry dataclass
+  - `src/core/combat/elemental_attack.py` - ElementalAttackOutcome, resolve_elemental_attack(), apply_on_hit_effects()
+  - `tests/core/test_characters/test_character_effects.py` - 18 testes (EffectManager, stat modifiers, subclass interaction)
+  - `tests/core/test_combat/test_effect_phase.py` - 21 testes (tick processing, apply results, skip turn)
+  - `tests/core/test_combat/test_combat_log_effects.py` - 10 testes (novos EventTypes + formatter templates)
+  - `tests/core/test_combat/test_combat_engine_effects.py` - 16 testes (DoT, CC, duration, buffs, regressao)
+  - `tests/core/test_combat/test_elemental_attack.py` - 14 testes (resistencia, on-hit, apply effects)
+  - `tests/core/test_combat/test_mock_battle_elemental.py` - 12 testes (batalha 3v3 com elementos, DoT, Freeze, party healing)
+- **Notas**: 902 testes totais (811+91). EffectLogEntry separado de CombatLogEntry para evitar import circular (combat_engine → effect_phase → combat_log → combat_engine). Stat modifier order: base → effect_mods → class_multiplier. Efeitos tickam no INICIO do turno (DoT antes de agir, CC impede acao). CombatEngine NAO sabe de elementos (SRP) - handlers decidem tipo de ataque. elemental_attack.py conecta damage + resistencia + on-hit em funcoes puras. Character class body = 198 linhas (<200).
 
 ### Bloco B - 10 Classes Restantes (RF02.3)
 
