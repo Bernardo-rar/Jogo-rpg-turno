@@ -210,6 +210,39 @@ Usamos um loop incremental inspirado no conceito de Ralph Loop para evitar "cont
 - Decisoes de design importantes devem ser anotadas nas "Notas" da task.
 - O PROGRESS.md e a fonte de verdade do estado do projeto.
 
+### Refactor Gate (TDD Step 3 - OBRIGATORIO)
+
+O passo "Refactor" do TDD nao pode ser pulado. Apos o Green (testes passando), rodar `/tdd-refactor-gate` antes de commitar:
+
+```bash
+/tdd-refactor-gate                    # Analisa arquivos modificados (git diff)
+/tdd-refactor-gate src/core/combat/   # Foco num diretorio especifico
+/tdd-refactor-gate --full src/core/   # Analisa TODOS os arquivos (nao so diff)
+/tdd-refactor-gate --quick            # Modo rapido (so CRITICAL + HIGH)
+```
+
+### Workflow completo por task do PRD:
+1. **RED**: Escrever o teste PRIMEIRO. Ele deve falhar.
+2. **GREEN**: Escrever o MINIMO de codigo para o teste passar.
+3. **REFACTOR**: Rodar `/tdd-refactor-gate` e corrigir issues CRITICAL e HIGH.
+4. **COMMIT**: So commitar quando o gate der "REFACTOR NEEDED: NO". **Um commit por task do PRD** — nao acumular multiplas tasks num commit so.
+5. **ATUALIZAR**: Atualizar `docs/PROGRESS.md` com o que foi feito.
+
+### Criterio de qualidade para commit:
+- Zero issues CRITICAL
+- Zero issues HIGH (exceto com justificativa documentada)
+- Todos os testes passando apos refatoracao
+- Metricas dentro dos limites: fn < 20 linhas, params <= 3, nesting <= 3, class < 200 linhas
+
+### Revisao geral pos-Fase 2
+Ao final da Fase 2 (todos os requisitos funcionais implementados), rodar `/tdd-refactor-gate --full` em cada modulo do core antes de iniciar a Fase 3 (UI/Pygame):
+- `src/core/attributes/`
+- `src/core/characters/`
+- `src/core/classes/`
+- `src/core/combat/`
+- `src/core/effects/`
+- `src/core/elements/`
+
 ## Documentos de Design Originais
 Os documentos de design originais estao em `Coisas interessantes/` e `Coisas interessantes/Tudo o q estava no notion/`. Consultar para detalhes de:
 - Classes e subclasses: `Classes/`
