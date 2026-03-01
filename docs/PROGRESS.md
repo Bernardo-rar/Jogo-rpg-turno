@@ -276,85 +276,97 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
   - `tests/core/test_combat/test_mock_battle_elemental.py` - 12 testes (batalha 3v3 com elementos, DoT, Freeze, party healing)
 - **Notas**: 902 testes totais (811+91). EffectLogEntry separado de CombatLogEntry para evitar import circular (combat_engine → effect_phase → combat_log → combat_engine). Stat modifier order: base → effect_mods → class_multiplier. Efeitos tickam no INICIO do turno (DoT antes de agir, CC impede acao). CombatEngine NAO sabe de elementos (SRP) - handlers decidem tipo de ataque. elemental_attack.py conecta damage + resistencia + on-hit em funcoes puras. Character class body = 198 linhas (<200).
 
-### Bloco B - 10 Classes Restantes (RF02.3)
+### Bloco B - Armas e Progressao (C-lite, antes das classes)
 
-#### Task 2.5 - Barbarian (Barbaro)
+#### Task 2.5 - Sistema de Armas (RF07.1)
+- **Status**: PENDENTE
+- **Descricao**: Weapon base, dados de dano por tipo, categorias (simples/marcial/magica), armas normais e elementais
+- **Dependencias**: Tasks 2.0-2.3 (armas elementais usam ElementType)
+- **Notas**: Resolve weapon_die=0 no Character. Proficiencias por classe ficam genericas por enquanto (lista de categorias permitidas), refinadas quando cada classe for implementada.
+
+#### Task 2.6 - Level Up e Progressao (RF08.1, RF08.2)
+- **Status**: PENDENTE
+- **Descricao**: XP, level 1-10, pontos de atributo, HP/mana scaling, proficiency bonus = nivel
+- **Dependencias**: Bloco A
+
+### Bloco C - 10 Classes Restantes (RF02.3)
+
+#### Task 2.7 - Barbarian (Barbaro)
 - **Status**: PENDENTE
 - **Descricao**: Barra de Furia, dano por HP perdido, rage como buff temporal
-- **Dependencias**: Task 2.1 (Furia = buff)
+- **Dependencias**: Task 2.1 (Furia = buff), Task 2.5 (armas)
 
-#### Task 2.6 - Paladin (Paladino)
+#### Task 2.8 - Paladin (Paladino)
 - **Status**: PENDENTE
 - **Descricao**: Divindade, Juramentos stack, Glimpse of Glory, auras como buffs persistentes
 - **Dependencias**: Task 2.1 (auras = buffs)
 
-#### Task 2.7 - Ranger
+#### Task 2.9 - Ranger
 - **Status**: PENDENTE
 - **Descricao**: Foco Predatorio (stack crit), Marca do Cacador (debuff no alvo)
 - **Dependencias**: Task 2.1 (marca = debuff)
 
-#### Task 2.8 - Monk (Monge)
+#### Task 2.10 - Monk (Monge)
 - **Status**: PENDENTE
 - **Descricao**: Barra Equilibrium (Vitalidade/Destruicao), multi-hit, debuffs
 - **Dependencias**: Task 2.1
 
-#### Task 2.9 - Sorcerer (Feiticeiro)
+#### Task 2.11 - Sorcerer (Feiticeiro)
 - **Status**: PENDENTE
 - **Descricao**: Metamagia, Overcharged, Rotacao de Mana
 - **Dependencias**: Task 2.0
 
-#### Task 2.10 - Warlock (Bruxo)
+#### Task 2.12 - Warlock (Bruxo)
 - **Status**: PENDENTE
 - **Descricao**: Insanidade (ailment proprio), Familiares, Sede Insaciavel
 - **Dependencias**: Task 2.2 (insanidade = ailment)
 
-#### Task 2.11 - Druid (Druida)
+#### Task 2.13 - Druid (Druida)
 - **Status**: PENDENTE
 - **Descricao**: Transformacoes, condicoes de campo
 - **Dependencias**: Tasks 2.1, 2.3 (campo = buff/debuff elemental)
 
-#### Task 2.12 - Rogue (Ladino)
+#### Task 2.14 - Rogue (Ladino)
 - **Status**: PENDENTE
 - **Descricao**: Usa itens sem gastar turno, mistura itens, utility
 - **Dependencias**: Task 2.0
 
-#### Task 2.13 - Bard (Bardo)
+#### Task 2.15 - Bard (Bardo)
 - **Status**: PENDENTE
 - **Descricao**: Embalo Musical (stack buff), recruta NPCs, buff/debuff
 - **Dependencias**: Task 2.1 (embalo = buff stacking)
 
-#### Task 2.14 - Artificer (Artifice)
+#### Task 2.16 - Artificer (Artifice)
 - **Status**: PENDENTE
 - **Descricao**: Traje Tecmagis, potencializa itens ativos, suporte/mana
 - **Dependencias**: Task 2.0
 
-### Bloco C - Equipamento e Progressao
+### Bloco D - Equipamento Restante
 
-#### Task 2.15 - Sistema de Armas (RF07.1)
-- **Status**: PENDENTE
-- **Descricao**: Weapon base, dados de dano por tipo, proficiencia por classe, armas normais/magicas
-- **Dependencias**: Bloco B (proficiencias por classe)
-
-#### Task 2.16 - Armaduras e Acessorios (RF07.2, RF07.3)
+#### Task 2.17 - Armaduras e Acessorios (RF07.2, RF07.3)
 - **Status**: PENDENTE
 - **Descricao**: Armaduras leve/media/pesada, acessorios com buffs, limite por CHA
-- **Dependencias**: Task 2.15
+- **Dependencias**: Task 2.5 (sistema de armas base)
 
-#### Task 2.17 - Consumiveis e Inventario (RF07.4, RF07.5)
+#### Task 2.18 - Consumiveis e Inventario (RF07.4, RF07.5)
 - **Status**: PENDENTE
 - **Descricao**: Pocoes, itens de combate, inventario com slots, equip/desequip
-- **Dependencias**: Task 2.16
+- **Dependencias**: Task 2.17
 
-#### Task 2.18 - Level Up e Progressao (RF08.1, RF08.2)
-- **Status**: PENDENTE
-- **Descricao**: XP, level 1-10, pontos de atributo, HP/mana scaling, proficiency bonus = nivel
-- **Dependencias**: Bloco B
+### Bloco E - Integracao e Visualizacao
 
 #### Task 2.19 - Mock Battle v2 (Integracao Fase 2)
 - **Status**: PENDENTE
 - **Descricao**: Batalha completa com elementos, buffs/debuffs, mais classes, equipamento
 - **Criterio de aceite**: Combate com 6+ classes, efeitos elementais, buffs/debuffs ativos, combat log mostrando tudo
 - **Dependencias**: Todas as tasks anteriores
+
+#### Task 2.20 - Pygame Minimo (Preview Visual)
+- **Status**: PENDENTE
+- **Descricao**: Visualizacao basica do Mock Battle v2 com Pygame. Shapes coloridos como placeholder (sem sprites), barras de HP/Mana, log de combate, efeitos ativos visiveis. Roda a batalha automaticamente (sem input do jogador ainda).
+- **Criterio de aceite**: Janela Pygame mostra batalha rodando em tempo real, personagens como retangulos coloridos, barras de vida, texto de acoes/efeitos
+- **Dependencias**: Task 2.19
+- **Notas**: Primeira dependencia externa alem do pytest (pygame). Tudo em src/ui/ (core/ NAO importa ui/). Assets reais ficam para Fase 4. Wireframe de referencia em `Coisas interessantes/WhatsApp Image 2022-05-26 at 21.25.41.jpeg`.
 
 ---
 
