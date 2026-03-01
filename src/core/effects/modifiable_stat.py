@@ -19,3 +19,4 @@ class ModifiableStat(Enum):
     MAX_MANA = auto()
     HP_REGEN = auto()
     MANA_REGEN = auto()
+    HEALING_RECEIVED = auto()
