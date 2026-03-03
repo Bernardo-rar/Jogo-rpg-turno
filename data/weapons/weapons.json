@@ -1,0 +1,149 @@
+{
+  "short_sword": {
+    "name": "Short Sword",
+    "weapon_type": "SWORD",
+    "damage_kind": "SLASHING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 6,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
+  },
+  "longsword": {
+    "name": "Longsword",
+    "weapon_type": "SWORD",
+    "damage_kind": "SLASHING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 8,
+    "attack_range": "MELEE",
+    "category": "MARTIAL"
+  },
+  "greatsword": {
+    "name": "Greatsword",
+    "weapon_type": "SWORD",
+    "damage_kind": "SLASHING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 12,
+    "attack_range": "MELEE",
+    "category": "MARTIAL"
+  },
+  "dagger": {
+    "name": "Dagger",
+    "weapon_type": "DAGGER",
+    "damage_kind": "PIERCING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 4,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
+  },
+  "mace": {
+    "name": "Mace",
+    "weapon_type": "MACE",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 6,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
+  },
+  "warhammer": {
+    "name": "Warhammer",
+    "weapon_type": "HAMMER",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 10,
+    "attack_range": "MELEE",
+    "category": "MARTIAL"
+  },
+  "lance": {
+    "name": "Lance",
+    "weapon_type": "LANCE",
+    "damage_kind": "PIERCING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 10,
+    "attack_range": "MELEE",
+    "category": "MARTIAL"
+  },
+  "shortbow": {
+    "name": "Shortbow",
+    "weapon_type": "BOW",
+    "damage_kind": "PIERCING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 6,
+    "attack_range": "RANGED",
+    "category": "SIMPLE"
+  },
+  "longbow": {
+    "name": "Longbow",
+    "weapon_type": "BOW",
+    "damage_kind": "PIERCING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 8,
+    "attack_range": "RANGED",
+    "category": "MARTIAL"
+  },
+  "quarterstaff": {
+    "name": "Quarterstaff",
+    "weapon_type": "STAFF",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "MAGICAL",
+    "weapon_die": 4,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
+  },
+  "arcane_staff": {
+    "name": "Arcane Staff",
+    "weapon_type": "STAFF",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "MAGICAL",
+    "weapon_die": 8,
+    "attack_range": "RANGED",
+    "category": "MAGICAL"
+  },
+  "flame_sword": {
+    "name": "Flame Sword",
+    "weapon_type": "SWORD",
+    "damage_kind": "SLASHING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 10,
+    "attack_range": "MELEE",
+    "category": "MARTIAL",
+    "rarity": "UNCOMMON",
+    "element": "FIRE",
+    "cha_requirement": 12
+  },
+  "frost_staff": {
+    "name": "Frost Staff",
+    "weapon_type": "STAFF",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "MAGICAL",
+    "weapon_die": 10,
+    "attack_range": "RANGED",
+    "category": "MAGICAL",
+    "rarity": "UNCOMMON",
+    "element": "ICE",
+    "cha_requirement": 12
+  },
+  "thunder_bow": {
+    "name": "Thunder Bow",
+    "weapon_type": "BOW",
+    "damage_kind": "PIERCING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 10,
+    "attack_range": "RANGED",
+    "category": "MARTIAL",
+    "rarity": "UNCOMMON",
+    "element": "LIGHTNING",
+    "cha_requirement": 12
+  },
+  "holy_mace": {
+    "name": "Holy Mace",
+    "weapon_type": "MACE",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 8,
+    "attack_range": "MELEE",
+    "category": "SIMPLE",
+    "rarity": "UNCOMMON",
+    "element": "HOLY",
+    "cha_requirement": 12
+  }
+}

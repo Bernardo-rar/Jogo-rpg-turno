@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
 from src.core.effects.effect_manager import EffectManager
 from src.core.elements.elemental_profile import ElementalProfile
+
+if TYPE_CHECKING:
+    from src.core.items.weapon import Weapon
 
 
 @dataclass(frozen=True)
@@ -21,3 +25,4 @@ class CharacterConfig:
     position: Position = Position.FRONT
     elemental_profile: ElementalProfile | None = None
     effect_manager: EffectManager | None = None
+    weapon: Weapon | None = None
