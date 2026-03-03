@@ -279,10 +279,34 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 ### Bloco B - Armas e Progressao (C-lite, antes das classes)
 
 #### Task 2.5 - Sistema de Armas (RF07.1)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Weapon base, dados de dano por tipo, categorias (simples/marcial/magica), armas normais e elementais
 - **Dependencias**: Tasks 2.0-2.3 (armas elementais usam ElementType)
-- **Notas**: Resolve weapon_die=0 no Character. Proficiencias por classe ficam genericas por enquanto (lista de categorias permitidas), refinadas quando cada classe for implementada.
+- **Arquivos criados**:
+  - `src/core/items/damage_kind.py` - DamageKind enum (SLASHING, PIERCING, BLUDGEONING)
+  - `src/core/items/weapon_type.py` - WeaponType enum (SWORD, DAGGER, BOW, STAFF, HAMMER, LANCE, MACE, FIST)
+  - `src/core/items/weapon_category.py` - WeaponCategory enum (SIMPLE, MARTIAL, MAGICAL)
+  - `src/core/items/weapon_rarity.py` - WeaponRarity enum (COMMON, UNCOMMON, RARE, LEGENDARY)
+  - `src/core/items/weapon.py` - Weapon frozen dataclass + from_dict() (Enum[name] parsing)
+  - `src/core/items/weapon_loader.py` - load_weapons() usando resolve_data_path()
+  - `src/core/items/weapon_proficiency.py` - can_equip() + FIGHTER/MAGE/CLERIC/DEFAULT proficiencies
+  - `data/weapons/weapons.json` - 15 armas (11 common + 4 uncommon elementais)
+  - `tests/core/test_items/conftest.py` - Fixtures compartilhadas (LONGSWORD, ARCANE_STAFF, make_attrs, make_item_config)
+  - `tests/core/test_items/test_damage_kind.py` - 4 testes
+  - `tests/core/test_items/test_weapon_type.py` - 4 testes
+  - `tests/core/test_items/test_weapon_category.py` - 4 testes
+  - `tests/core/test_items/test_weapon_rarity.py` - 4 testes
+  - `tests/core/test_items/test_weapon.py` - 13 testes (criacao, frozen, from_dict, defaults, invalid)
+  - `tests/core/test_items/test_weapon_loader.py` - 8 testes
+  - `tests/core/test_items/test_weapon_proficiency.py` - 9 testes
+  - `tests/core/test_items/test_weapon_equip.py` - 10 testes (equip/unequip, LSP subclasses)
+  - `tests/core/test_items/test_weapon_stats.py` - 10 testes (weapon_die routing)
+  - `tests/core/test_items/test_weapon_combat_integration.py` - 7 testes (armed vs unarmed, elemental, battle)
+- **Arquivos modificados**:
+  - `src/core/characters/character_config.py` - Adicionado weapon: Weapon | None = None
+  - `src/core/characters/character.py` - Adicionado _weapon no __init__
+  - `src/core/characters/combat_stats_mixin.py` - weapon property, equip/unequip, _get_weapon_die() routing
+- **Notas**: 1035 testes totais (902+133), 100% cobertura (1752 stmts). weapon_die routing: arma PHYSICAL adiciona die a physical_attack, MAGICAL a magical_attack, sem arma = 0 (backward-compatible). Proficiencias genericas por classe (FIGHTER={SIMPLE,MARTIAL}, MAGE={SIMPLE,MAGICAL}, CLERIC={SIMPLE}). Refactor gate: weapon methods movidos de Character para CombatStatsMixin (Character ficou com 10 metodos, dentro do limite). Conftest compartilhado eliminou duplicacao nos 3 test files.
 
 #### Task 2.6 - Level Up e Progressao (RF08.1, RF08.2)
 - **Status**: PENDENTE
@@ -392,3 +416,12 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - **Decisoes**: ActionEconomy e composicao (nao acoplado ao Character). has_actions ignora REACTION (e passiva, nao proativa). PROACTIVE_ACTIONS como frozenset.
 - Task 1.4 concluida: 13 testes novos (117 total). TurnOrder com Protocol Combatant, speed property no Character.
 - **Decisoes**: TurnOrder usa Protocol Combatant (DI), nao depende de Character. Speed = DEX por enquanto. Empates por nome. Mortos excluidos automaticamente.
+
+### Sessao 5 - 2026-03-02
+
+- Task 2.5 concluida: 133 testes novos (1035 total), 100% cobertura (1752 stmts)
+- Sistema de armas completo: 4 enums, Weapon frozen dataclass, JSON loader, proficiencias, integracao Character
+- 15 armas no JSON: 11 common (sword, dagger, bow, staff, hammer, lance, mace) + 4 uncommon elementais (fire, ice, lightning, holy)
+- weapon_die routing integrado no CombatStatsMixin: arma PHYSICAL soma em physical_attack, MAGICAL em magical_attack
+- Refactor gate: weapon methods movidos de Character para CombatStatsMixin, conftest.py compartilhado para test_items
+- **Decisoes**: Weapon como frozen dataclass com from_dict() (Enum[name] parsing, sem jsonschema). Proficiencias genericas por enquanto (frozenset de WeaponCategory). weapon/equip/unequip no CombatStatsMixin (junto do weapon_die routing). TYPE_CHECKING guards para evitar circular imports.

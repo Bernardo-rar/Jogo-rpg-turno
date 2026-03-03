@@ -151,13 +151,28 @@ pytest --lf
 python -m src.main
 ```
 
-## Design Patterns Recomendados
-- **Strategy**: Para diferentes tipos de dano, efeitos de buff/debuff, comportamento de IA
-- **Observer**: Para eventos de combate (on_hit, on_crit, on_death, on_buff)
-- **Factory**: Para criacao de personagens, skills, itens
-- **State**: Para estados de combate (turno do jogador, turno inimigo, selecao de alvo)
-- **Composite**: Para efeitos compostos (buff que aplica varios sub-efeitos)
-- **Template Method**: Para fluxo de turno (pre-turno → acao → pos-turno) onde cada classe customiza partes
+## Design Patterns em Uso
+
+Guia completo com exemplos: `docs/DESIGN_PATTERNS.md`
+
+### Comportamento
+- **Template Method**: Esqueleto fixo com hooks customizaveis (`Effect.tick()` — subclasses sobrescrevem `_do_tick()`)
+- **Strategy**: Algoritmo inteiro injetado via DI (`TurnHandler` Protocol no `CombatEngine`)
+- **Dispatch Table**: Strategy + lookup dict com fallback (`DispatchTurnHandler` — nome→handler)
+- **State (Inline)**: Comportamento muda com estado interno via enum (`Stance` do Fighter, `Overcharge` do Mage)
+
+### Criacao
+- **Factory Functions**: Encapsulam logica de criacao (`buff_factory.py`, `ailment_factory.py`)
+- **Factory Method**: Construtores alternativos (`from_json()`, `from_dict()`)
+
+### Estrutura
+- **ABC + Polimorfismo**: Contratos via heranca (`Effect` ABC → `StatBuff`, `DotAilment`, `CcAilment`)
+- **Protocol (ISP)**: Interfaces leves sem heranca (`Combatant`, `Targetable`, `TurnHandler`)
+- **Value Object**: Frozen dataclasses imutaveis (`DamageResult`, `CombatEvent`, `Weapon`, `StatModifier`)
+
+### Transversais
+- **Dependency Injection**: Construtor injection em todas as classes (facilita mocks)
+- **Memoization**: Cache com invalidacao (`get_threshold_bonuses()`)
 
 ## Sistema de Combate (Core do MVP)
 - **Action Economy**: Acao Normal + Acao Bonus + Reacao por turno
@@ -178,16 +193,20 @@ python -m src.main
 - **Reducao dano fisico**: `CA / 4` (base, varia por classe)
 
 ## Status do Projeto
-- [ ] Setup do projeto (pyproject.toml, pytest config, estrutura de pastas)
-- [ ] Sistema de atributos (7 primarios + derivados)
-- [ ] Classe base Character
-- [ ] Engine de combate por turnos (action economy)
-- [ ] 13 classes com mecanicas unicas
+- [x] Setup do projeto (pyproject.toml, pytest config, estrutura de pastas)
+- [x] Sistema de atributos (7 primarios + derivados + thresholds)
+- [x] Classe base Character (HP, Mana, posicao, effects, weapon)
+- [x] Engine de combate por turnos (action economy, targeting, dano, initiative)
+- [x] 3/13 classes (Fighter, Mage, Cleric)
+- [x] Sistema de buffs/debuffs (StatBuff, StatDebuff, factories)
+- [x] Status ailments (13 ailments: DoTs, CC, debuffs, resource locks)
+- [x] Sistema elemental (10 elementos, fraquezas/resistencias, on-hit data-driven)
+- [x] Integracao effects + combat (tick phase, elemental attack, skip turn)
+- [x] Sistema de armas (15 armas, weapon_die routing, proficiencias, elementais)
+- [ ] 10 classes restantes com mecanicas unicas
 - [ ] Sistema de subclasses (escolha no lvl 3)
 - [ ] Sistema de habilidades (spell slots com custo customizavel)
-- [ ] Sistema de buffs/debuffs/status ailments
-- [ ] Sistema elemental (8+ elementos com efeitos on-hit)
-- [ ] Sistema de equipamento (armas, armaduras, acessorios, consumiveis)
+- [ ] Armaduras, acessorios, consumiveis e inventario
 - [ ] Progressao (level up 1-10, talentos, aumento de atributos)
 - [ ] IA de inimigos (dificuldade baseada em comportamento, nao so stats)
 - [ ] UI/Rendering (Pygame)

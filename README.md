@@ -62,7 +62,7 @@ Todo codigo segue o ciclo **Red -> Green -> Refactor**:
 3. **Refactor** — Melhorar o codigo mantendo os testes verdes
 
 ```
-287 testes passando | 0 falhas
+1035 testes passando | 100% cobertura | 0 falhas
 ```
 
 Estrutura de teste:
@@ -73,15 +73,26 @@ def test_fighter_overdrive_consumes_all_action_points():
     # Assert - verificar resultado
 ```
 
+### Commits
+
+Um commit por task do PRD. Commits podem ter 20+ arquivos — isso e intencional. Cada task e uma feature coesa (enums + dataclass + loader + testes), e separar artificialmente quebraria o principio de que cada commit deixa o projeto num estado funcional e verde. Codigo e seus testes sao uma unidade: `git bisect` e `git revert` operam na feature inteira, sem deixar testes orfaos ou codigo sem cobertura.
+
 ### Design Patterns
+
+Guia detalhado com exemplos: [`docs/DESIGN_PATTERNS.md`](docs/DESIGN_PATTERNS.md)
 
 | Pattern | Onde e usado |
 |---|---|
+| **Template Method** | `Effect.tick()` — esqueleto fixo, hooks customizaveis nas subclasses |
 | **Strategy** | `TurnHandler` Protocol — diferentes estrategias de acao no combate |
-| **Factory** | Criacao de personagens com `ClassModifiers.from_json()` |
-| **State** | `Stance` do Fighter (Balanced/Offensive/Defensive) |
-| **Composite** | `ManaBarrier` do Mage absorve dano antes do HP |
-| **Protocol (Structural Typing)** | `Combatant`, `Targetable`, `TurnHandler` — DI sem heranca forcada |
+| **Dispatch Table** | `DispatchTurnHandler` — mapa nome→handler com fallback |
+| **Factory** | `buff_factory.py`, `ailment_factory.py`, `from_json()`/`from_dict()` |
+| **ABC + Polimorfismo** | `Effect` ABC → `StatBuff`, `StatDebuff`, `DotAilment`, `CcAilment` |
+| **Protocol (ISP)** | `Combatant`, `Targetable`, `TurnHandler` — interfaces segregadas |
+| **State (Inline)** | `Stance` do Fighter, `Overcharge` do Mage, `ChannelDivinity` do Cleric |
+| **Value Object** | Frozen dataclasses: `DamageResult`, `CombatEvent`, `StatModifier`, `Weapon` |
+| **Dependency Injection** | Construtor injection em todas as classes (facilita mocks nos testes) |
+| **Memoization** | `get_threshold_bonuses()` com cache invalidavel |
 
 ## Sistema de Combate
 
@@ -113,6 +124,8 @@ pytest --lf
 
 ## Status do Projeto
 
+### Fase 1 — Core Engine
+
 - [x] Setup do projeto (pyproject.toml, pytest, estrutura)
 - [x] Sistema de atributos (7 primarios + derivados + thresholds)
 - [x] Classe base Character com HP, Mana, posicao
@@ -123,12 +136,27 @@ pytest --lf
 - [x] Combat Engine loop completo
 - [x] Fighter (estancias, pontos de acao)
 - [x] Mage (barreira de mana, overcharge)
-- [ ] 11 classes restantes
+- [x] Cleric (divindade, cura, holy power, channel divinity)
+- [x] Mock Battle integracao (Fighter+Mage+Cleric vs Goblins)
+
+### Fase 2 — Profundidade (em andamento)
+
+- [x] Effects framework (Effect ABC, EffectManager, stacking, tick/expire)
+- [x] Buffs e Debuffs (StatBuff/StatDebuff, factories, flat/percent)
+- [x] Status Ailments (13 ailments: DoTs, CC, debuffs, resource locks)
+- [x] Sistema elemental (10 elementos, fraquezas/resistencias, on-hit data-driven)
+- [x] Integracao effects + combat engine (tick phase, elemental attack)
+- [x] Sistema de armas (15 armas, weapon_die routing, proficiencias, armas elementais)
+- [ ] Level up e progressao (XP, level 1-10, attribute points)
+- [ ] 10 classes restantes (Barbarian, Paladin, Ranger, Monk, Sorcerer, Warlock, Druid, Rogue, Bard, Artificer)
+- [ ] Armaduras e acessorios
+- [ ] Consumiveis e inventario
+- [ ] Mock Battle v2 (integracao completa)
+- [ ] Pygame preview visual
+
+### Futuro
+
 - [ ] Sistema de subclasses (escolha no lvl 3)
 - [ ] Sistema de habilidades e spell slots
-- [ ] Buffs, debuffs e status ailments
-- [ ] Sistema elemental
-- [ ] Equipamentos (armas, armaduras, acessorios)
-- [ ] Progressao (level up 1-10, talentos)
 - [ ] IA de inimigos
-- [ ] UI com Pygame
+- [ ] UI completa com Pygame
