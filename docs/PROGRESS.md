@@ -355,9 +355,23 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - **Notas**: 1157 testes totais (1103+54), 99% cobertura (1958 stmts). Barbarian herda de Character (LSP verificado). FuryBar: max = 25% do max_hp, ganha fury ao receber dano (10% do dano) e ao atacar (+5 flat), decai 3/turno. Fury passiva: escala linear ate +30% physical_attack e +20% hp_regen no max. Missing HP bonus: +25% physical_attack quando quase morto (linear com % de HP faltando). physical_attack override combina fury_mult * missing_mult. on_level_up recalcula fury max. Dados de balanceamento em JSON. Barbarian.py ~73 linhas, 7 metodos. Refactor gate: PASSED (1 MEDIUM corrigido: unused import).
 
 #### Task 2.8 - Paladin (Paladino)
-- **Status**: PENDENTE
-- **Descricao**: Divindade, Juramentos stack, Glimpse of Glory, auras como buffs persistentes
+- **Status**: CONCLUIDA
+- **Descricao**: Divine Favor, Auras (PROTECTION/ATTACK/VITALITY), Glimpse of Glory
 - **Dependencias**: Task 2.1 (auras = buffs)
+- **Arquivos criados**:
+  - `src/core/classes/paladin/__init__.py` - Package marker
+  - `src/core/classes/paladin/divine_favor.py` - DivineFavor resource (gain/spend/max_stacks)
+  - `src/core/classes/paladin/aura.py` - Aura enum + AuraModifier frozen + load_aura_modifiers()
+  - `src/core/classes/paladin/glory_config.py` - GloryConfig frozen + load_glory_config()
+  - `src/core/classes/paladin/paladin.py` - Paladin(Character) com auras, favor, glory
+  - `data/classes/paladin.json` - ClassModifiers (d10, balanced atk/def)
+  - `data/classes/paladin_auras.json` - Multiplicadores por aura (NONE/PROTECTION/ATTACK/VITALITY)
+  - `data/classes/paladin_glory.json` - Config de Glimpse of Glory (custo, duracao, boost)
+  - `tests/core/test_classes/test_paladin/test_divine_favor.py` - 9 testes
+  - `tests/core/test_classes/test_paladin/test_aura.py` - 11 testes
+  - `tests/core/test_classes/test_paladin/test_glory_config.py` - 5 testes
+  - `tests/core/test_classes/test_paladin/test_paladin.py` - 41 testes (LSP, stats, auras, favor, glory, duration)
+- **Notas**: 1225 testes totais (1157+66+2 extras do barbarian coverage), 100% cobertura (2090 stmts). Paladin herda de Character (LSP verificado). DivineFavor: max 10 stacks, ganha +1 ao proteger/buffar/curar aliados (API pronta, handlers futuros). Aura: apenas 1 ativa por vez, PROTECTION +15% def, ATTACK +15% atk, VITALITY +15% regen. Glimpse of Glory: custo 5 favor, dobra bonus da aura (15%->30%), dura 3 turnos, auto-desativa. Aura afetando party = fora do escopo (combat handler futuro). Refactor gate: GloryConfig extraido para arquivo proprio (HIGH corrigido). Paladin.py ~100 linhas, 10 metodos.
 
 #### Task 2.9 - Ranger
 - **Status**: PENDENTE
