@@ -339,9 +339,20 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 ### Bloco C - 10 Classes Restantes (RF02.3)
 
 #### Task 2.7 - Barbarian (Barbaro)
-- **Status**: PENDENTE
-- **Descricao**: Barra de Furia, dano por HP perdido, rage como buff temporal
+- **Status**: CONCLUIDA
+- **Descricao**: Barra de Furia, dano por HP perdido, fury passiva (ataque e regen)
 - **Dependencias**: Task 2.1 (Furia = buff), Task 2.5 (armas)
+- **Arquivos criados**:
+  - `src/core/classes/barbarian/__init__.py` - Package marker
+  - `src/core/classes/barbarian/fury_config.py` - FuryConfig frozen dataclass + load_fury_config()
+  - `src/core/classes/barbarian/fury_bar.py` - FuryBar resource (gain/spend/decay/update_max)
+  - `src/core/classes/barbarian/barbarian.py` - Barbarian(Character) com fury, missing HP bonus, overrides
+  - `data/classes/barbarian.json` - ClassModifiers (d12, high phys atk/def, low mana)
+  - `data/classes/barbarian_fury.json` - Config de furia (ratios, bonuses, decay)
+  - `tests/core/test_classes/test_barbarian/test_fury_config.py` - 9 testes
+  - `tests/core/test_classes/test_barbarian/test_fury_bar.py` - 16 testes
+  - `tests/core/test_classes/test_barbarian/test_barbarian.py` - 29 testes (LSP, fury on damage, fury on attack, decay, atk bonus, missing HP bonus, regen bonus, level up)
+- **Notas**: 1157 testes totais (1103+54), 99% cobertura (1958 stmts). Barbarian herda de Character (LSP verificado). FuryBar: max = 25% do max_hp, ganha fury ao receber dano (10% do dano) e ao atacar (+5 flat), decai 3/turno. Fury passiva: escala linear ate +30% physical_attack e +20% hp_regen no max. Missing HP bonus: +25% physical_attack quando quase morto (linear com % de HP faltando). physical_attack override combina fury_mult * missing_mult. on_level_up recalcula fury max. Dados de balanceamento em JSON. Barbarian.py ~73 linhas, 7 metodos. Refactor gate: PASSED (1 MEDIUM corrigido: unused import).
 
 #### Task 2.8 - Paladin (Paladino)
 - **Status**: PENDENTE
@@ -458,3 +469,14 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - Template Method hook: `on_level_up()` no Character, Fighter override atualiza AP limit
 - Refactor gate: extraido conftest.py, removido dead code (LEVEL_1_HP_MULTIPLIER, ZERO_POINTS), removidas delegacoes desnecessarias (add_effect/has_active_effects), monkey-patch substituido por unittest.mock.patch
 - **Decisoes**: LevelUpSystem externo ao Character (SRP — Character nao sabe de XP). XP table data-driven do JSON. Niveis impares = 0 pontos (reservados para subclasses/talentos). Proficiency bonus = level (property no CombatStatsMixin). add_effect/has_active_effects removidos do Character (pura delegacao, callers ja usavam effect_manager direto).
+
+### Sessao 7 - 2026-03-04
+
+- Task 2.7 concluida: 54 testes novos (1157 total), 99% cobertura (1958 stmts)
+- Barbarian completo: FuryBar resource, FuryConfig frozen, Barbarian(Character) com fury + missing HP bonus
+- FuryBar: max = 25% max_hp, gain on damage (10%), gain on attack (+5), decay 3/turno
+- Fury passiva: +30% physical_attack e +20% hp_regen no max (linear scaling)
+- Missing HP bonus: +25% physical_attack linear com HP faltando
+- on_level_up recalcula fury max (acompanha max_hp)
+- Refactor gate: PASSED (1 MEDIUM corrigido: unused import FuryConfig)
+- **Decisoes**: FuryBar como resource separado (mesmo padrao de ActionPoints). Fury NAO e buff do EffectManager - e estado interno da classe (como Stance do Fighter). Berserk/perda de controle fica para RF09 (IA). physical_attack override combina 2 multiplicadores (fury + missing HP). Dados de balanceamento em 2 JSONs (barbarian.json + barbarian_fury.json).

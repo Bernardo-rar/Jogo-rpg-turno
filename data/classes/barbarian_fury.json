@@ -1,0 +1,9 @@
+{
+  "fury_max_ratio": 0.25,
+  "fury_on_damage_ratio": 0.10,
+  "fury_on_basic_attack": 5,
+  "fury_decay_per_turn": 3,
+  "atk_bonus_at_max_fury": 0.30,
+  "regen_bonus_at_max_fury": 0.20,
+  "missing_hp_atk_bonus": 0.25
+}
