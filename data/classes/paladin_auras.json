@@ -1,0 +1,6 @@
+{
+  "NONE": {"def_multiplier": 1.0, "atk_multiplier": 1.0, "regen_multiplier": 1.0},
+  "PROTECTION": {"def_multiplier": 1.15, "atk_multiplier": 1.0, "regen_multiplier": 1.0},
+  "ATTACK": {"def_multiplier": 1.0, "atk_multiplier": 1.15, "regen_multiplier": 1.0},
+  "VITALITY": {"def_multiplier": 1.0, "atk_multiplier": 1.0, "regen_multiplier": 1.15}
+}
