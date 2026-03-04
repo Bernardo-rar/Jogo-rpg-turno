@@ -95,15 +95,15 @@ class TestCharacterHp:
         # ((12 + 5 + 0) * 2) * 10 = 340
         assert fighter.max_hp == 340
 
-    def test_max_hp_level_2_no_doubling(self, fighter_attrs, threshold_calc):
+    def test_max_hp_level_2_accumulates(self, fighter_attrs, threshold_calc):
         config = CharacterConfig(
             class_modifiers=FIGHTER_MODS,
             threshold_calculator=threshold_calc,
             level=2,
         )
         char = Character(name="Roland", attributes=fighter_attrs, config=config)
-        # (12 + 5 + 0) * 10 = 170
-        assert char.max_hp == 170
+        # base * (level + 1) * mod_hp = 17 * 3 * 10 = 510
+        assert char.max_hp == 510
 
     def test_current_hp_starts_at_max(self, fighter: Character):
         assert fighter.current_hp == fighter.max_hp
@@ -356,18 +356,18 @@ class TestCharacterDependencyInjection:
 
 class TestCharacterAddEffect:
 
-    def test_add_effect_delegates_to_manager(self, fighter: Character) -> None:
+    def test_add_effect_via_manager(self, fighter: Character) -> None:
         buff = create_flat_buff(ModifiableStat.PHYSICAL_ATTACK, 5, 3)
-        fighter.add_effect(buff)
+        fighter.effect_manager.add_effect(buff)
         assert fighter.effect_manager.count == 1
 
-    def test_has_active_effects_false_by_default(self, fighter: Character) -> None:
-        assert fighter.has_active_effects() is False
+    def test_no_active_effects_by_default(self, fighter: Character) -> None:
+        assert fighter.effect_manager.count == 0
 
-    def test_has_active_effects_true_after_add(self, fighter: Character) -> None:
+    def test_has_active_effects_after_add(self, fighter: Character) -> None:
         buff = create_flat_buff(ModifiableStat.SPEED, 5, 3)
-        fighter.add_effect(buff)
-        assert fighter.has_active_effects() is True
+        fighter.effect_manager.add_effect(buff)
+        assert fighter.effect_manager.count > 0
 
 
 class TestCharacterThresholdCacheInvalidation:

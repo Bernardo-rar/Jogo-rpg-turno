@@ -309,9 +309,32 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - **Notas**: 1035 testes totais (902+133), 100% cobertura (1752 stmts). weapon_die routing: arma PHYSICAL adiciona die a physical_attack, MAGICAL a magical_attack, sem arma = 0 (backward-compatible). Proficiencias genericas por classe (FIGHTER={SIMPLE,MARTIAL}, MAGE={SIMPLE,MAGICAL}, CLERIC={SIMPLE}). Refactor gate: weapon methods movidos de Character para CombatStatsMixin (Character ficou com 10 metodos, dentro do limite). Conftest compartilhado eliminou duplicacao nos 3 test files.
 
 #### Task 2.6 - Level Up e Progressao (RF08.1, RF08.2)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: XP, level 1-10, pontos de atributo, HP/mana scaling, proficiency bonus = nivel
 - **Dependencias**: Bloco A
+- **Arquivos criados**:
+  - `data/progression/xp_table.json` - Thresholds XP para levels 1-10 (0, 100, 300, ..., 4500)
+  - `data/progression/attribute_points.json` - Pontos fisicos/mentais por nivel (pares ganham pontos, impares reservados para subclasses)
+  - `src/core/progression/xp_table.py` - XpTable frozen dataclass + level_for_xp() + load_xp_table()
+  - `src/core/progression/level_up_result.py` - LevelUpResult frozen dataclass (new_level, physical/mental points)
+  - `src/core/progression/attribute_point_config.py` - LevelAttributePoints frozen + get_points_for_level() + load_attribute_points()
+  - `src/core/progression/level_up_system.py` - LevelUpSystem orquestrador (gain_xp, distribute_physical/mental_points)
+  - `tests/core/test_progression/conftest.py` - Fixtures compartilhadas (SIMPLE_MODS, EMPTY_THRESHOLDS, make_attrs)
+  - `tests/core/test_progression/test_xp_table.py` - 13 testes
+  - `tests/core/test_progression/test_attribute_point_config.py` - 12 testes
+  - `tests/core/test_progression/test_level_up_result.py` - 4 testes
+  - `tests/core/test_progression/test_level_up_system.py` - 15 testes
+  - `tests/core/test_progression/test_character_hooks.py` - 10 testes
+  - `tests/core/test_progression/test_level_up_integration.py` - 10 testes (Fighter/Mage/Cleric level up)
+- **Arquivos modificados**:
+  - `src/core/attributes/derived_stats.py` - HP acumulativo: `base * (level+1) * mod_hp`, regen scaling com level
+  - `src/core/characters/character.py` - `_set_level()` + `on_level_up()` hook (Template Method), removidos `add_effect`/`has_active_effects` (delegacao desnecessaria)
+  - `src/core/characters/combat_stats_mixin.py` - `proficiency_bonus` property, level passado para regen
+  - `src/core/classes/fighter/action_points.py` - `update_limit(level)` method
+  - `src/core/classes/fighter/fighter.py` - `on_level_up()` override (atualiza AP limit)
+  - `tests/core/test_attributes/test_derived_stats.py` - Testes de HP acumulativo e regen scaling
+  - `tests/core/test_characters/test_character.py` - Adaptado para HP acumulativo e effect_manager direto
+- **Notas**: 1103 testes totais (1035+68), 100% cobertura (1872 stmts). HP formula: `(hit_dice + CON + vida_mod) * (level+1) * mod_hp` (level 1 = base*2, backward-compatible). Regen: `CON * level * mod`. Proficiency bonus = level. XP table data-driven do JSON (sem formula nos docs). LevelUpSystem externo ao Character (SRP — Character nao sabe de XP). Pontos de atributo: fisicos (STR/DEX/CON) e mentais (INT/WIS/CHA/MIND), distribuicao livre dentro da categoria. Niveis impares = 0 pontos (reservados para subclasses/talentos). on_level_up() como Template Method hook: Fighter atualiza AP limit, base e noop.
 
 ### Bloco C - 10 Classes Restantes (RF02.3)
 
@@ -425,3 +448,13 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - weapon_die routing integrado no CombatStatsMixin: arma PHYSICAL soma em physical_attack, MAGICAL em magical_attack
 - Refactor gate: weapon methods movidos de Character para CombatStatsMixin, conftest.py compartilhado para test_items
 - **Decisoes**: Weapon como frozen dataclass com from_dict() (Enum[name] parsing, sem jsonschema). Proficiencias genericas por enquanto (frozenset de WeaponCategory). weapon/equip/unequip no CombatStatsMixin (junto do weapon_die routing). TYPE_CHECKING guards para evitar circular imports.
+
+### Sessao 6 - 2026-03-03
+
+- Task 2.6 concluida: 68 testes novos (1103 total), 100% cobertura (1872 stmts)
+- Sistema de progressao completo: XP table, level 1-10, pontos de atributo, HP/regen scaling, proficiency bonus
+- Modulo `src/core/progression/` criado (4 arquivos), `data/progression/` (2 JSONs)
+- HP acumulativo: `base * (level+1) * mod_hp`, regen scaling: `CON * level * mod`
+- Template Method hook: `on_level_up()` no Character, Fighter override atualiza AP limit
+- Refactor gate: extraido conftest.py, removido dead code (LEVEL_1_HP_MULTIPLIER, ZERO_POINTS), removidas delegacoes desnecessarias (add_effect/has_active_effects), monkey-patch substituido por unittest.mock.patch
+- **Decisoes**: LevelUpSystem externo ao Character (SRP — Character nao sabe de XP). XP table data-driven do JSON. Niveis impares = 0 pontos (reservados para subclasses/talentos). Proficiency bonus = level (property no CombatStatsMixin). add_effect/has_active_effects removidos do Character (pura delegacao, callers ja usavam effect_manager direto).

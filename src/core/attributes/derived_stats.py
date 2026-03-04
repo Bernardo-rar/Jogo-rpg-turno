@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-LEVEL_1_HP_MULTIPLIER = 2
 MANA_BASE_MULTIPLIER = 10
 
 
@@ -45,11 +44,14 @@ class DefenseInput:
 
 
 def calculate_hp(hp_input: HpInput) -> int:
-    """HP = ((hit_dice + CON + vida_mod) [* 2 se lvl1]) * mod_hp."""
+    """HP = (hit_dice + CON + vida_mod) * (level + 1) * mod_hp.
+
+    Level 1: base * 2 * mod_hp (backward-compatible).
+    Level N: base * (N+1) * mod_hp (acumulativo).
+    """
     base = hp_input.hit_dice + hp_input.con + hp_input.vida_mod
-    if hp_input.level == 1:
-        base *= LEVEL_1_HP_MULTIPLIER
-    return base * hp_input.mod_hp
+    level_multiplier = hp_input.level + 1
+    return base * level_multiplier * hp_input.mod_hp
 
 
 def calculate_mana(mana_multiplier: int, mind: int) -> int:
@@ -78,11 +80,11 @@ def calculate_defense(defense_input: DefenseInput) -> int:
     ) * defense_input.modifier
 
 
-def calculate_hp_regen(constitution: int, regen_hp_mod: int) -> int:
-    """Regen HP = CON * regen_hp_mod."""
-    return constitution * regen_hp_mod
+def calculate_hp_regen(constitution: int, regen_hp_mod: int, level: int) -> int:
+    """Regen HP = CON * level * regen_hp_mod."""
+    return constitution * level * regen_hp_mod
 
 
-def calculate_mana_regen(mind: int, regen_mana_mod: int) -> int:
-    """Regen Mana = MIND * regen_mana_mod."""
-    return mind * regen_mana_mod
+def calculate_mana_regen(mind: int, regen_mana_mod: int, level: int) -> int:
+    """Regen Mana = MIND * level * regen_mana_mod."""
+    return mind * level * regen_mana_mod

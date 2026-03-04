@@ -141,11 +141,16 @@ class CombatStatsMixin:
         return self._apply_effect_modifiers(ModifiableStat.MAGICAL_DEFENSE, base)
 
     @property
+    def proficiency_bonus(self) -> int:
+        return self._level
+
+    @property
     def hp_regen(self) -> int:
         bonus = self.get_threshold_bonuses().get(BONUS_HP_REGEN, 0)
         base = calculate_hp_regen(
             constitution=self._attributes.get(AttributeType.CONSTITUTION),
             regen_hp_mod=self._modifiers.regen_hp_mod + bonus,
+            level=self._level,
         )
         return self._apply_effect_modifiers(ModifiableStat.HP_REGEN, base)
 
@@ -154,5 +159,6 @@ class CombatStatsMixin:
         base = calculate_mana_regen(
             mind=self._attributes.get(AttributeType.MIND),
             regen_mana_mod=self._modifiers.regen_mana_mod,
+            level=self._level,
         )
         return self._apply_effect_modifiers(ModifiableStat.MANA_REGEN, base)

@@ -7,7 +7,6 @@ from src.core.characters.character_config import CharacterConfig
 from src.core.characters.combat_stats_mixin import CombatStatsMixin
 from src.core.characters.position import Position
 from src.core.characters.threshold_mixin import ThresholdBonusMixin
-from src.core.effects.effect import Effect
 from src.core.effects.effect_manager import EffectManager
 from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.elements.elemental_profile import ElementalProfile
@@ -112,10 +111,10 @@ class Character(ThresholdBonusMixin, CombatStatsMixin):
         self.heal(self.hp_regen)
         self.restore_mana(self.mana_regen)
 
-    def add_effect(self, effect: Effect) -> None:
-        """Adiciona efeito ao personagem."""
-        self._effect_manager.add_effect(effect)
+    def _set_level(self, level: int) -> None:
+        """Define novo nivel e dispara hook de level up."""
+        self._level = level
+        self.on_level_up()
 
-    def has_active_effects(self) -> bool:
-        """True se tem efeitos ativos."""
-        return self._effect_manager.count > 0
+    def on_level_up(self) -> None:
+        """Hook para subclasses atualizarem recursos ao subir de nivel."""

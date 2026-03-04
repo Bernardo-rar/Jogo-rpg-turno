@@ -18,11 +18,20 @@ class TestCalculateHp:
         hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=1)
         assert calculate_hp(hp_input) == 340
 
-    def test_level_2_no_doubling(self):
-        # (hit_dice + CON + vida_mod) * mod_hp
-        # (12 + 5 + 0) * 10 = 170
+    def test_level_2_accumulates(self):
+        # base * (level + 1) * mod_hp = 17 * 3 * 10 = 510
         hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=2)
-        assert calculate_hp(hp_input) == 170
+        assert calculate_hp(hp_input) == 510
+
+    def test_level_5_accumulates(self):
+        # base * (5 + 1) * mod_hp = 17 * 6 * 10 = 1020
+        hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=5)
+        assert calculate_hp(hp_input) == 1020
+
+    def test_level_10_accumulates(self):
+        # base * (10 + 1) * mod_hp = 17 * 11 * 10 = 1870
+        hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=10)
+        assert calculate_hp(hp_input) == 1870
 
     def test_vida_mod_adds_to_base(self):
         # ((12 + 5 + 3) * 2) * 10 = 400
@@ -79,16 +88,24 @@ class TestCalculateDefense:
 
 
 class TestCalculateHpRegen:
-    def test_basic_formula(self):
-        # CON * regen_hp_mod
-        # 6 * 5 = 30
-        result = calculate_hp_regen(constitution=6, regen_hp_mod=5)
+    def test_level_1_same_as_before(self):
+        # CON * level * regen_hp_mod = 6 * 1 * 5 = 30
+        result = calculate_hp_regen(constitution=6, regen_hp_mod=5, level=1)
         assert result == 30
+
+    def test_scales_with_level(self):
+        # CON * level * regen_hp_mod = 6 * 5 * 5 = 150
+        result = calculate_hp_regen(constitution=6, regen_hp_mod=5, level=5)
+        assert result == 150
 
 
 class TestCalculateManaRegen:
-    def test_basic_formula(self):
-        # MIND * regen_mana_mod
-        # 4 * 3 = 12
-        result = calculate_mana_regen(mind=4, regen_mana_mod=3)
+    def test_level_1_same_as_before(self):
+        # MIND * level * regen_mana_mod = 4 * 1 * 3 = 12
+        result = calculate_mana_regen(mind=4, regen_mana_mod=3, level=1)
         assert result == 12
+
+    def test_scales_with_level(self):
+        # MIND * level * regen_mana_mod = 4 * 5 * 3 = 60
+        result = calculate_mana_regen(mind=4, regen_mana_mod=3, level=5)
+        assert result == 60

@@ -53,6 +53,10 @@ class Fighter(Character):
         base = super().magical_defense
         return int(base * self._current_stance_mod.def_multiplier)
 
+    def on_level_up(self) -> None:
+        """Atualiza AP limit ao subir de nivel."""
+        self._action_points.update_limit(self._level)
+
     @property
     def _current_stance_mod(self) -> StanceModifier:
         return _STANCE_MODIFIERS[self._stance]

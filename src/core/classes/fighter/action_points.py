@@ -40,6 +40,10 @@ class ActionPoints:
         self._spent_this_turn = True
         return True
 
+    def update_limit(self, level: int) -> None:
+        """Atualiza limite de AP baseado no novo nivel."""
+        self._limit = AP_LIMIT_PER_LEVEL.get(level, DEFAULT_AP_LIMIT)
+
     def on_turn_end(self) -> None:
         """Fim do turno: ganha +1 passivo se nao gastou neste turno."""
         if not self._spent_this_turn:
