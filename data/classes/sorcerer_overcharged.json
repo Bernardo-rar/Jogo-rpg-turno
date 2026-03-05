@@ -1,0 +1,7 @@
+{
+  "atk_multiplier": 1.8,
+  "mana_cost_per_turn": 40,
+  "self_damage_pct": 0.05,
+  "metamagic_mana_cost": 15,
+  "born_of_magic_bonus": 0.10
+}

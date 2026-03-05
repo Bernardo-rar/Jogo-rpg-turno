@@ -404,9 +404,19 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - **Notas**: 1369 testes totais, 100% cobertura (2343 stmts). EquilibriumBar bidirecional: 0=full Vitality, 50=center, 100=full Destruction. Tres zonas: Vitality (+20% def, +15% regen), Balanced (+8% atk/def), Destruction (+25% atk, +15% crit, +1 hit). Intensidades escalam linearmente dentro de cada zona. Multi-hit: base 2, +1 em Destruction (3 total). mod_atk_physical=6 (menor que Fighter/Barbarian) porque multi-hit compensa. Debuff chance exposta pro combat handler (max 30%). Refactor gate: PASSED (0 issues).
 
 #### Task 2.11 - Sorcerer (Feiticeiro)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Metamagia, Overcharged, Rotacao de Mana
 - **Dependencias**: Task 2.0
+- **Arquivos criados**:
+  - `src/core/classes/sorcerer/__init__.py` - Package marker
+  - `src/core/classes/sorcerer/overcharged_config.py` - OverchargedConfig frozen + loader
+  - `src/core/classes/sorcerer/mana_rotation.py` - ManaRotationConfig frozen + ManaRotation resource bar
+  - `src/core/classes/sorcerer/sorcerer.py` - Sorcerer(Character) com overcharged, metamagia, mana rotation
+  - `data/classes/sorcerer.json` - ClassModifiers (d6, atk_mag 12, def_fis 2, mana 14)
+  - `data/classes/sorcerer_overcharged.json` - Config overcharged (1.8x atk, 40 mana/turno, 5% self-damage, 15 metamagic cost, 10% born_of_magic)
+  - `data/classes/sorcerer_mana_rotation.json` - Config rotacao (8% gain, 5 decay, 20% max)
+  - `tests/core/test_classes/test_sorcerer/` - 4 arquivos, 67 testes
+- **Notas**: 1436 testes totais (1369+67), 100% cobertura (2466 stmts). Sorcerer herda de Character (LSP verificado). Posicao default BACK (glass cannon). Overcharged: 1.8x magical_attack + 40 mana/turno + 5% max_hp self-damage, auto-desativa se mana insuficiente. Metamagia: troca elemento do ataque por 15 mana, consume_metamagic() retorna e limpa. Born of Magic passiva: +10% magical_attack permanente. Mana Rotation: 8% do dano magico vira mana, armazena ate 20% do max_mana, decai 5/turno. on_level_up recalcula rotation max. Refactor gate: PASSED (1 HIGH corrigido: unused import).
 
 #### Task 2.12 - Warlock (Bruxo)
 - **Status**: PENDENTE
@@ -528,3 +538,13 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - Multi-hit: base 2, +1 em Destruction. mod_atk_physical=6 (compensado por multi-hit)
 - Refactor gate: PASSED (0 issues)
 - **Decisoes**: EquilibriumBar como resource bidirecional (diferente de FuryBar unidirecional). Intensidades lineares dentro das zonas. Balanced = bonus fixo (recompensa manter equilibrio). Debuff chance exposta como property (combat handler aplica). Ranger: crit bonuses como properties (combat handler consulta). HuntersMark usa string-based target tracking.
+
+### Sessao 9 - 2026-03-05
+
+- Task 2.11 concluida: 67 testes novos (1436 total), 100% cobertura (2466 stmts)
+- Sorcerer completo: Overcharged (1.8x atk + mana cost + self-damage), Metamagia (troca elemento por mana), Mana Rotation (8% do dano magico vira mana)
+- Born of Magic passiva: +10% magical_attack permanente
+- ManaRotation: resource bar (gain on magic damage, decay per turn, max = 20% max_mana)
+- Overcharged vs Mage Overcharge: mais dano (1.8x vs 1.5x), mais custo (40 vs 30 mana), E self-damage (5% max_hp)
+- Refactor gate: PASSED (1 HIGH corrigido: unused import OverchargedConfig)
+- **Decisoes**: Overcharged self-damage = % do max_hp fixo (CON influencia indiretamente via max_hp). Metamagia custa mana (15) para evitar spam. ManaRotation como resource bar separado (mesmo padrao FuryBar). OverchargedConfig agrupa configs de overcharged + metamagia + born_of_magic (todos do Sorcerer, evita 3 config files). Mana nao escala com level, entao rotation max nao muda no level up (mas on_level_up recalcula para future-proofing).

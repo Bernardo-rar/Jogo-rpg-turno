@@ -1,0 +1,5 @@
+{
+  "gain_ratio": 0.08,
+  "decay_per_turn": 5,
+  "max_ratio": 0.20
+}
