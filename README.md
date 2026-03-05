@@ -62,7 +62,7 @@ Todo codigo segue o ciclo **Red -> Green -> Refactor**:
 3. **Refactor** — Melhorar o codigo mantendo os testes verdes
 
 ```
-1035 testes passando | 100% cobertura | 0 falhas
+1369 testes passando | 100% cobertura | 0 falhas
 ```
 
 Estrutura de teste:
@@ -147,8 +147,8 @@ pytest --lf
 - [x] Sistema elemental (10 elementos, fraquezas/resistencias, on-hit data-driven)
 - [x] Integracao effects + combat engine (tick phase, elemental attack)
 - [x] Sistema de armas (15 armas, weapon_die routing, proficiencias, armas elementais)
-- [ ] Level up e progressao (XP, level 1-10, attribute points)
-- [ ] 10 classes restantes (Barbarian, Paladin, Ranger, Monk, Sorcerer, Warlock, Druid, Rogue, Bard, Artificer)
+- [x] Level up e progressao (XP, level 1-10, attribute points)
+- [ ] 10 classes restantes (4/10: Barbarian, Paladin, Ranger, Monk done — Sorcerer, Warlock, Druid, Rogue, Bard, Artificer pending)
 - [ ] Armaduras e acessorios
 - [ ] Consumiveis e inventario
 - [ ] Mock Battle v2 (integracao completa)

@@ -374,14 +374,34 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - **Notas**: 1225 testes totais (1157+66+2 extras do barbarian coverage), 100% cobertura (2090 stmts). Paladin herda de Character (LSP verificado). DivineFavor: max 10 stacks, ganha +1 ao proteger/buffar/curar aliados (API pronta, handlers futuros). Aura: apenas 1 ativa por vez, PROTECTION +15% def, ATTACK +15% atk, VITALITY +15% regen. Glimpse of Glory: custo 5 favor, dobra bonus da aura (15%->30%), dura 3 turnos, auto-desativa. Aura afetando party = fora do escopo (combat handler futuro). Refactor gate: GloryConfig extraido para arquivo proprio (HIGH corrigido). Paladin.py ~100 linhas, 10 metodos.
 
 #### Task 2.9 - Ranger
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Foco Predatorio (stack crit), Marca do Cacador (debuff no alvo)
 - **Dependencias**: Task 2.1 (marca = debuff)
+- **Arquivos criados**:
+  - `src/core/classes/ranger/__init__.py` - Package marker
+  - `src/core/classes/ranger/predatory_focus_config.py` - PredatoryFocusConfig frozen + loader
+  - `src/core/classes/ranger/predatory_focus.py` - PredatoryFocus resource (gain/lose/decay)
+  - `src/core/classes/ranger/hunters_mark.py` - HuntersMark + HuntersMarkConfig + loader
+  - `src/core/classes/ranger/ranger.py` - Ranger(Character) com focus, mark, crit bonuses
+  - `data/classes/ranger.json` - ClassModifiers (d10, atk 8/8, def 3/3)
+  - `data/classes/ranger_focus.json` - Focus config (20 stacks, +2/hit, -4/miss, 2% crit/stack)
+  - `data/classes/ranger_mark.json` - Mark config (20% armor penetration)
+  - `tests/core/test_classes/test_ranger/` - 4 arquivos, 63 testes
+- **Notas**: 1288 testes totais, 100% cobertura. PredatoryFocus: stacks que crescem ao acertar (+2), perdem ao errar (-4), decaem por turno (-1). Cada stack da +2% crit chance, +5% crit damage, +0.5% physical_attack. HuntersMark: marca 1 alvo, 20% armor penetration. Crit bonuses expostos como properties para o combat handler. Refactor gate: PASSED (0 issues).
 
 #### Task 2.10 - Monk (Monge)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Barra Equilibrium (Vitalidade/Destruicao), multi-hit, debuffs
 - **Dependencias**: Task 2.1
+- **Arquivos criados**:
+  - `src/core/classes/monk/__init__.py` - Package marker
+  - `src/core/classes/monk/equilibrium_config.py` - EquilibriumConfig frozen (15 campos) + loader
+  - `src/core/classes/monk/equilibrium_bar.py` - EquilibriumState enum + EquilibriumBar resource
+  - `src/core/classes/monk/monk.py` - Monk(Character) com equilibrium, multi-hit, crit/debuff bonuses
+  - `data/classes/monk.json` - ClassModifiers (d10, atk 6/5, def 4/4)
+  - `data/classes/monk_equilibrium.json` - Equilibrium config (100 max, zones 33/67, bonuses)
+  - `tests/core/test_classes/test_monk/` - 4 arquivos, 81 testes
+- **Notas**: 1369 testes totais, 100% cobertura (2343 stmts). EquilibriumBar bidirecional: 0=full Vitality, 50=center, 100=full Destruction. Tres zonas: Vitality (+20% def, +15% regen), Balanced (+8% atk/def), Destruction (+25% atk, +15% crit, +1 hit). Intensidades escalam linearmente dentro de cada zona. Multi-hit: base 2, +1 em Destruction (3 total). mod_atk_physical=6 (menor que Fighter/Barbarian) porque multi-hit compensa. Debuff chance exposta pro combat handler (max 30%). Refactor gate: PASSED (0 issues).
 
 #### Task 2.11 - Sorcerer (Feiticeiro)
 - **Status**: PENDENTE
@@ -494,3 +514,17 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - on_level_up recalcula fury max (acompanha max_hp)
 - Refactor gate: PASSED (1 MEDIUM corrigido: unused import FuryConfig)
 - **Decisoes**: FuryBar como resource separado (mesmo padrao de ActionPoints). Fury NAO e buff do EffectManager - e estado interno da classe (como Stance do Fighter). Berserk/perda de controle fica para RF09 (IA). physical_attack override combina 2 multiplicadores (fury + missing HP). Dados de balanceamento em 2 JSONs (barbarian.json + barbarian_fury.json).
+
+### Sessao 8 - 2026-03-05
+
+- Task 2.8 (Paladin) commitada na sessao anterior, PROGRESS atualizado
+- Task 2.9 concluida: 63 testes novos (1288 total), 100% cobertura (2207 stmts)
+- Ranger completo: PredatoryFocus (stack crit +2%/stack, +5% crit dmg/stack), HuntersMark (20% armor pen)
+- Focus: gain +2/hit, lose -4/miss, decay -1/turn, +0.5% physical_attack/stack
+- Refactor gate: PASSED (0 issues)
+- Task 2.10 concluida: 81 testes novos (1369 total), 100% cobertura (2343 stmts)
+- Monk completo: EquilibriumBar bidirecional (0=Vitality, 50=center, 100=Destruction)
+- Tres zonas: Vitality (+20% def), Balanced (+8% atk/def), Destruction (+25% atk, +15% crit, +1 hit)
+- Multi-hit: base 2, +1 em Destruction. mod_atk_physical=6 (compensado por multi-hit)
+- Refactor gate: PASSED (0 issues)
+- **Decisoes**: EquilibriumBar como resource bidirecional (diferente de FuryBar unidirecional). Intensidades lineares dentro das zonas. Balanced = bonus fixo (recompensa manter equilibrio). Debuff chance exposta como property (combat handler aplica). Ranger: crit bonuses como properties (combat handler consulta). HuntersMark usa string-based target tracking.
