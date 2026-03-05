@@ -1,0 +1,9 @@
+{
+  "max_stacks": 20,
+  "stacks_per_hit": 2,
+  "miss_loss_multiplier": 2.0,
+  "crit_chance_per_stack": 0.02,
+  "crit_damage_per_stack": 0.05,
+  "decay_per_turn": 1,
+  "atk_bonus_per_stack": 0.005
+}
