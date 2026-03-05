@@ -1,0 +1,17 @@
+{
+  "max_value": 100,
+  "vitality_upper": 33,
+  "destruction_lower": 67,
+  "shift_per_attack": 10,
+  "shift_per_defend": 10,
+  "decay_per_turn": 5,
+  "vitality_def_bonus": 0.20,
+  "vitality_regen_bonus": 0.15,
+  "destruction_atk_bonus": 0.25,
+  "destruction_crit_bonus": 0.15,
+  "balance_atk_bonus": 0.08,
+  "balance_def_bonus": 0.08,
+  "base_hit_count": 2,
+  "destruction_extra_hits": 1,
+  "debuff_chance_max": 0.30
+}
