@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character_config import CharacterConfig
 from src.core.characters.combat_stats_mixin import CombatStatsMixin
+from src.core.characters.equipment_mixin import EquipmentMixin
 from src.core.characters.position import Position
 from src.core.characters.threshold_mixin import ThresholdBonusMixin
 from src.core.effects.effect_manager import EffectManager
@@ -12,10 +13,12 @@ from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.elements.elemental_profile import ElementalProfile
 
 if TYPE_CHECKING:
+    from src.core.items.accessory import Accessory
+    from src.core.items.armor import Armor
     from src.core.items.weapon import Weapon
 
 
-class Character(ThresholdBonusMixin, CombatStatsMixin):
+class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
     """Classe base de personagem. Subclasses (Fighter, Mage, etc.) herdam dela."""
 
     def __init__(
@@ -35,6 +38,8 @@ class Character(ThresholdBonusMixin, CombatStatsMixin):
         self._effect_manager = config.effect_manager or EffectManager()
         self._elemental_profile = config.elemental_profile or ElementalProfile()
         self._weapon: Weapon | None = config.weapon
+        self._armor: Armor | None = config.armor
+        self._accessories: list[Accessory] = list(config.accessories)
         self._current_hp = self.max_hp
         self._current_mana = self.max_mana
 

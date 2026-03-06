@@ -1,0 +1,58 @@
+{
+  "leather_armor": {
+    "name": "Leather Armor",
+    "weight": "LIGHT",
+    "ca_bonus": 2,
+    "hp_bonus": 0,
+    "mana_bonus": 0,
+    "physical_defense_bonus": 1,
+    "magical_defense_bonus": 0
+  },
+  "studded_leather": {
+    "name": "Studded Leather",
+    "weight": "LIGHT",
+    "ca_bonus": 2,
+    "hp_bonus": 0,
+    "mana_bonus": 0,
+    "physical_defense_bonus": 2,
+    "magical_defense_bonus": 1
+  },
+  "scale_mail": {
+    "name": "Scale Mail",
+    "weight": "MEDIUM",
+    "ca_bonus": 3,
+    "hp_bonus": 5,
+    "mana_bonus": 0,
+    "physical_defense_bonus": 2,
+    "magical_defense_bonus": 0
+  },
+  "chain_mail": {
+    "name": "Chain Mail",
+    "weight": "MEDIUM",
+    "ca_bonus": 4,
+    "hp_bonus": 10,
+    "mana_bonus": 0,
+    "physical_defense_bonus": 2,
+    "magical_defense_bonus": 1
+  },
+  "plate_armor": {
+    "name": "Plate Armor",
+    "weight": "HEAVY",
+    "ca_bonus": 6,
+    "hp_bonus": 30,
+    "mana_bonus": 0,
+    "physical_defense_bonus": 4,
+    "magical_defense_bonus": 2
+  },
+  "mage_robes": {
+    "name": "Mage Robes",
+    "weight": "LIGHT",
+    "ca_bonus": 1,
+    "hp_bonus": 0,
+    "mana_bonus": 50,
+    "physical_defense_bonus": 0,
+    "magical_defense_bonus": 3,
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  }
+}

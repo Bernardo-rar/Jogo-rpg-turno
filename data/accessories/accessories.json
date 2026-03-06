@@ -1,0 +1,35 @@
+{
+  "iron_ring": {
+    "name": "Iron Ring",
+    "accessory_type": "RING",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_DEFENSE", "flat": 3}
+    ]
+  },
+  "amulet_of_wisdom": {
+    "name": "Amulet of Wisdom",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_DEFENSE", "flat": 5},
+      {"stat": "MANA_REGEN", "flat": 2}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "cloak_of_speed": {
+    "name": "Cloak of Speed",
+    "accessory_type": "CLOAK",
+    "stat_bonuses": [
+      {"stat": "SPEED", "flat": 2}
+    ]
+  },
+  "bracelet_of_might": {
+    "name": "Bracelet of Might",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_ATTACK", "flat": 4}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  }
+}

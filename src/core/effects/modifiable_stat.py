@@ -20,3 +20,4 @@ class ModifiableStat(Enum):
     HP_REGEN = auto()
     MANA_REGEN = auto()
     HEALING_RECEIVED = auto()
+    ARMOR_CLASS = auto()

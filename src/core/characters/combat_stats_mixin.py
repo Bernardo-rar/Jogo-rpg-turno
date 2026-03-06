@@ -80,6 +80,7 @@ class CombatStatsMixin:
             mod_hp=self._modifiers.mod_hp,
             level=self._level,
         ))
+        base += self._armor_bonus("hp_bonus")
         return self._apply_effect_modifiers(ModifiableStat.MAX_HP, base)
 
     @property
@@ -89,6 +90,7 @@ class CombatStatsMixin:
             mana_multiplier=self._modifiers.mana_multiplier,
             mind=mind,
         )
+        base += self._armor_bonus("mana_bonus")
         return self._apply_effect_modifiers(ModifiableStat.MAX_MANA, base)
 
     @property
@@ -116,6 +118,7 @@ class CombatStatsMixin:
     @property
     def speed(self) -> int:
         base = self._attributes.get(AttributeType.DEXTERITY)
+        base += self._total_accessory_flat(ModifiableStat.SPEED)
         return self._apply_effect_modifiers(ModifiableStat.SPEED, base)
 
     @property
@@ -127,6 +130,8 @@ class CombatStatsMixin:
             tertiary_stat=self._attributes.get(AttributeType.STRENGTH),
             modifier=self._modifiers.mod_def_physical + bonus,
         ))
+        base += self._armor_bonus("physical_defense_bonus")
+        base += self._total_accessory_flat(ModifiableStat.PHYSICAL_DEFENSE)
         return self._apply_effect_modifiers(ModifiableStat.PHYSICAL_DEFENSE, base)
 
     @property
@@ -138,6 +143,8 @@ class CombatStatsMixin:
             tertiary_stat=self._attributes.get(AttributeType.INTELLIGENCE),
             modifier=self._modifiers.mod_def_magical + bonus,
         ))
+        base += self._armor_bonus("magical_defense_bonus")
+        base += self._total_accessory_flat(ModifiableStat.MAGICAL_DEFENSE)
         return self._apply_effect_modifiers(ModifiableStat.MAGICAL_DEFENSE, base)
 
     @property
@@ -162,3 +169,10 @@ class CombatStatsMixin:
             level=self._level,
         )
         return self._apply_effect_modifiers(ModifiableStat.MANA_REGEN, base)
+
+    @property
+    def armor_class(self) -> int:
+        ca = self._armor_bonus("ca_bonus")
+        dex = self._attributes.get(AttributeType.DEXTERITY)
+        base = ca + dex + self._level
+        return self._apply_effect_modifiers(ModifiableStat.ARMOR_CLASS, base)

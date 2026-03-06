@@ -12,6 +12,8 @@ from src.core.effects.effect_manager import EffectManager
 from src.core.elements.elemental_profile import ElementalProfile
 
 if TYPE_CHECKING:
+    from src.core.items.accessory import Accessory
+    from src.core.items.armor import Armor
     from src.core.items.weapon import Weapon
 
 
@@ -26,3 +28,5 @@ class CharacterConfig:
     elemental_profile: ElementalProfile | None = None
     effect_manager: EffectManager | None = None
     weapon: Weapon | None = None
+    armor: Armor | None = None
+    accessories: tuple[Accessory, ...] = ()
