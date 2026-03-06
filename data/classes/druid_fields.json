@@ -1,0 +1,6 @@
+{
+  "SNOW":      {"element_resistance": "FIRE", "element_vulnerability": "ICE", "speed_modifier": 0.85, "default_duration": 3},
+  "RAIN":      {"element_resistance": "FIRE", "element_vulnerability": "LIGHTNING", "speed_modifier": 1.0, "default_duration": 3},
+  "SANDSTORM": {"element_resistance": "EARTH", "element_vulnerability": "WATER", "speed_modifier": 0.8, "default_duration": 2},
+  "FOG":       {"element_resistance": "DARK", "element_vulnerability": "LIGHT", "speed_modifier": 0.9, "default_duration": 4}
+}

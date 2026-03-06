@@ -1,0 +1,8 @@
+{
+  "transform_mana_cost": 30,
+  "field_mana_cost": 25,
+  "healing_bonus": 0.15,
+  "hp_regen_bonus": 0.10,
+  "mana_regen_bonus": 0.10,
+  "nature_atk_bonus": 0.08
+}
