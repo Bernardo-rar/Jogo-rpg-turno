@@ -1,0 +1,13 @@
+{
+  "insanity_on_cast": 10,
+  "insanity_on_damage_ratio": 0.05,
+  "insanity_decay_per_turn": 3,
+  "insanity_atk_bonus_at_max": 0.40,
+  "insanity_def_penalty_at_max": 0.25,
+  "thirst_atk_bonus": 0.20,
+  "thirst_regen_bonus": 0.20,
+  "thirst_def_bonus": 0.15,
+  "life_drain_ratio": 0.15,
+  "spell_ramp_bonus": 0.15,
+  "spell_ramp_cha_scaling": 0.005
+}

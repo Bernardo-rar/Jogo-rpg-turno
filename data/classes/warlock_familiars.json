@@ -1,0 +1,18 @@
+{
+  "IMP": {
+    "stat_bonus_type": "magical_attack",
+    "stat_bonus_pct": 0.10
+  },
+  "RAVEN": {
+    "stat_bonus_type": "speed",
+    "stat_bonus_pct": 0.15
+  },
+  "SPIDER": {
+    "stat_bonus_type": "magical_attack",
+    "stat_bonus_pct": 0.08
+  },
+  "SHADOW_CAT": {
+    "stat_bonus_type": "magical_defense",
+    "stat_bonus_pct": 0.10
+  }
+}
