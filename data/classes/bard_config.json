@@ -1,0 +1,6 @@
+{
+  "speed_bonus_pct": 0.10,
+  "buff_effectiveness_bonus": 0.15,
+  "debuff_effectiveness_bonus": 0.10,
+  "extra_bonus_actions": 1
+}

@@ -1,0 +1,12 @@
+{
+  "max_stacks": 10,
+  "gain_per_skill": 1,
+  "decay_per_turn": 1,
+  "buff_effectiveness_per_stack": 0.02,
+  "debuff_effectiveness_per_stack": 0.015,
+  "speed_bonus_per_stack": 0.01,
+  "crit_chance_per_stack": 0.005,
+  "crescendo_bonus": 0.25,
+  "crescendo_duration": 2,
+  "crescendo_reset_stacks": 5
+}
