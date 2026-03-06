@@ -1,0 +1,8 @@
+{
+  "crit_bonus_per_dex": 0.005,
+  "poison_damage_bonus": 0.15,
+  "speed_bonus_pct": 0.10,
+  "extra_skill_slots": 1,
+  "crit_speed_boost_pct": 0.15,
+  "crit_speed_boost_duration": 2
+}
