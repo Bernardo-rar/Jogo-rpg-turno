@@ -419,29 +419,84 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - **Notas**: 1436 testes totais (1369+67), 100% cobertura (2466 stmts). Sorcerer herda de Character (LSP verificado). Posicao default BACK (glass cannon). Overcharged: 1.8x magical_attack + 40 mana/turno + 5% max_hp self-damage, auto-desativa se mana insuficiente. Metamagia: troca elemento do ataque por 15 mana, consume_metamagic() retorna e limpa. Born of Magic passiva: +10% magical_attack permanente. Mana Rotation: 8% do dano magico vira mana, armazena ate 20% do max_mana, decai 5/turno. on_level_up recalcula rotation max. Refactor gate: PASSED (1 HIGH corrigido: unused import).
 
 #### Task 2.12 - Warlock (Bruxo)
-- **Status**: PENDENTE
-- **Descricao**: Insanidade (ailment proprio), Familiares, Sede Insaciavel
-- **Dependencias**: Task 2.2 (insanidade = ailment)
+- **Status**: CONCLUIDA
+- **Descricao**: Insanidade (double-edged resource), Familiares, Sede Insaciavel, Life Drain, Spell Ramping
+- **Dependencias**: Task 2.0
+- **Arquivos criados**:
+  - `src/core/classes/warlock/__init__.py` - Package marker
+  - `src/core/classes/warlock/insanity_bar.py` - InsanityBar resource (0-100, gain/decay/ratio)
+  - `src/core/classes/warlock/insatiable_thirst.py` - InsatiableThirst (5 stacks below 50% HP, buff CON turnos)
+  - `src/core/classes/warlock/familiar.py` - FamiliarType enum (IMP/RAVEN/SPIDER/SHADOW_CAT) + FamiliarConfig + loader
+  - `src/core/classes/warlock/warlock_config.py` - WarlockConfig frozen (11 fields: insanity, thirst, passives)
+  - `src/core/classes/warlock/warlock.py` - Warlock(Character) com insanidade, sede, familiar, life drain, spell ramp
+  - `data/classes/warlock.json` - ClassModifiers (d8, atk_mag 9, def_fis 3, def_mag 4, mana 8)
+  - `data/classes/warlock_config.json` - Config insanidade/sede/passivas (11 params)
+  - `data/classes/warlock_familiars.json` - 4 familiares com stat_bonus_type e stat_bonus_pct
+  - `tests/core/test_classes/test_warlock/` - 4 arquivos, 88 testes
+- **Notas**: 1524 testes totais (1436+88), 100% cobertura (2668 stmts). InsanityBar double-edged: +40% magical_attack no max MAS -25% magical_defense. Gain: +10 por cast, 5% do dano recebido. Decay: 3/turno. InsatiableThirst: 1 stack/turno abaixo de 50% HP, trigger em 5 stacks, buff dura CON turnos (+20% atk, +20% regen, +15% def_fis). 4 familiares com bonus passivo (IMP=+10% mag_atk, RAVEN=+8% speed, SPIDER=+5% debuff, SHADOW_CAT=+7% mag_def). Life Drain: 15% do bleed damage vira HP. Spell Ramping: register_cast → proxima skill +15% + CHA*0.005 bonus. Refactor gate: PASSED (1 HIGH corrigido: magic number 0.005 movido para warlock_config.json como spell_ramp_cha_scaling).
 
 #### Task 2.13 - Druid (Druida)
-- **Status**: PENDENTE
-- **Descricao**: Transformacoes, condicoes de campo
+- **Status**: CONCLUIDA
+- **Descricao**: Transformacoes (ShapeShift), condicoes de campo, passivas naturais
 - **Dependencias**: Tasks 2.1, 2.3 (campo = buff/debuff elemental)
+- **Arquivos criados**:
+  - `src/core/classes/druid/__init__.py` - Package marker
+  - `src/core/classes/druid/animal_form.py` - AnimalForm enum (HUMANOID/BEAR/WOLF/EAGLE/SERPENT) + AnimalFormModifier frozen + loader
+  - `src/core/classes/druid/field_condition.py` - FieldConditionType enum (SNOW/RAIN/SANDSTORM/FOG) + FieldConditionConfig frozen + loader
+  - `src/core/classes/druid/druid_config.py` - DruidConfig frozen (6 campos) + loader
+  - `src/core/classes/druid/druid.py` - Druid(Character) com shapeshift, field conditions, passivas
+  - `data/classes/druid.json` - ClassModifiers (d8, atk_phys 5, atk_mag 7, def 4/5, mana 10, regen 5/5)
+  - `data/classes/druid_forms.json` - 5 formas com 6 multiplicadores cada
+  - `data/classes/druid_fields.json` - 4 condicoes de campo com resistencia/vulnerabilidade elemental
+  - `data/classes/druid_config.json` - Config passivas (transform_mana_cost, field_mana_cost, healing/regen/nature bonuses)
+  - `tests/core/test_classes/test_druid/` - 3 arquivos, 82 testes (19 animal_form + 15 field_condition + 48 druid)
+- **Notas**: 1606 testes totais (1524+82), 100% cobertura (2790 stmts). ShapeShift: transform(form) custa mana, revert_form() gratis, stats multiplicados pela forma ativa (BEAR: +30% def/-20% speed, WOLF: +25% phys_atk, EAGLE: +30% speed/+20% mag_atk, SERPENT: +15% mag_atk). Field Conditions: cria condicao de campo com custo de mana, tick auto-decrementa, cada condicao tem resistencia e vulnerabilidade elemental. Passivas: heal() override +15%, hp_regen/mana_regen +10%, nature_atk_bonus +8% magical_attack. Refactor gate: PASSED (0 CRITICAL, 0 HIGH).
 
 #### Task 2.14 - Rogue (Ladino)
-- **Status**: PENDENTE
-- **Descricao**: Usa itens sem gastar turno, mistura itens, utility
+- **Status**: CONCLUIDA
+- **Descricao**: Stealth (invisibilidade + crit garantido), passivas (crit, poison, speed), uso livre de itens
 - **Dependencias**: Task 2.0
+- **Arquivos criados**:
+  - `src/core/classes/rogue/__init__.py` - Package marker
+  - `src/core/classes/rogue/stealth.py` - Stealth state tracker (binario on/off, guaranteed_crit)
+  - `src/core/classes/rogue/rogue_config.py` - RogueConfig frozen (6 campos) + loader
+  - `src/core/classes/rogue/rogue.py` - Rogue(Character) com stealth, passivas, speed override
+  - `data/classes/rogue.json` - ClassModifiers (d8, atk_phys 8, atk_mag 4, def 4/3, mana 6, regen 3/3)
+  - `data/classes/rogue_config.json` - Config passivas (crit_bonus_per_dex, poison, speed, skill_slots, crit_speed_boost)
+  - `tests/core/test_classes/test_rogue/` - 2 arquivos, 43 testes (10 stealth + 33 rogue)
+- **Notas**: 1649 testes totais (1606+43), 100% cobertura (2912 stmts). Stealth: enter/break toggle, guaranteed_crit quando stealthed, take_damage override quebra stealth automaticamente (LSP preservado). Passivas config-driven: crit_bonus = DEX * 0.005, poison_damage +15%, speed +10% permanente, +1 skill slot, crit_speed_boost +15% por 2 turnos apos crit. free_item_use=True como interface (sistema de itens deferred). Speed override: base + passive(10%) + crit_boost(15% temporario). Refactor gate: PASSED (0 CRITICAL, 0 HIGH).
 
 #### Task 2.15 - Bard (Bardo)
-- **Status**: PENDENTE
-- **Descricao**: Embalo Musical (stack buff), recruta NPCs, buff/debuff
+- **Status**: CONCLUIDA
+- **Descricao**: Embalo Musical (stacking buff resource), passivas de buff/debuff effectiveness, speed
 - **Dependencias**: Task 2.1 (embalo = buff stacking)
+- **Arquivos criados**:
+  - `src/core/classes/bard/__init__.py` - Package marker
+  - `src/core/classes/bard/musical_groove.py` - MusicalGrooveConfig frozen (10 campos) + MusicalGroove resource bar
+  - `src/core/classes/bard/bard_config.py` - BardConfig frozen (4 campos) + loader
+  - `src/core/classes/bard/bard.py` - Bard(Character) com groove, passivas, speed override
+  - `data/classes/bard.json` - ClassModifiers (d8, atk_phys 4, atk_mag 6, def 4/5, mana 8, regen 4/4)
+  - `data/classes/bard_groove.json` - MusicalGroove config (10 stacks, bonuses, crescendo)
+  - `data/classes/bard_config.json` - Passivas config (speed, buff/debuff effectiveness, bonus actions)
+  - `tests/core/test_classes/test_bard/` - 2 arquivos, 51 testes (22 musical_groove + 29 bard)
+- **Notas**: 1700 testes totais (1649+51), 100% cobertura (3039 stmts). MusicalGroove: stacks 0-10, +1/skill, -1/turno. Bonuses escalantes: buff (+2%/stack=20% max), debuff (+1.5%/stack=15% max), speed (+1%/stack=10% max), crit (+0.5%/stack=5% max). Crescendo: ao atingir max stacks, +25% buff/debuff bonus por 2 turnos, reset para 5 stacks. Passivas config-driven: speed +10%, buff_effectiveness +15%, debuff_effectiveness +10%, +1 bonus action. NPC recruitment deferred (party system nao existe). Refactor gate: PASSED (0 CRITICAL, 0 HIGH).
 
 #### Task 2.16 - Artificer (Artifice)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Traje Tecmagis, potencializa itens ativos, suporte/mana
 - **Dependencias**: Task 2.0
+- **Arquivos criados**:
+  - `src/core/classes/artificer/__init__.py`
+  - `src/core/classes/artificer/tech_suit.py` - TechSuitConfig frozen + TechSuit calculator (mana ratio → multipliers)
+  - `src/core/classes/artificer/artificer_config.py` - ArtificerConfig frozen (3 passivas) + loader
+  - `src/core/classes/artificer/artificer.py` - Artificer(Character), 4 stat overrides + scroll_potentiation
+  - `data/classes/artificer.json` - ClassModifiers (d8, mana=10, atk_mag=8, regen_mana=6)
+  - `data/classes/artificer_suit.json` - TechSuit config (atk=0.20, phys_def=0.15, mag_def=0.20)
+  - `data/classes/artificer_config.json` - Passivas (mana_regen=0.20, mag_def=0.10, scroll=0.15)
+  - `tests/core/test_classes/test_artificer/__init__.py`
+  - `tests/core/test_classes/test_artificer/test_tech_suit.py` - 15 testes
+  - `tests/core/test_classes/test_artificer/test_artificer.py` - 24 testes
+- **Notas**: TechSuit como calculator stateless (padrao mais simples que resource bar). Item potentiation e mana share deferred.
 
 ### Bloco D - Equipamento Restante
 
@@ -548,3 +603,40 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - Overcharged vs Mage Overcharge: mais dano (1.8x vs 1.5x), mais custo (40 vs 30 mana), E self-damage (5% max_hp)
 - Refactor gate: PASSED (1 HIGH corrigido: unused import OverchargedConfig)
 - **Decisoes**: Overcharged self-damage = % do max_hp fixo (CON influencia indiretamente via max_hp). Metamagia custa mana (15) para evitar spam. ManaRotation como resource bar separado (mesmo padrao FuryBar). OverchargedConfig agrupa configs de overcharged + metamagia + born_of_magic (todos do Sorcerer, evita 3 config files). Mana nao escala com level, entao rotation max nao muda no level up (mas on_level_up recalcula para future-proofing).
+
+### Sessao 10 - 2026-03-05
+
+- Task 2.12 concluida: 88 testes novos (1524 total), 100% cobertura (2668 stmts)
+- Warlock completo: InsanityBar (double-edged: +40% atk / -25% def), InsatiableThirst (5 stacks → buff CON turnos), 4 Familiares com passivas
+- Life Drain: 15% do bleed damage → HP. Spell Ramping: +15% + CHA scaling na proxima skill
+- Refactor gate: PASSED (1 HIGH corrigido: magic number 0.005 → spell_ramp_cha_scaling no config)
+- **Decisoes**: InsanityBar como resource double-edged (padrao FuryBar mas com penalidade). Familiares como Enum + FamiliarConfig JSON (ativo deferred para skills). InsatiableThirst como counter simples (5 stacks trigger, CON duracao). Spell Ramping implementado agora (nao deferred). WarlockConfig agrupa 11 params (insanity + thirst + passives).
+
+### Sessao 11 - 2026-03-05
+
+- Task 2.13 concluida: 82 testes novos (1606 total), 100% cobertura (2790 stmts)
+- Druid completo: ShapeShift (5 formas com multiplicadores de stats), Field Conditions (4 condicoes com resistencia/vulnerabilidade elemental)
+- Passivas: heal +15%, hp/mana regen +10%, nature_atk +8% magical_attack
+- Formas: BEAR (+30% def, -20% speed), WOLF (+25% phys_atk), EAGLE (+30% speed, +20% mag_atk), SERPENT (+15% mag_atk)
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- Task 2.14 concluida: 43 testes novos (1649 total), 100% cobertura (2912 stmts)
+- Rogue completo: Stealth (toggle + guaranteed crit), take_damage override (auto-break stealth)
+- Passivas: crit_bonus (DEX*0.005), poison +15%, speed +10%, +1 skill slot, crit_speed_boost (+15% por 2 turnos)
+- free_item_use=True como interface (sistema de itens deferred)
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- **Decisoes**: Stealth como componente binario (padrao PredatoryFocus). take_damage override preserva LSP (mesmo contrato, side effect adicional). free_item_use como property constante (combat handler checa). Crit speed boost como counter interno (on_crit seta, tick decrementa). Item system deferred — expor interface agora, implementar quando consumiveis existirem.
+- Task 2.15 concluida: 51 testes novos (1700 total), 100% cobertura (3039 stmts)
+- Bard completo: MusicalGroove (stacks 0-10, +1/skill, -1/turno, 4 bonuses escalantes, crescendo no max)
+- Crescendo: +25% buff/debuff bonus por 2 turnos, reset para 5 stacks
+- Passivas: speed +10%, buff_effectiveness +15%, debuff_effectiveness +10%, +1 bonus action
+- NPC recruitment deferred (party system nao existe)
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- **Decisoes**: MusicalGroove como resource bar (padrao FuryBar/PredatoryFocus). Crescendo como trigger temporario (padrao InsatiableThirst). Buff/debuff effectiveness como properties passivas (combat handler aplica). NPC recruitment deferred completo. Posicao default BACK (support).
+- Task 2.16 concluida: 39 testes novos (1739 total), 100% cobertura (3120 stmts)
+- Artificer completo: TechSuit stateless calculator (mana ratio → stat multipliers)
+- Bonuses at full mana: +20% atk, +15% phys_def, +20% mag_def (linear scaling)
+- Passivas: mana_regen +20%, magical_defense +10%, scroll_potentiation +15%
+- Item potentiation e mana share deferred (sistemas nao existem)
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- **Decisoes**: TechSuit como calculator stateless (padrao mais simples que resource bar — recebe ratio, retorna multiplier). Scroll potentiation como property constante (combat handler aplica). Mana share deferred. Posicao default BACK (support/mana).
+- **BLOCO C COMPLETO**: Todas 10 classes restantes implementadas (Barbarian, Paladin, Ranger, Monk, Sorcerer, Warlock, Druid, Rogue, Bard, Artificer). Total: 13/13 classes.
