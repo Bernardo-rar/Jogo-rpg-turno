@@ -501,28 +501,76 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 ### Bloco D - Equipamento Restante
 
 #### Task 2.17 - Armaduras e Acessorios (RF07.2, RF07.3)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Armaduras leve/media/pesada, acessorios com buffs, limite por CHA
 - **Dependencias**: Task 2.5 (sistema de armas base)
+- **Arquivos criados**:
+  - `src/core/items/item_rarity.py` - ItemRarity enum (COMMON, UNCOMMON, RARE, LEGENDARY)
+  - `src/core/items/armor_weight.py` - ArmorWeight enum (LIGHT, MEDIUM, HEAVY)
+  - `src/core/items/accessory_type.py` - AccessoryType enum (AMULET, RING, CLOAK, BRACELET)
+  - `src/core/items/stat_bonus.py` - StatBonus frozen dataclass + from_dict
+  - `src/core/items/armor.py` - Armor frozen dataclass + from_dict (CA, HP, mana, def bonuses)
+  - `src/core/items/accessory.py` - Accessory frozen dataclass + from_dict (tuple[StatBonus])
+  - `src/core/items/armor_loader.py` - load_armors() from JSON
+  - `src/core/items/accessory_loader.py` - load_accessories() from JSON
+  - `src/core/items/armor_proficiency.py` - frozensets por classe + can_equip_armor()
+  - `src/core/items/accessory_slots.py` - calculate_accessory_slots() (2 base + CHA thresholds)
+  - `src/core/characters/equipment_mixin.py` - EquipmentMixin (equip/unequip, bonus aggregation)
+  - `data/armors/armors.json` - 6 armaduras (2 light, 2 medium, 2 heavy)
+  - `data/accessories/accessories.json` - 4 acessorios
+  - 12 arquivos de teste (77 testes novos)
+- **Arquivos modificados**: character.py, character_config.py, combat_stats_mixin.py, modifiable_stat.py
+- **Notas**: Armor slot unico (set completo). Accessory slots = 2 + CHA thresholds. Proficiency: ALL (Fighter/Paladin), LIGHT+MEDIUM (Cleric/Barbarian/Ranger/Druid/Artificer), LIGHT (demais). Actives/passives especiais deferred.
 
-#### Task 2.18 - Consumiveis e Inventario (RF07.4, RF07.5)
-- **Status**: PENDENTE
-- **Descricao**: Pocoes, itens de combate, inventario com slots, equip/desequip
+#### Task 2.18 - Sistema de Skills/Habilidades (RF06)
+- **Status**: CONCLUIDA
+- **Descricao**: Spell slots com custo customizavel, cooldowns, progressao de skills, barra de skills
+- **Dependencias**: Task 2.0 (classes base)
+- **Arquivos criados**:
+  - `src/core/skills/skill_effect_type.py` - SkillEffectType enum (DAMAGE, HEAL, BUFF, DEBUFF, APPLY_AILMENT)
+  - `src/core/skills/target_type.py` - TargetType enum (SELF, SINGLE_ALLY, SINGLE_ENEMY, ALL_ALLIES, ALL_ENEMIES)
+  - `src/core/skills/skill_effect.py` - SkillEffect frozen dataclass + from_dict
+  - `src/core/skills/skill.py` - Skill frozen dataclass + from_dict (descriptivo, sem execucao)
+  - `src/core/skills/skill_loader.py` - load_skills() from JSON
+  - `src/core/skills/spell_slot.py` - SpellSlot frozen + funcoes puras (budget de custo)
+  - `src/core/skills/cooldown_tracker.py` - CooldownTracker mutavel (tick, reset, is_ready)
+  - `src/core/skills/skill_bar.py` - SkillBar composicao (SpellSlots + CooldownTracker)
+  - `src/core/skills/skill_slots_calculator.py` - calculate_skill_slots (base 3 + INT thresholds)
+  - `data/skills/skills.json` - 10 skills genericas
+  - 10 arquivos de teste (94 testes novos)
+- **Arquivos modificados**: thresholds.json (+skill_slots em INT), character.py, character_config.py
+- **Notas**: 1910 testes totais, 100% cobertura. SpellSlot como budget imutavel (add retorna novo). CooldownTracker.tick() iteration-safe. SkillBar.ready_skills filtra por cooldown. Execucao de skills no combate deferred para proxima task.
+
+#### Task 2.19 - Consumiveis e Inventario (RF07.4, RF07.5)
+- **Status**: CONCLUIDA
+- **Descricao**: Pocoes, itens de combate, inventario com slots
 - **Dependencias**: Task 2.17
+- **Arquivos criados**:
+  - `src/core/items/consumable_effect_type.py` - ConsumableEffectType enum (HEAL_HP, HEAL_MANA, DAMAGE, BUFF, CLEANSE, FLEE)
+  - `src/core/items/consumable_category.py` - ConsumableCategory enum (HEALING, DEFENSE, OFFENSIVE, CLEANSE, ESCAPE)
+  - `src/core/items/consumable_effect.py` - ConsumableEffect frozen dataclass + from_dict
+  - `src/core/items/consumable.py` - Consumable frozen dataclass + from_dict (descriptivo, sem execucao)
+  - `src/core/items/consumable_loader.py` - load_consumables() from JSON
+  - `src/core/items/inventory_slot.py` - InventorySlot frozen (consumable + quantity)
+  - `src/core/items/inventory.py` - Inventory mutavel (add/remove, stacking, max 20 slots)
+  - `data/consumables/consumables.json` - 6 consumiveis (health/mana potion, molotov, turtle shell, antidote, smoke bomb)
+  - 7 arquivos de teste (58 testes novos)
+- **Arquivos modificados**: nenhum
+- **Notas**: 1968 testes totais. ConsumableEffect separado de SkillEffect (Open/Closed). Inventario nao integrado ao Character (vive externo, party-level). Rogue.free_item_use ja existe. Execucao de consumiveis deferred para combat handler.
 
 ### Bloco E - Integracao e Visualizacao
 
-#### Task 2.19 - Mock Battle v2 (Integracao Fase 2)
+#### Task 2.20 - Mock Battle v2 (Integracao Fase 2)
 - **Status**: PENDENTE
 - **Descricao**: Batalha completa com elementos, buffs/debuffs, mais classes, equipamento
 - **Criterio de aceite**: Combate com 6+ classes, efeitos elementais, buffs/debuffs ativos, combat log mostrando tudo
 - **Dependencias**: Todas as tasks anteriores
 
-#### Task 2.20 - Pygame Minimo (Preview Visual)
+#### Task 2.21 - Pygame Minimo (Preview Visual)
 - **Status**: PENDENTE
 - **Descricao**: Visualizacao basica do Mock Battle v2 com Pygame. Shapes coloridos como placeholder (sem sprites), barras de HP/Mana, log de combate, efeitos ativos visiveis. Roda a batalha automaticamente (sem input do jogador ainda).
 - **Criterio de aceite**: Janela Pygame mostra batalha rodando em tempo real, personagens como retangulos coloridos, barras de vida, texto de acoes/efeitos
-- **Dependencias**: Task 2.19
+- **Dependencias**: Task 2.20
 - **Notas**: Primeira dependencia externa alem do pytest (pygame). Tudo em src/ui/ (core/ NAO importa ui/). Assets reais ficam para Fase 4. Wireframe de referencia em `Coisas interessantes/WhatsApp Image 2022-05-26 at 21.25.41.jpeg`.
 
 ---
@@ -640,3 +688,30 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
 - **Decisoes**: TechSuit como calculator stateless (padrao mais simples que resource bar — recebe ratio, retorna multiplier). Scroll potentiation como property constante (combat handler aplica). Mana share deferred. Posicao default BACK (support/mana).
 - **BLOCO C COMPLETO**: Todas 10 classes restantes implementadas (Barbarian, Paladin, Ranger, Monk, Sorcerer, Warlock, Druid, Rogue, Bard, Artificer). Total: 13/13 classes.
+
+### Sessao 12 - 2026-03-06
+
+- Task 2.17 concluida: 77 testes novos (1816 total), 100% cobertura (3298 stmts)
+- Armor system: frozen dataclass, 6 armaduras (light/medium/heavy), CA/HP/mana/defense bonuses
+- Accessory system: frozen dataclass com StatBonus tuple, 4 acessorios, slot limit 2+CHA thresholds
+- EquipmentMixin: novo mixin para equip/unequip armor/accessories, bonus aggregation
+- Armor proficiency por classe: ALL (Fighter/Paladin), LIGHT+MEDIUM (Cleric/Barbarian/Ranger/Druid/Artificer), LIGHT (demais)
+- Nova property armor_class: CA + DEX + level
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- Reorganizacao de tasks: RF06 Skills inserido como Task 2.18, Consumiveis movido para 2.19, Mock Battle para 2.20, Pygame para 2.21
+- **Decisoes**: Armor slot unico (set completo, RF diz "sets completos"). Accessory slots = 2 base + CHA magic_item_slots thresholds. Bonus flat somados ANTES de effect modifiers. EquipmentMixin extraido para nao estourar CombatStatsMixin (164→179 linhas). ItemRarity separado de WeaponRarity (Open/Closed). Actives/passives especiais deferred.
+
+### Sessao 13 - 2026-03-08
+
+- Task 2.18 concluida: 94 testes novos (1910 total), 100% cobertura (3442 stmts)
+- Skill system infra: SkillEffect/Skill frozen dataclasses, SpellSlot budget, CooldownTracker, SkillBar, skill_slots_calculator
+- SpellSlot como budget imutavel (add retorna novo SpellSlot ou None). 10 skills genericas no JSON.
+- INT thresholds: +skill_slots em todos os 5 marcos
+- Character integrado com SkillBar opcional
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- Task 2.19 concluida: 58 testes novos (1968 total)
+- Consumable system: ConsumableEffectType (6 tipos), ConsumableCategory (5 tipos), ConsumableEffect, Consumable frozen dataclasses
+- Inventory: stacking (max_stack por item), 20 slots max, add/remove/query
+- 6 consumiveis no JSON: health/mana potion, molotov, turtle shell, antidote, smoke bomb
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- **Decisoes**: ConsumableEffect separado de SkillEffect (Open/Closed). Inventario nao integrado ao Character (vive externo). Execucao de skills e consumiveis deferred para combat handler. **BLOCO D COMPLETO**: Equipment (armas, armaduras, acessorios), skills infra, consumiveis e inventario.
