@@ -14,6 +14,7 @@ from src.core.elements.elemental_profile import ElementalProfile
 if TYPE_CHECKING:
     from src.core.items.accessory import Accessory
     from src.core.items.armor import Armor
+    from src.core.items.inventory import Inventory
     from src.core.items.weapon import Weapon
     from src.core.skills.skill_bar import SkillBar
 
@@ -32,3 +33,4 @@ class CharacterConfig:
     armor: Armor | None = None
     accessories: tuple[Accessory, ...] = ()
     skill_bar: SkillBar | None = None
+    inventory: Inventory | None = None

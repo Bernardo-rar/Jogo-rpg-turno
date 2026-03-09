@@ -15,6 +15,7 @@ from src.core.elements.elemental_profile import ElementalProfile
 if TYPE_CHECKING:
     from src.core.items.accessory import Accessory
     from src.core.items.armor import Armor
+    from src.core.items.inventory import Inventory
     from src.core.items.weapon import Weapon
     from src.core.skills.skill_bar import SkillBar
 
@@ -42,6 +43,7 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
         self._armor: Armor | None = config.armor
         self._accessories: list[Accessory] = list(config.accessories)
         self._skill_bar: SkillBar | None = config.skill_bar
+        self._inventory: Inventory | None = config.inventory
         self._current_hp = self.max_hp
         self._current_mana = self.max_mana
 
@@ -72,6 +74,10 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
     @property
     def skill_bar(self) -> SkillBar | None:
         return self._skill_bar
+
+    @property
+    def inventory(self) -> Inventory | None:
+        return self._inventory
 
     @property
     def current_hp(self) -> int:

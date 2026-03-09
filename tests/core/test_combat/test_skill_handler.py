@@ -1,0 +1,128 @@
+"""Testes para SkillHandler - executa skills no combate."""
+
+from __future__ import annotations
+
+from src.core.combat.action_economy import ActionEconomy, ActionType
+from src.core.combat.combat_engine import EventType, TurnContext
+from src.core.combat.skill_handler import SkillHandler
+from src.core.skills.cooldown_tracker import CooldownTracker
+from src.core.skills.skill import Skill
+from src.core.skills.skill_bar import SkillBar
+from src.core.skills.skill_effect import SkillEffect
+from src.core.skills.skill_effect_type import SkillEffectType
+from src.core.skills.spell_slot import SpellSlot
+from src.core.skills.target_type import TargetType
+
+from tests.core.test_combat.conftest import _build_char
+
+
+def _fireball() -> Skill:
+    return Skill(
+        skill_id="fireball", name="Fireball", mana_cost=10,
+        action_type=ActionType.ACTION, target_type=TargetType.SINGLE_ENEMY,
+        effects=(SkillEffect(effect_type=SkillEffectType.DAMAGE, base_power=20),),
+        slot_cost=3,
+    )
+
+
+def _heal() -> Skill:
+    return Skill(
+        skill_id="heal", name="Heal", mana_cost=5,
+        action_type=ActionType.ACTION, target_type=TargetType.SELF,
+        effects=(SkillEffect(effect_type=SkillEffectType.HEAL, base_power=15),),
+        slot_cost=2, cooldown_turns=2,
+    )
+
+
+def _make_bar(*skills: Skill) -> SkillBar:
+    slot = SpellSlot(max_cost=20, skills=skills)
+    return SkillBar(slots=(slot,))
+
+
+def _context(combatant, enemies=None):
+    if enemies is None:
+        enemies = [_build_char("Enemy")]
+    return TurnContext(
+        combatant=combatant,
+        allies=[combatant],
+        enemies=enemies,
+        action_economy=ActionEconomy(),
+        round_number=1,
+    )
+
+
+class TestSkillHandler:
+    def test_no_skill_bar_returns_empty(self) -> None:
+        hero = _build_char("Hero")
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert events == []
+
+    def test_no_mana_returns_empty(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_fireball())
+        hero.spend_mana(hero.current_mana)
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert events == []
+
+    def test_skill_spends_mana(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_fireball())
+        mana_before = hero.current_mana
+        handler = SkillHandler()
+        handler.execute_turn(_context(hero))
+        assert hero.current_mana == mana_before - 10
+
+    def test_skill_uses_action(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_fireball())
+        economy = ActionEconomy()
+        ctx = TurnContext(
+            combatant=hero, allies=[hero],
+            enemies=[_build_char("E")],
+            action_economy=economy, round_number=1,
+        )
+        SkillHandler().execute_turn(ctx)
+        assert not economy.is_available(ActionType.ACTION)
+
+    def test_skill_damage_creates_event(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_fireball())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert len(events) == 1
+        assert events[0].damage is not None
+        assert events[0].target_name == "Enemy"
+
+    def test_skill_heal_creates_event(self) -> None:
+        hero = _build_char("Hero")
+        hero.take_damage(5)
+        hero._skill_bar = _make_bar(_heal())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert len(events) == 1
+        assert events[0].event_type == EventType.HEAL
+
+    def test_skill_starts_cooldown(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_heal())
+        hero.take_damage(5)
+        handler = SkillHandler()
+        handler.execute_turn(_context(hero))
+        tracker = hero.skill_bar.cooldown_tracker
+        assert not tracker.is_ready("heal")
+        assert tracker.remaining("heal") == 2
+
+    def test_no_action_available_returns_empty(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_fireball())
+        economy = ActionEconomy()
+        economy.use(ActionType.ACTION)
+        ctx = TurnContext(
+            combatant=hero, allies=[hero],
+            enemies=[_build_char("E")],
+            action_economy=economy, round_number=1,
+        )
+        events = SkillHandler().execute_turn(ctx)
+        assert events == []

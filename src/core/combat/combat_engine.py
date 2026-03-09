@@ -29,6 +29,21 @@ class CombatResult(Enum):
     DRAW = auto()
 
 
+class EventType(Enum):
+    """Tipo de evento de combate."""
+
+    DAMAGE = auto()
+    HEAL = auto()
+    BUFF = auto()
+    DEBUFF = auto()
+    AILMENT = auto()
+    CLEANSE = auto()
+    MANA_RESTORE = auto()
+    FLEE = auto()
+    SKILL_USE = auto()
+    ITEM_USE = auto()
+
+
 @dataclass(frozen=True)
 class CombatEvent:
     """Registro imutavel de algo que aconteceu no combate."""
@@ -36,7 +51,10 @@ class CombatEvent:
     round_number: int
     actor_name: str
     target_name: str
-    damage: DamageResult
+    damage: DamageResult | None = None
+    event_type: EventType = EventType.DAMAGE
+    value: int = 0
+    description: str = ""
 
 
 @dataclass(frozen=True)
@@ -98,6 +116,7 @@ class CombatEngine:
         combatant = self._participants[combatant_proto.name]
         economy = self._economies[combatant.name]
         economy.reset()
+        _tick_cooldowns(combatant)
         tick_results = process_effect_ticks(combatant.effect_manager)
         self._effect_log.extend(
             apply_tick_results(combatant, tick_results, self._round),
@@ -169,3 +188,10 @@ class CombatEngine:
         if not party_alive:
             return CombatResult.PARTY_DEFEAT
         return None
+
+
+def _tick_cooldowns(combatant: Character) -> None:
+    """Decrementa cooldowns do combatente se tiver skill_bar."""
+    bar = combatant.skill_bar
+    if bar is not None:
+        bar.cooldown_tracker.tick()
