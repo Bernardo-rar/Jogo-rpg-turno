@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from src.core.items.accessory import Accessory
     from src.core.items.armor import Armor
     from src.core.items.weapon import Weapon
+    from src.core.skills.skill_bar import SkillBar
 
 
 class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
@@ -40,6 +41,7 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
         self._weapon: Weapon | None = config.weapon
         self._armor: Armor | None = config.armor
         self._accessories: list[Accessory] = list(config.accessories)
+        self._skill_bar: SkillBar | None = config.skill_bar
         self._current_hp = self.max_hp
         self._current_mana = self.max_mana
 
@@ -66,6 +68,10 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
     @property
     def elemental_profile(self) -> ElementalProfile:
         return self._elemental_profile
+
+    @property
+    def skill_bar(self) -> SkillBar | None:
+        return self._skill_bar
 
     @property
     def current_hp(self) -> int:

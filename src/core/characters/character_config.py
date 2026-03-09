@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from src.core.items.accessory import Accessory
     from src.core.items.armor import Armor
     from src.core.items.weapon import Weapon
+    from src.core.skills.skill_bar import SkillBar
 
 
 @dataclass(frozen=True)
@@ -30,3 +31,4 @@ class CharacterConfig:
     weapon: Weapon | None = None
     armor: Armor | None = None
     accessories: tuple[Accessory, ...] = ()
+    skill_bar: SkillBar | None = None

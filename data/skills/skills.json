@@ -1,0 +1,119 @@
+{
+  "fireball": {
+    "name": "Fireball",
+    "mana_cost": 25,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 30, "element": "FIRE"}
+    ],
+    "slot_cost": 5,
+    "required_level": 1,
+    "description": "Bola de fogo basica"
+  },
+  "ice_bolt": {
+    "name": "Ice Bolt",
+    "mana_cost": 20,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 25, "element": "ICE"}
+    ],
+    "slot_cost": 4,
+    "required_level": 1
+  },
+  "minor_heal": {
+    "name": "Minor Heal",
+    "mana_cost": 15,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 20}
+    ],
+    "slot_cost": 3,
+    "required_level": 1
+  },
+  "heal_all": {
+    "name": "Heal All",
+    "mana_cost": 40,
+    "action_type": "ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 15}
+    ],
+    "slot_cost": 8,
+    "required_level": 3
+  },
+  "defense_buff": {
+    "name": "Defense Buff",
+    "mana_cost": 20,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 10, "stat": "PHYSICAL_DEFENSE", "duration": 3}
+    ],
+    "slot_cost": 3,
+    "cooldown_turns": 2,
+    "required_level": 1
+  },
+  "speed_buff": {
+    "name": "Speed Buff",
+    "mana_cost": 15,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 5, "stat": "SPEED", "duration": 3}
+    ],
+    "slot_cost": 2,
+    "required_level": 1
+  },
+  "weaken": {
+    "name": "Weaken",
+    "mana_cost": 25,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DEBUFF", "base_power": 8, "stat": "PHYSICAL_ATTACK", "duration": 3}
+    ],
+    "slot_cost": 4,
+    "cooldown_turns": 3,
+    "required_level": 2
+  },
+  "poison_strike": {
+    "name": "Poison Strike",
+    "mana_cost": 20,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 15},
+      {"effect_type": "APPLY_AILMENT", "ailment_id": "poison", "duration": 3}
+    ],
+    "slot_cost": 5,
+    "required_level": 2
+  },
+  "revive": {
+    "name": "Revive",
+    "mana_cost": 60,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 50}
+    ],
+    "slot_cost": 12,
+    "cooldown_turns": 8,
+    "required_level": 5,
+    "description": "Revive um aliado caido"
+  },
+  "war_cry": {
+    "name": "War Cry",
+    "mana_cost": 30,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 5, "stat": "PHYSICAL_ATTACK", "duration": 2}
+    ],
+    "slot_cost": 6,
+    "cooldown_turns": 4,
+    "required_level": 3
+  }
+}

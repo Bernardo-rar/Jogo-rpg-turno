@@ -28,11 +28,11 @@
   },
   "INTELLIGENCE": {
     "thresholds": [
-      {"value": 18, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2}},
-      {"value": 22, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2}},
-      {"value": 26, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2}},
-      {"value": 30, "tier": 2, "bonuses": {"mana_mod": 4, "def_magical_mod": 2, "atk_magical_mod": 4}},
-      {"value": 32, "tier": 2, "bonuses": {"mana_mod": 4, "def_magical_mod": 2, "atk_magical_mod": 4}}
+      {"value": 18, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2, "skill_slots": 1}},
+      {"value": 22, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2, "skill_slots": 1}},
+      {"value": 26, "tier": 1, "bonuses": {"mana_mod": 2, "def_magical_mod": 1, "atk_magical_mod": 2, "skill_slots": 1}},
+      {"value": 30, "tier": 2, "bonuses": {"mana_mod": 4, "def_magical_mod": 2, "atk_magical_mod": 4, "skill_slots": 1}},
+      {"value": 32, "tier": 2, "bonuses": {"mana_mod": 4, "def_magical_mod": 2, "atk_magical_mod": 4, "skill_slots": 1}}
     ]
   },
   "WISDOM": {
