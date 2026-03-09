@@ -715,3 +715,14 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - 6 consumiveis no JSON: health/mana potion, molotov, turtle shell, antidote, smoke bomb
 - Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
 - **Decisoes**: ConsumableEffect separado de SkillEffect (Open/Closed). Inventario nao integrado ao Character (vive externo). Execucao de skills e consumiveis deferred para combat handler. **BLOCO D COMPLETO**: Equipment (armas, armaduras, acessorios), skills infra, consumiveis e inventario.
+- Task 2.19b concluida: 59 testes novos (2027 total)
+- CombatEvent expandido: EventType enum (10 tipos), damage opcional, value/description fields
+- Inventory integrado ao Character via CharacterConfig
+- TargetResolver: dispatch table TargetType → alvos concretos (front-line priority, alive filter)
+- SkillEffectApplier: dispatch table SkillEffectType → handler (DAMAGE, HEAL, BUFF, DEBUFF, APPLY_AILMENT)
+- ConsumableEffectApplier: dispatch table ConsumableEffectType → handler (HEAL_HP, HEAL_MANA, DAMAGE, BUFF, CLEANSE, FLEE)
+- SkillHandler: TurnHandler que seleciona skill pronta com mana, executa efeitos, inicia cooldown
+- ConsumableHandler: TurnHandler que seleciona consumivel com mana, executa efeitos, remove do inventario
+- Cooldown tick integrado no combat loop (_tick_cooldowns antes do handler)
+- Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
+- **Decisoes**: Dispatch table pattern para todos os appliers (extensivel sem modificar). Element presence determina defense type (element → magical, None → physical). Cleanse remove non-StatBuff effects (keeps buffs). Cooldown tick antes do handler (skill fica ready no mesmo turno que cooldown expira).
