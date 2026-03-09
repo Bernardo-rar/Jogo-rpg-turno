@@ -23,31 +23,36 @@ _DEFAULT_AILMENT_DURATION = 3
 
 def apply_skill_effect(
     effect: SkillEffect, targets: list[Character], context_round: int,
-    actor_name: str,
+    combatant: Character,
 ) -> list[CombatEvent]:
     """Aplica um SkillEffect a todos os alvos. Retorna eventos gerados."""
     applier = _APPLIERS.get(effect.effect_type)
     if applier is None:
         return []
-    return applier(effect, targets, context_round, actor_name)
+    return applier(effect, targets, context_round, combatant)
 
 
 def _apply_damage(
     effect: SkillEffect, targets: list[Character],
-    rnd: int, actor: str,
+    rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     events: list[CombatEvent] = []
+    attack = effect.base_power + _pick_attack(effect, combatant)
     for target in targets:
         defense = _pick_defense(effect, target)
-        result = resolve_damage(
-            attack_power=effect.base_power, defense=defense,
-        )
+        result = resolve_damage(attack_power=attack, defense=defense)
         target.take_damage(result.final_damage)
         events.append(CombatEvent(
-            round_number=rnd, actor_name=actor,
+            round_number=rnd, actor_name=combatant.name,
             target_name=target.name, damage=result,
         ))
     return events
+
+
+def _pick_attack(effect: SkillEffect, combatant: Character) -> int:
+    if effect.element is not None:
+        return combatant.magical_attack
+    return combatant.physical_attack
 
 
 def _pick_defense(effect: SkillEffect, target: Character) -> int:
@@ -58,13 +63,13 @@ def _pick_defense(effect: SkillEffect, target: Character) -> int:
 
 def _apply_heal(
     effect: SkillEffect, targets: list[Character],
-    rnd: int, actor: str,
+    rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     events: list[CombatEvent] = []
     for target in targets:
         healed = target.heal(effect.base_power)
         events.append(CombatEvent(
-            round_number=rnd, actor_name=actor,
+            round_number=rnd, actor_name=combatant.name,
             target_name=target.name,
             event_type=EventType.HEAL, value=healed,
         ))
@@ -73,7 +78,7 @@ def _apply_heal(
 
 def _apply_buff(
     effect: SkillEffect, targets: list[Character],
-    rnd: int, actor: str,
+    rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     if effect.stat is None:
         return []
@@ -82,16 +87,17 @@ def _apply_buff(
         buff = create_flat_buff(effect.stat, effect.base_power, effect.duration)
         target.effect_manager.add_effect(buff)
         events.append(CombatEvent(
-            round_number=rnd, actor_name=actor,
+            round_number=rnd, actor_name=combatant.name,
             target_name=target.name,
             event_type=EventType.BUFF, value=effect.base_power,
+            description=effect.stat.name.lower(),
         ))
     return events
 
 
 def _apply_debuff(
     effect: SkillEffect, targets: list[Character],
-    rnd: int, actor: str,
+    rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     if effect.stat is None:
         return []
@@ -102,16 +108,17 @@ def _apply_debuff(
         )
         target.effect_manager.add_effect(debuff)
         events.append(CombatEvent(
-            round_number=rnd, actor_name=actor,
+            round_number=rnd, actor_name=combatant.name,
             target_name=target.name,
             event_type=EventType.DEBUFF, value=effect.base_power,
+            description=effect.stat.name.lower(),
         ))
     return events
 
 
 def _apply_ailment(
     effect: SkillEffect, targets: list[Character],
-    rnd: int, actor: str,
+    rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     factory = _AILMENT_FACTORIES.get(effect.ailment_id or "")
     if factory is None:
@@ -122,7 +129,7 @@ def _apply_ailment(
         ailment = factory(effect.base_power, dur)
         target.effect_manager.add_effect(ailment)
         events.append(CombatEvent(
-            round_number=rnd, actor_name=actor,
+            round_number=rnd, actor_name=combatant.name,
             target_name=target.name,
             event_type=EventType.AILMENT,
             description=effect.ailment_id or "",

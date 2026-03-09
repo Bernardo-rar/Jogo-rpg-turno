@@ -28,7 +28,7 @@ class TestFormatterRendersNewEvents:
         log = CombatLog()
         log.add(CombatLogEntry(
             round_number=1, event_type=EventType.EFFECT_APPLY,
-            actor_name="Goblin", detail="Burn",
+            actor_name="Caster", target_name="Goblin", detail="Burn",
         ))
         text = LogFormatter.to_text(log)
         assert "Goblin" in text

@@ -40,7 +40,7 @@ def _execute_skill(skill: Skill, context: TurnContext) -> list[CombatEvent]:
     for effect in skill.effects:
         events.extend(apply_skill_effect(
             effect, targets, context.round_number,
-            context.combatant.name,
+            context.combatant,
         ))
     _start_cooldown(context, skill)
     return events

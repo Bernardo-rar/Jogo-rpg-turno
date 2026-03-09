@@ -14,7 +14,7 @@ def sample_log():
     log.add(CombatLogEntry(
         round_number=1, event_type=EventType.ATTACK,
         actor_name="Gareth", target_name="Goblin_0",
-        value=85, detail="physical",
+        value=85, detail=" (critical)",
     ))
     log.add(CombatLogEntry(
         round_number=1, event_type=EventType.BARRIER_CREATE,
@@ -38,7 +38,7 @@ def sample_log():
 class TestLogFormatterText:
     def test_attack_line_format(self, sample_log):
         text = LogFormatter.to_text(sample_log)
-        assert "[Round 1] Gareth attacks Goblin_0 for 85 damage (physical)" in text
+        assert "[Round 1] Gareth attacks Goblin_0 for 85 damage (critical)" in text
 
     def test_barrier_line_format(self, sample_log):
         text = LogFormatter.to_text(sample_log)
@@ -97,7 +97,7 @@ class TestLogFormatterJson:
         assert first["actor_name"] == "Gareth"
         assert first["target_name"] == "Goblin_0"
         assert first["value"] == 85
-        assert first["detail"] == "physical"
+        assert first["detail"] == " (critical)"
 
     def test_empty_log_returns_empty_array(self):
         raw = LogFormatter.to_json(CombatLog())

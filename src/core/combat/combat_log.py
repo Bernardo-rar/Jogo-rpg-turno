@@ -60,7 +60,7 @@ class CombatLog:
             self._add_non_damage_event(event)
 
     def _add_damage_event(self, event: CombatEvent) -> None:
-        detail = "critical" if event.damage.is_critical else ""
+        detail = " (critical)" if event.damage.is_critical else ""
         self.add(CombatLogEntry(
             round_number=event.round_number,
             event_type=EventType.ATTACK,
