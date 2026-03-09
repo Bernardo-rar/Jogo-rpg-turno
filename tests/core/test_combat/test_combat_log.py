@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.core.combat.combat_engine import CombatEvent
+from src.core.combat.combat_engine import CombatEvent, EventType as EngineEventType
 from src.core.combat.combat_log import CombatLog, CombatLogEntry, EventType
 from src.core.combat.damage import DamageResult
 
@@ -107,6 +107,27 @@ class TestAddFromCombatEvent:
         )
         log.add_from_combat_event(event)
         assert "critical" in log.entries[0].detail
+
+    def test_heal_event_no_damage(self):
+        log = CombatLog()
+        event = CombatEvent(
+            round_number=1, actor_name="Healer", target_name="Ally",
+            event_type=EngineEventType.HEAL, value=50,
+        )
+        log.add_from_combat_event(event)
+        assert len(log.entries) == 1
+        assert log.entries[0].event_type == EventType.HEAL
+        assert log.entries[0].value == 50
+
+    def test_buff_event_no_damage(self):
+        log = CombatLog()
+        event = CombatEvent(
+            round_number=2, actor_name="Buffer", target_name="Ally",
+            event_type=EngineEventType.BUFF, value=10,
+        )
+        log.add_from_combat_event(event)
+        assert len(log.entries) == 1
+        assert log.entries[0].event_type == EventType.EFFECT_APPLY
 
 
 # --- Filtros ---

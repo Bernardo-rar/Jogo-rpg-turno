@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, auto
 
-from src.core.combat.combat_engine import CombatEvent
+from src.core.combat.combat_engine import CombatEvent, EventType as EngineEventType
 
 
 class EventType(Enum):
@@ -53,7 +53,13 @@ class CombatLog:
         self._entries.append(entry)
 
     def add_from_combat_event(self, event: CombatEvent) -> None:
-        """Converte CombatEvent (ataque) em CombatLogEntry."""
+        """Converte CombatEvent em CombatLogEntry."""
+        if event.damage is not None:
+            self._add_damage_event(event)
+        else:
+            self._add_non_damage_event(event)
+
+    def _add_damage_event(self, event: CombatEvent) -> None:
         detail = "critical" if event.damage.is_critical else ""
         self.add(CombatLogEntry(
             round_number=event.round_number,
@@ -64,6 +70,17 @@ class CombatLog:
             detail=detail,
         ))
 
+    def _add_non_damage_event(self, event: CombatEvent) -> None:
+        log_type = _ENGINE_TO_LOG.get(event.event_type, EventType.EFFECT_APPLY)
+        self.add(CombatLogEntry(
+            round_number=event.round_number,
+            event_type=log_type,
+            actor_name=event.actor_name,
+            target_name=event.target_name,
+            value=event.value,
+            detail=event.description,
+        ))
+
     def get_by_round(self, round_number: int) -> list[CombatLogEntry]:
         return [e for e in self._entries if e.round_number == round_number]
 
@@ -72,3 +89,13 @@ class CombatLog:
 
     def get_by_type(self, event_type: EventType) -> list[CombatLogEntry]:
         return [e for e in self._entries if e.event_type == event_type]
+
+
+_ENGINE_TO_LOG: dict[EngineEventType, EventType] = {
+    EngineEventType.HEAL: EventType.HEAL,
+    EngineEventType.MANA_RESTORE: EventType.MANA_RESTORE,
+    EngineEventType.BUFF: EventType.EFFECT_APPLY,
+    EngineEventType.DEBUFF: EventType.EFFECT_APPLY,
+    EngineEventType.AILMENT: EventType.EFFECT_APPLY,
+    EngineEventType.CLEANSE: EventType.EFFECT_EXPIRE,
+}

@@ -86,7 +86,7 @@
     "target_type": "SINGLE_ENEMY",
     "effects": [
       {"effect_type": "DAMAGE", "base_power": 15},
-      {"effect_type": "APPLY_AILMENT", "ailment_id": "poison", "duration": 3}
+      {"effect_type": "APPLY_AILMENT", "base_power": 5, "ailment_id": "poison", "duration": 3}
     ],
     "slot_cost": 5,
     "required_level": 2
