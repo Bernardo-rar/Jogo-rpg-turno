@@ -1,0 +1,68 @@
+{
+  "health_potion_small": {
+    "name": "Small Health Potion",
+    "category": "HEALING",
+    "mana_cost": 5,
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "HEAL_HP", "base_power": 50}
+    ],
+    "max_stack": 10,
+    "description": "Restaura 50 HP"
+  },
+  "mana_potion_small": {
+    "name": "Small Mana Potion",
+    "category": "HEALING",
+    "mana_cost": 0,
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "HEAL_MANA", "base_power": 30}
+    ],
+    "max_stack": 10,
+    "description": "Restaura 30 Mana"
+  },
+  "molotov": {
+    "name": "Molotov",
+    "category": "OFFENSIVE",
+    "mana_cost": 10,
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 40, "element": "FIRE"}
+    ],
+    "max_stack": 5,
+    "description": "Joga fogo em todos os inimigos"
+  },
+  "magic_turtle_shell": {
+    "name": "Magic Turtle Shell",
+    "category": "DEFENSE",
+    "mana_cost": 15,
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 15, "stat": "PHYSICAL_DEFENSE", "duration": 3}
+    ],
+    "max_stack": 5,
+    "description": "Aumenta defesa fisica por 3 turnos"
+  },
+  "antidote": {
+    "name": "Antidote",
+    "category": "CLEANSE",
+    "mana_cost": 5,
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "CLEANSE"}
+    ],
+    "max_stack": 10,
+    "description": "Remove status ailments de um aliado"
+  },
+  "smoke_bomb": {
+    "name": "Smoke Bomb",
+    "category": "ESCAPE",
+    "mana_cost": 10,
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "FLEE"}
+    ],
+    "max_stack": 3,
+    "description": "Permite fugir do combate"
+  }
+}
