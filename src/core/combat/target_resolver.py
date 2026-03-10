@@ -26,7 +26,16 @@ def _resolve_self(context: TurnContext) -> list[Character]:
 
 def _resolve_single_ally(context: TurnContext) -> list[Character]:
     alive = [a for a in context.allies if a.is_alive]
-    return alive[:1]
+    if not alive:
+        return []
+    most_hurt = min(alive, key=_hp_ratio)
+    return [most_hurt]
+
+
+def _hp_ratio(char: Character) -> float:
+    if char.max_hp == 0:
+        return 1.0
+    return char.current_hp / char.max_hp
 
 
 def _resolve_single_enemy(context: TurnContext) -> list[Character]:

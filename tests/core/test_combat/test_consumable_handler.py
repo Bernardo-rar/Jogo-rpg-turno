@@ -136,3 +136,27 @@ class TestConsumableHandler:
         events = handler.execute_turn(_context(hero))
         assert len(events) == 1
         assert events[0].event_type == EventType.FLEE
+
+    def test_skip_heal_when_hp_full(self) -> None:
+        hero = _build_char("Hero")
+        hero._inventory = Inventory()
+        hero._inventory.add_item(_health_potion())
+        handler = ConsumableHandler()
+        events = handler.execute_turn(_context(hero))
+        assert events == []
+
+    def test_skip_cleanse_when_no_negative_effects(self) -> None:
+        antidote = Consumable(
+            consumable_id="antidote", name="Antidote",
+            category=ConsumableCategory.CLEANSE, mana_cost=0,
+            target_type=TargetType.SELF,
+            effects=(ConsumableEffect(
+                effect_type=ConsumableEffectType.CLEANSE,
+            ),),
+        )
+        hero = _build_char("Hero")
+        hero._inventory = Inventory()
+        hero._inventory.add_item(antidote)
+        handler = ConsumableHandler()
+        events = handler.execute_turn(_context(hero))
+        assert events == []

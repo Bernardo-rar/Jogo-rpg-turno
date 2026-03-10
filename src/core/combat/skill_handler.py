@@ -6,6 +6,8 @@ from src.core.combat.combat_engine import CombatEvent, EventType, TurnContext
 from src.core.combat.skill_effect_applier import apply_skill_effect
 from src.core.combat.target_resolver import resolve_targets
 from src.core.skills.skill import Skill
+from src.core.skills.skill_effect_type import SkillEffectType
+from src.core.skills.target_type import TargetType
 
 
 class SkillHandler:
@@ -26,9 +28,36 @@ def _pick_skill(context: TurnContext) -> Skill | None:
     economy = context.action_economy
     mana = context.combatant.current_mana
     for skill in bar.ready_skills:
-        if skill.mana_cost <= mana and economy.is_available(skill.action_type):
-            return skill
+        if skill.mana_cost > mana:
+            continue
+        if not economy.is_available(skill.action_type):
+            continue
+        if _is_wasteful_heal(skill, context):
+            continue
+        return skill
     return None
+
+
+def _is_wasteful_heal(skill: Skill, context: TurnContext) -> bool:
+    """Pula skills puramente de heal se todos os aliados estao com HP cheio."""
+    if not _is_pure_heal(skill):
+        return False
+    allies = _heal_targets(skill.target_type, context)
+    return all(a.current_hp >= a.max_hp for a in allies)
+
+
+def _is_pure_heal(skill: Skill) -> bool:
+    return all(e.effect_type == SkillEffectType.HEAL for e in skill.effects)
+
+
+def _heal_targets(target_type: TargetType, context: TurnContext):
+    if target_type == TargetType.SELF:
+        return [context.combatant]
+    if target_type == TargetType.SINGLE_ALLY:
+        return [a for a in context.allies if a.is_alive]
+    if target_type == TargetType.ALL_ALLIES:
+        return [a for a in context.allies if a.is_alive]
+    return []
 
 
 def _execute_skill(skill: Skill, context: TurnContext) -> list[CombatEvent]:

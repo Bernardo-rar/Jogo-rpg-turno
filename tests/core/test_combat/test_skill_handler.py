@@ -126,3 +126,27 @@ class TestSkillHandler:
         )
         events = SkillHandler().execute_turn(ctx)
         assert events == []
+
+    def test_skip_heal_skill_when_all_allies_full_hp(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_heal())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert events == []
+
+    def test_heal_skill_used_when_ally_hurt(self) -> None:
+        hero = _build_char("Hero")
+        hero.take_damage(10)
+        hero._skill_bar = _make_bar(_heal())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert len(events) == 1
+        assert events[0].event_type == EventType.HEAL
+
+    def test_skip_heal_falls_through_to_next_skill(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_heal(), _fireball())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert len(events) == 1
+        assert events[0].damage is not None

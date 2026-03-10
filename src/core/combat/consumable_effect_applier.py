@@ -105,6 +105,7 @@ def _apply_cleanse(
             round_number=rnd, actor_name=actor,
             target_name=target.name,
             event_type=EventType.CLEANSE,
+            description="cleanse",
         ))
     return events
 

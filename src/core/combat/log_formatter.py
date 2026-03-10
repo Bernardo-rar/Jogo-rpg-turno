@@ -46,6 +46,11 @@ class LogFormatter:
     """Renderiza CombatLog em texto ou JSON."""
 
     @staticmethod
+    def format_entry(entry: CombatLogEntry) -> str:
+        """Formata uma unica entry como texto legivel."""
+        return _format_entry(entry)
+
+    @staticmethod
     def to_text(log: CombatLog) -> str:
         if not log.entries:
             return ""
