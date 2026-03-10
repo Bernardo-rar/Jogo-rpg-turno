@@ -1,0 +1,45 @@
+"""Constantes de layout para janela 1280x720."""
+
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+WINDOW_TITLE = "RPG Turno - Battle Preview"
+FPS = 60
+
+# Battlefield area (top portion)
+BATTLEFIELD_Y = 40
+BATTLEFIELD_HEIGHT = 440
+
+# Enemy area (left side)
+ENEMY_AREA_X = 60
+ENEMY_FRONT_X = 280
+ENEMY_BACK_X = 60
+ENEMY_START_Y = 60
+
+# Party area (right side)
+PARTY_AREA_X = 800
+PARTY_FRONT_X = 800
+PARTY_BACK_X = 1060
+PARTY_START_Y = 60
+
+# Character card dimensions
+CARD_WIDTH = 160
+CARD_HEIGHT = 110
+CARD_SPACING_Y = 125
+BAR_WIDTH = 130
+BAR_HEIGHT = 10
+
+# Combat log panel (bottom)
+LOG_PANEL_X = 10
+LOG_PANEL_Y = 500
+LOG_PANEL_WIDTH = 1260
+LOG_PANEL_HEIGHT = 210
+LOG_LINE_HEIGHT = 22
+LOG_MAX_VISIBLE = 9
+
+# Round indicator (top center)
+ROUND_INDICATOR_X = 540
+ROUND_INDICATOR_Y = 8
+
+# Event pacing
+EVENT_DELAY_MS = 1500
+ROUND_FLASH_MS = 800

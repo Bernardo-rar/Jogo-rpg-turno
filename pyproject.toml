@@ -3,6 +3,9 @@ name = "rpg-turno"
 version = "0.1.0"
 description = "RPG por turnos ambientado no mundo de Adnos"
 requires-python = ">=3.12"
+dependencies = [
+    "pygame-ce>=2.4",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
