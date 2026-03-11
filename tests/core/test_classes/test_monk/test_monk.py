@@ -69,7 +69,8 @@ class TestMonkLSP:
     def test_heal(self, monk: Monk):
         monk.take_damage(20)
         healed = monk.heal(10)
-        assert healed == 10
+        # CON=8, heal(10) -> int(10 * 1.4) = 14
+        assert healed == 14
 
 
 # --- Stats basicos ---

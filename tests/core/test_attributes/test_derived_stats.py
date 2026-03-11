@@ -41,14 +41,14 @@ class TestCalculateHp:
 
 class TestCalculateMana:
     def test_warrior_level_1_multiplier(self):
-        # Guerreiro lvl1: 6 * MIND * 10
+        # Guerreiro lvl1: 6 * MIND * 5
         result = calculate_mana(mana_multiplier=6, mind=4)
-        assert result == 240
+        assert result == 120
 
     def test_warrior_level_2_plus_multiplier(self):
-        # Guerreiro lvl2+: 4 * MIND * 10
+        # Guerreiro lvl2+: 4 * MIND * 5
         result = calculate_mana(mana_multiplier=4, mind=4)
-        assert result == 160
+        assert result == 80
 
 
 class TestCalculateAttack:

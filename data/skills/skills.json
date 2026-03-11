@@ -1,7 +1,7 @@
 {
   "fireball": {
     "name": "Fireball",
-    "mana_cost": 25,
+    "mana_cost": 13,
     "action_type": "ACTION",
     "target_type": "SINGLE_ENEMY",
     "effects": [
@@ -13,7 +13,7 @@
   },
   "ice_bolt": {
     "name": "Ice Bolt",
-    "mana_cost": 20,
+    "mana_cost": 10,
     "action_type": "ACTION",
     "target_type": "SINGLE_ENEMY",
     "effects": [
@@ -24,7 +24,7 @@
   },
   "minor_heal": {
     "name": "Minor Heal",
-    "mana_cost": 15,
+    "mana_cost": 8,
     "action_type": "ACTION",
     "target_type": "SINGLE_ALLY",
     "effects": [
@@ -35,7 +35,7 @@
   },
   "heal_all": {
     "name": "Heal All",
-    "mana_cost": 40,
+    "mana_cost": 20,
     "action_type": "ACTION",
     "target_type": "ALL_ALLIES",
     "effects": [
@@ -46,7 +46,7 @@
   },
   "defense_buff": {
     "name": "Defense Buff",
-    "mana_cost": 20,
+    "mana_cost": 10,
     "action_type": "BONUS_ACTION",
     "target_type": "SINGLE_ALLY",
     "effects": [
@@ -58,7 +58,7 @@
   },
   "speed_buff": {
     "name": "Speed Buff",
-    "mana_cost": 15,
+    "mana_cost": 8,
     "action_type": "BONUS_ACTION",
     "target_type": "SINGLE_ALLY",
     "effects": [
@@ -69,7 +69,7 @@
   },
   "weaken": {
     "name": "Weaken",
-    "mana_cost": 25,
+    "mana_cost": 13,
     "action_type": "ACTION",
     "target_type": "SINGLE_ENEMY",
     "effects": [
@@ -81,19 +81,19 @@
   },
   "poison_strike": {
     "name": "Poison Strike",
-    "mana_cost": 20,
+    "mana_cost": 10,
     "action_type": "ACTION",
     "target_type": "SINGLE_ENEMY",
     "effects": [
       {"effect_type": "DAMAGE", "base_power": 15},
-      {"effect_type": "APPLY_AILMENT", "base_power": 5, "ailment_id": "poison", "duration": 3}
+      {"effect_type": "APPLY_AILMENT", "base_power": 10, "ailment_id": "poison", "duration": 3}
     ],
     "slot_cost": 5,
     "required_level": 2
   },
   "revive": {
     "name": "Revive",
-    "mana_cost": 60,
+    "mana_cost": 30,
     "action_type": "ACTION",
     "target_type": "SINGLE_ALLY",
     "effects": [
@@ -106,7 +106,7 @@
   },
   "war_cry": {
     "name": "War Cry",
-    "mana_cost": 30,
+    "mana_cost": 15,
     "action_type": "BONUS_ACTION",
     "target_type": "ALL_ALLIES",
     "effects": [

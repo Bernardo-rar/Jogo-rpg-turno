@@ -68,7 +68,8 @@ class TestPaladinIsCharacter:
     def test_heal_works(self, paladin: Paladin):
         paladin.take_damage(20)
         paladin.heal(10)
-        assert paladin.current_hp == paladin.max_hp - 10
+        # CON=8, heal(10) -> int(10 * 1.4) = 14
+        assert paladin.current_hp == paladin.max_hp - 20 + 14
 
     def test_is_alive(self, paladin: Paladin):
         assert paladin.is_alive is True

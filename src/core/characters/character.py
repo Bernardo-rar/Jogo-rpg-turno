@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character_config import CharacterConfig
 from src.core.characters.combat_stats_mixin import CombatStatsMixin
@@ -97,8 +98,9 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
     def heal(self, amount: int) -> int:
         if not self._alive:
             return 0
+        con_scaled = _apply_con_bonus(amount, self._attributes)
         modified = self._apply_effect_modifiers(
-            ModifiableStat.HEALING_RECEIVED, amount,
+            ModifiableStat.HEALING_RECEIVED, con_scaled,
         )
         actual = min(modified, self.max_hp - self._current_hp)
         self._current_hp += actual
@@ -135,3 +137,13 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
 
     def on_level_up(self) -> None:
         """Hook para subclasses atualizarem recursos ao subir de nivel."""
+
+
+CON_HEAL_BONUS_PER_POINT = 0.05
+
+
+def _apply_con_bonus(amount: int, attributes: Attributes) -> int:
+    """Aplica bonus de CON na cura recebida: +5% por ponto de CON."""
+    con = attributes.get(AttributeType.CONSTITUTION)
+    multiplier = 1.0 + con * CON_HEAL_BONUS_PER_POINT
+    return int(amount * multiplier)

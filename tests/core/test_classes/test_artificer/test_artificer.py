@@ -100,7 +100,7 @@ class TestArtificerStats:
         self, artificer: Artificer, attrs: Attributes
     ) -> None:
         mind = attrs.get(AttributeType.MIND)
-        expected = 10 * mind * 10
+        expected = 10 * mind * 5
         assert artificer.max_mana == expected
 
     def test_physical_attack(self, artificer: Artificer) -> None:

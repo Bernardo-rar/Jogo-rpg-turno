@@ -94,7 +94,7 @@ class TestRogueStats:
 
     def test_max_mana_formula(self, rogue: Rogue, attrs: Attributes) -> None:
         mind = attrs.get(AttributeType.MIND)
-        expected = 6 * mind * 10
+        expected = 6 * mind * 5
         assert rogue.max_mana == expected
 
     def test_physical_attack(self, rogue: Rogue) -> None:

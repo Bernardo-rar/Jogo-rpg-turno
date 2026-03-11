@@ -70,7 +70,8 @@ class TestMageIsCharacter:
     def test_heal_works(self, mage: Mage):
         mage.take_damage(50)
         mage.heal(20)
-        assert mage.current_hp == mage.max_hp - 30
+        # CON=4, heal(20) -> int(20 * 1.2) = 24
+        assert mage.current_hp == mage.max_hp - 50 + 24
 
     def test_is_alive(self, mage: Mage):
         assert mage.is_alive is True
@@ -87,8 +88,8 @@ class TestMageStats:
         assert mage.max_hp == 120
 
     def test_max_mana_high(self, mage: Mage):
-        # mana_multiplier * MIND * 10 = 12 * 10 * 10 = 1200
-        assert mage.max_mana == 1200
+        # mana_multiplier * MIND * 5 = 12 * 10 * 5 = 600
+        assert mage.max_mana == 600
 
     def test_physical_attack_low(self, mage: Mage):
         # (weapon_die=0 + STR + DEX) * mod_atk_physical

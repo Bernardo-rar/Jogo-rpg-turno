@@ -77,7 +77,8 @@ class TestWarlockIsCharacter:
     def test_heal_works(self, warlock: Warlock):
         warlock.take_damage(50)
         warlock.heal(20)
-        assert warlock.current_hp == warlock.max_hp - 30
+        # CON=6, heal(20) -> int(20 * 1.3) = 26
+        assert warlock.current_hp == warlock.max_hp - 50 + 26
 
     def test_is_alive(self, warlock: Warlock):
         assert warlock.is_alive is True
@@ -96,8 +97,8 @@ class TestWarlockStats:
         assert warlock.max_hp == 168
 
     def test_max_mana(self, warlock: Warlock):
-        # 8 * 8 * 10 = 640
-        assert warlock.max_mana == 640
+        # 8 * 8 * 5 = 320
+        assert warlock.max_mana == 320
 
     def test_physical_attack(self, warlock: Warlock):
         # (0 + 4 + 5) * 4 = 36
@@ -297,13 +298,14 @@ class TestWarlockLifeDrain:
         warlock.take_damage(50)
         before = warlock.current_hp
         warlock.on_inflict_bleed(100)
-        # 100 * 0.15 = 15 HP restored
-        assert warlock.current_hp == before + 15
+        # 100 * 0.15 = 15 -> heal(15) with CON=6 -> int(15 * 1.3) = 19
+        assert warlock.current_hp == before + 19
 
     def test_on_inflict_bleed_returns_healed(self, warlock: Warlock):
         warlock.take_damage(50)
         healed = warlock.on_inflict_bleed(100)
-        assert healed == 15
+        # 100 * 0.15 = 15 -> heal(15) with CON=6 -> int(15 * 1.3) = 19
+        assert healed == 19
 
     def test_on_inflict_bleed_capped_at_max_hp(self, warlock: Warlock):
         healed = warlock.on_inflict_bleed(100)

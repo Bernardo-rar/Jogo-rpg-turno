@@ -110,7 +110,8 @@ class TestApplyTickResults:
         hp_before = character.current_hp
         results = [TickResult(healing=10, message="Regen")]
         apply_tick_results(character, results, round_number=1)
-        assert character.current_hp == hp_before + 10
+        # CON=5, heal(10) -> int(10 * 1.25) = 12
+        assert character.current_hp == hp_before + 12
 
     def test_applies_mana_restore(self, character) -> None:
         character.spend_mana(10)

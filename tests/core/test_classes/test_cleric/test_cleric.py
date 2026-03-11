@@ -89,7 +89,8 @@ class TestClericIsCharacter:
     def test_heal_works(self, cleric: Cleric):
         cleric.take_damage(50)
         cleric.heal(20)
-        assert cleric.current_hp == cleric.max_hp - 30
+        # CON=6, heal(20) -> int(20 * 1.3) = 26
+        assert cleric.current_hp == cleric.max_hp - 50 + 26
 
     def test_is_alive(self, cleric: Cleric):
         assert cleric.is_alive is True
@@ -106,8 +107,8 @@ class TestClericStats:
         assert cleric.max_hp == 224
 
     def test_max_mana_medium_high(self, cleric: Cleric):
-        # mana_multiplier * MIND * 10 = 8 * 7 * 10 = 560
-        assert cleric.max_mana == 560
+        # mana_multiplier * MIND * 5 = 8 * 7 * 5 = 280
+        assert cleric.max_mana == 280
 
     def test_physical_attack(self, cleric: Cleric):
         # (0 + STR + DEX) * mod_atk_physical = (0 + 4 + 5) * 5 = 45
@@ -176,7 +177,9 @@ class TestClericHealing:
     def test_heal_target_heals_ally(self, cleric: Cleric, wounded_ally: Character):
         hp_before = wounded_ally.current_hp
         cleric.heal_target(wounded_ally)
-        assert wounded_ally.current_hp == hp_before + cleric.healing_power
+        # Ally CON=6, heal(35) -> int(35 * 1.3) = 45
+        expected_heal = int(cleric.healing_power * (1 + 6 * 0.05))
+        assert wounded_ally.current_hp == hp_before + expected_heal
 
     def test_heal_target_spends_mana(self, cleric: Cleric, wounded_ally: Character):
         cleric.heal_target(wounded_ally)
@@ -186,7 +189,9 @@ class TestClericHealing:
         self, cleric: Cleric, wounded_ally: Character,
     ):
         healed = cleric.heal_target(wounded_ally)
-        assert healed == cleric.healing_power
+        # Ally CON=6, heal(35) -> int(35 * 1.3) = 45
+        expected_heal = int(cleric.healing_power * (1 + 6 * 0.05))
+        assert healed == expected_heal
 
     def test_heal_target_gains_holy_power(
         self, cleric: Cleric, wounded_ally: Character,

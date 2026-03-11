@@ -94,7 +94,7 @@ class TestBardStats:
 
     def test_max_mana_formula(self, bard: Bard, attrs: Attributes) -> None:
         mind = attrs.get(AttributeType.MIND)
-        expected = 8 * mind * 10
+        expected = 8 * mind * 5
         assert bard.max_mana == expected
 
     def test_physical_attack(self, bard: Bard) -> None:

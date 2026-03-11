@@ -2,7 +2,7 @@
   "health_potion_small": {
     "name": "Small Health Potion",
     "category": "HEALING",
-    "mana_cost": 5,
+    "mana_cost": 0,
     "target_type": "SELF",
     "effects": [
       {"effect_type": "HEAL_HP", "base_power": 50}
@@ -24,7 +24,7 @@
   "molotov": {
     "name": "Molotov",
     "category": "OFFENSIVE",
-    "mana_cost": 10,
+    "mana_cost": 5,
     "target_type": "ALL_ENEMIES",
     "effects": [
       {"effect_type": "DAMAGE", "base_power": 40, "element": "FIRE"}
@@ -35,7 +35,7 @@
   "magic_turtle_shell": {
     "name": "Magic Turtle Shell",
     "category": "DEFENSE",
-    "mana_cost": 15,
+    "mana_cost": 8,
     "target_type": "SELF",
     "effects": [
       {"effect_type": "BUFF", "base_power": 15, "stat": "PHYSICAL_DEFENSE", "duration": 3}
@@ -46,7 +46,7 @@
   "antidote": {
     "name": "Antidote",
     "category": "CLEANSE",
-    "mana_cost": 5,
+    "mana_cost": 0,
     "target_type": "SINGLE_ALLY",
     "effects": [
       {"effect_type": "CLEANSE"}
@@ -57,7 +57,7 @@
   "smoke_bomb": {
     "name": "Smoke Bomb",
     "category": "ESCAPE",
-    "mana_cost": 10,
+    "mana_cost": 5,
     "target_type": "ALL_ALLIES",
     "effects": [
       {"effect_type": "FLEE"}

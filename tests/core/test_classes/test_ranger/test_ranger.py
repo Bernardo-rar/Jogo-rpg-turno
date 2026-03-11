@@ -66,7 +66,8 @@ class TestRangerLSP:
     def test_heal(self, ranger: Ranger):
         ranger.take_damage(20)
         healed = ranger.heal(10)
-        assert healed == 10
+        # CON=6, heal(10) -> int(10 * 1.3) = 13
+        assert healed == 13
 
 
 # --- Stats basicos ---

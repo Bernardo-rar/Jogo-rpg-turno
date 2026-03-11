@@ -99,7 +99,7 @@ class TestDruidStats:
 
     def test_max_mana_formula(self, druid: Druid, attrs: Attributes) -> None:
         mind = attrs.get(AttributeType.MIND)
-        expected = 10 * mind * 10
+        expected = 10 * mind * 5
         assert druid.max_mana == expected
 
     def test_magical_attack_includes_nature_bonus(
@@ -288,7 +288,9 @@ class TestDruidHealingBonus:
         hp_before = druid.current_hp
         druid.heal(20)
         healed = druid.current_hp - hp_before
-        expected = int(20 * (1.0 + _CONFIG.healing_bonus))
+        # Druid enhances first, then super().heal() applies CON bonus (CON=7)
+        enhanced = int(20 * (1.0 + _CONFIG.healing_bonus))
+        expected = int(enhanced * (1 + 7 * 0.05))
         assert healed == expected
 
     def test_heal_still_capped_at_max_hp(self, druid: Druid) -> None:

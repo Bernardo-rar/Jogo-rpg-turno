@@ -69,7 +69,8 @@ class TestBarbarianIsCharacter:
     def test_heal_works(self, barbarian: Barbarian):
         barbarian.take_damage(20)
         barbarian.heal(10)
-        assert barbarian.current_hp == barbarian.max_hp - 10
+        # CON=10, heal(10) -> int(10 * 1.5) = 15
+        assert barbarian.current_hp == barbarian.max_hp - 20 + 15
 
     def test_is_alive(self, barbarian: Barbarian):
         assert barbarian.is_alive is True

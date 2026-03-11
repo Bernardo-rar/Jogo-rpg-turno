@@ -67,7 +67,8 @@ class TestFighterIsCharacter:
     def test_heal_works(self, fighter: Fighter):
         fighter.take_damage(20)
         fighter.heal(10)
-        assert fighter.current_hp == fighter.max_hp - 10
+        # CON=5, heal(10) -> int(10 * 1.25) = 12
+        assert fighter.current_hp == fighter.max_hp - 20 + 12
 
     def test_is_alive(self, fighter: Fighter):
         assert fighter.is_alive is True

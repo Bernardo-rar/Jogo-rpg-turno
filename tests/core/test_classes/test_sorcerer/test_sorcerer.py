@@ -78,7 +78,8 @@ class TestSorcererIsCharacter:
     def test_heal_works(self, sorcerer: Sorcerer):
         sorcerer.take_damage(50)
         sorcerer.heal(20)
-        assert sorcerer.current_hp == sorcerer.max_hp - 30
+        # CON=4, heal(20) -> int(20 * 1.2) = 24
+        assert sorcerer.current_hp == sorcerer.max_hp - 50 + 24
 
     def test_is_alive(self, sorcerer: Sorcerer):
         assert sorcerer.is_alive is True
@@ -96,8 +97,8 @@ class TestSorcererStats:
         assert sorcerer.max_hp == 100
 
     def test_max_mana(self, sorcerer: Sorcerer):
-        # 14 * 11 * 10 = 1540
-        assert sorcerer.max_mana == 1540
+        # 14 * 11 * 5 = 770
+        assert sorcerer.max_mana == 770
 
     def test_physical_attack(self, sorcerer: Sorcerer):
         # (0 + 3 + 5) * 2 = 16

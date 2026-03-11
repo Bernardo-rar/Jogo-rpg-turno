@@ -8,7 +8,7 @@ from src.core.attributes.threshold_calculator import (
     BONUS_HP,
     ThresholdCalculator,
 )
-from src.core.characters.character import Character
+from src.core.characters.character import CON_HEAL_BONUS_PER_POINT, Character
 from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
@@ -111,8 +111,8 @@ class TestCharacterHp:
 
 class TestCharacterMana:
     def test_max_mana_fighter_level_1(self, fighter: Character):
-        # mana_multiplier * MIND * 10 = 6 * 4 * 10 = 240
-        assert fighter.max_mana == 240
+        # mana_multiplier * MIND * 5 = 6 * 4 * 5 = 120
+        assert fighter.max_mana == 120
 
     def test_current_mana_starts_at_max(self, fighter: Character):
         assert fighter.current_mana == fighter.max_mana
@@ -184,8 +184,11 @@ class TestCharacterHeal:
     def test_heal_restores_hp(self, fighter: Character):
         fighter.take_damage(100)
         healed = fighter.heal(50)
-        assert fighter.current_hp == fighter.max_hp - 50
-        assert healed == 50
+        # CON=5, heal(50) -> int(50 * (1 + 5*0.05)) = int(50 * 1.25) = 62
+        con = 5
+        expected_heal = int(50 * (1 + con * CON_HEAL_BONUS_PER_POINT))
+        assert fighter.current_hp == fighter.max_hp - 100 + expected_heal
+        assert healed == expected_heal
 
     def test_heal_cannot_exceed_max(self, fighter: Character):
         fighter.take_damage(10)
@@ -260,7 +263,10 @@ class TestCharacterApplyRegen:
     def test_apply_regen_restores_hp(self, fighter: Character):
         fighter.take_damage(100)
         fighter.apply_regen()
-        assert fighter.current_hp == fighter.max_hp - 100 + fighter.hp_regen
+        # apply_regen calls heal(hp_regen), CON bonus applied inside heal
+        con = 5
+        expected_heal = int(fighter.hp_regen * (1 + con * CON_HEAL_BONUS_PER_POINT))
+        assert fighter.current_hp == fighter.max_hp - 100 + expected_heal
 
     def test_apply_regen_restores_mana(self, fighter: Character):
         fighter.spend_mana(100)

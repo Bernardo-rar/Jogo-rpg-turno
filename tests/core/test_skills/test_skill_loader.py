@@ -23,7 +23,7 @@ class TestLoadSkills:
         fb = skills["fireball"]
         assert fb.skill_id == "fireball"
         assert fb.name == "Fireball"
-        assert fb.mana_cost == 25
+        assert fb.mana_cost == 13
         assert fb.action_type == ActionType.ACTION
         assert fb.target_type == TargetType.SINGLE_ENEMY
         assert fb.slot_cost == 5

@@ -66,8 +66,9 @@ def _apply_heal(
     rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     events: list[CombatEvent] = []
+    heal_power = effect.base_power + combatant.magical_attack
     for target in targets:
-        healed = target.heal(effect.base_power)
+        healed = target.heal(heal_power)
         events.append(CombatEvent(
             round_number=rnd, actor_name=combatant.name,
             target_name=target.name,

@@ -23,7 +23,7 @@ class TestConsumableLoader:
         hp = consumables["health_potion_small"]
         assert hp.name == "Small Health Potion"
         assert hp.category == ConsumableCategory.HEALING
-        assert hp.mana_cost == 5
+        assert hp.mana_cost == 0
         assert hp.target_type == TargetType.SELF
 
     def test_molotov_has_fire_element(self) -> None:

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-MANA_BASE_MULTIPLIER = 10
+MANA_BASE_MULTIPLIER = 5
 
 
 @dataclass(frozen=True)
