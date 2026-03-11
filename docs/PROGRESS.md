@@ -726,3 +726,36 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - Cooldown tick integrado no combat loop (_tick_cooldowns antes do handler)
 - Refactor gate: PASSED (0 CRITICAL, 0 HIGH)
 - **Decisoes**: Dispatch table pattern para todos os appliers (extensivel sem modificar). Element presence determina defense type (element → magical, None → physical). Cleanse remove non-StatBuff effects (keeps buffs). Cooldown tick antes do handler (skill fica ready no mesmo turno que cooldown expira).
+
+### Sessao 14 - 2026-03-10
+
+- Task 2.20 concluida: Mock Battle v2 + combat fixes
+- CompositeHandler: combina AttackHandler + SkillHandler + ConsumableHandler com prioridade
+- DispatchTurnHandler usa CompositeHandler como fallback
+- CombatLog: formata eventos/efeitos em texto legivel (LogFormatter + log_formatter)
+- Mock battle script (scripts/run_battle.py): party 4 vs enemies 3, combate completo
+- Fix: skill damage agora escala com attack stats (physical ou magical baseado em element)
+- Fix: combat log descriptions e templates melhorados
+- Refactor gate: PASSED
+- Task 2.21 concluida: Pygame visual battle replay
+- src/ui/ criado (core/ NUNCA importa de ui/)
+- BattleRecorder: roda batalha round-by-round, captura snapshots (HP/Mana/Effects/is_alive)
+- BattleReplay: dataclass frozen com snapshots + events + effect_log + result
+- CombatScene: consome BattleReplay, avanca 1 evento a cada 1.5s
+- Componentes visuais: HealthBar, CharacterCard, CombatLogPanel, Battlefield
+- Game loop Pygame 1280x720, ESC para sair
+- Entry point: scripts/run_battle_visual.py
+- pygame-ce>=2.4 adicionado como dependencia
+- Balance changes:
+  - MANA_BASE_MULTIPLIER 10→5 (pools menores, mais gerenciaveis)
+  - Custos de mana de skills divididos por 2 proporcionalmente
+  - Consumiveis fisicos (potions, antidotes) com mana_cost=0
+  - Skill heals escalam com magical_attack do caster (base_power + magical_attack)
+  - Cura recebida escala com CON do alvo (+5% por ponto, CON_HEAL_BONUS_PER_POINT=0.05)
+  - Poison buffado: 5→10 dano por tick
+  - AI: skip wasteful heals (skills e consumables) quando todos com HP cheio
+  - AI: skip wasteful cleanse quando sem efeitos negativos
+  - Target resolver: SINGLE_ALLY escolhe aliado mais machucado (min HP ratio)
+- docs/BALANCE_DECISIONS.md criado com todas as decisoes de balanceamento
+- 2074 testes passando, 0 CRITICAL, 0 HIGH
+- **Decisoes**: Consumable heals sao flat (nao escalam com stats). Skill heals escalam com magical_attack inteiro. CON bonus aplica ANTES de effect modifiers. DoT scaling com %HP maximo documentado como TODO futuro.
