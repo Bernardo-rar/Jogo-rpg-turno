@@ -561,17 +561,101 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 ### Bloco E - Integracao e Visualizacao
 
 #### Task 2.20 - Mock Battle v2 (Integracao Fase 2)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Batalha completa com elementos, buffs/debuffs, mais classes, equipamento
 - **Criterio de aceite**: Combate com 6+ classes, efeitos elementais, buffs/debuffs ativos, combat log mostrando tudo
 - **Dependencias**: Todas as tasks anteriores
 
 #### Task 2.21 - Pygame Minimo (Preview Visual)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Visualizacao basica do Mock Battle v2 com Pygame. Shapes coloridos como placeholder (sem sprites), barras de HP/Mana, log de combate, efeitos ativos visiveis. Roda a batalha automaticamente (sem input do jogador ainda).
 - **Criterio de aceite**: Janela Pygame mostra batalha rodando em tempo real, personagens como retangulos coloridos, barras de vida, texto de acoes/efeitos
 - **Dependencias**: Task 2.20
 - **Notas**: Primeira dependencia externa alem do pytest (pygame). Tudo em src/ui/ (core/ NAO importa ui/). Assets reais ficam para Fase 4. Wireframe de referencia em `Coisas interessantes/WhatsApp Image 2022-05-26 at 21.25.41.jpeg`.
+
+#### Task 2.22 - Animacoes de Combate (Visual Polish)
+- **Status**: PENDENTE
+- **Descricao**: Sistema de animacoes baseado em particulas e shapes para feedback visual de acoes de combate (ataque, magia, cura, veneno, buffs, morte). Zero assets externos — tudo com geometria e particulas Pygame.
+- **Criterio de aceite**: Cada tipo de evento tem animacao visual distinta, CombatScene espera animacao acabar antes de avancar pro proximo evento, floating damage/heal numbers visiveis
+- **Dependencias**: Task 2.21
+- **Notas**: Ver plano detalhado abaixo.
+
+**Arquitetura de Animacoes:**
+
+```
+src/ui/
+  animations/
+    __init__.py
+    animation.py              # Animation Protocol (update/draw/is_done)
+    animation_manager.py      # Gerencia animacoes ativas, update/draw all
+    floating_text.py          # Numeros de dano/heal flutuando pra cima (+fade)
+    slash_effect.py           # Linha diagonal que cruza o alvo (ataque fisico)
+    magic_burst.py            # Circulos/particulas expandindo (cor por elemento)
+    heal_particles.py         # Particulas verdes subindo no alvo
+    poison_bubbles.py         # Bolhas roxas ao redor do personagem (DoT tick)
+    buff_aura.py              # Aura pulsante ao redor do card (verde=buff, vermelho=debuff)
+    card_shake.py             # Shake no card do alvo ao receber dano
+    death_fade.py             # Card escurece gradualmente ao morrer
+    animation_factory.py      # Dispatch table: EventType -> Animation
+```
+
+**Animation Protocol:**
+```python
+class Animation(Protocol):
+    def update(self, dt_ms: int) -> None: ...
+    def draw(self, surface: pygame.Surface) -> None: ...
+    @property
+    def is_done(self) -> bool: ...
+```
+
+**AnimationManager:**
+- Lista de animacoes ativas
+- `spawn(animation)`: adiciona nova
+- `update(dt_ms)`: ticka todas, remove as finalizadas
+- `draw(surface)`: desenha todas
+- `has_active`: True se alguma animacao rodando
+- `has_blocking`: True se alguma animacao blocking (CombatScene espera)
+
+**Integracao com CombatScene:**
+- Ao avancar evento, spawna animacao via `animation_factory`
+- `update()`: se `has_blocking`, NAO avanca timer de proximo evento
+- `draw()`: desenha animacoes SOBRE o battlefield (layer acima)
+- Animacoes nao-blocking (floating text, aura) podem rodar em paralelo
+
+**Mapeamento EventType -> Animacao:**
+| EventType | Animacao | Blocking | Duracao |
+|-----------|----------|----------|---------|
+| DAMAGE (fisico) | SlashEffect + CardShake + FloatingText(vermelho) | Sim | 400ms |
+| DAMAGE (magico/skill) | MagicBurst(cor do elemento) + FloatingText(vermelho) | Sim | 500ms |
+| HEAL | HealParticles + FloatingText(verde) | Sim | 400ms |
+| BUFF | BuffAura(verde) | Nao | 600ms |
+| DEBUFF | BuffAura(vermelho) | Nao | 600ms |
+| AILMENT | PoisonBubbles(roxo) | Nao | 500ms |
+| EFFECT_TICK (DoT) | PoisonBubbles + FloatingText(roxo) | Nao | 400ms |
+| DEATH | DeathFade | Nao | 800ms |
+| SKIP_TURN | nenhuma | Nao | - |
+
+**Cores por Elemento (MagicBurst):**
+- FIRE: (255, 120, 30) laranja
+- ICE: (130, 200, 255) azul claro
+- LIGHTNING: (255, 255, 100) amarelo
+- HOLY: (255, 255, 200) branco quente
+- DARKNESS: (100, 50, 150) roxo escuro
+- Default: (200, 200, 255) branco azulado
+
+**Steps TDD:**
+1. Animation Protocol + AnimationManager (puro Python, testavel)
+2. FloatingText (posicao, velocidade, fade, is_done)
+3. SlashEffect (linha start->end, progresso, is_done)
+4. MagicBurst (particulas expandindo, cor, is_done)
+5. HealParticles (particulas subindo, fade, is_done)
+6. PoisonBubbles (bolhas oscilando, is_done)
+7. BuffAura (rect pulsante, cor, is_done)
+8. CardShake (offset oscilante, is_done)
+9. DeathFade (alpha decrescente, is_done)
+10. AnimationFactory (dispatch EventType -> animacoes)
+11. Integrar AnimationManager no CombatScene
+12. Teste visual manual (run_battle_visual.py)
 
 ---
 
