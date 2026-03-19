@@ -13,8 +13,17 @@ _PADDING_Y = 8
 class CombatLogPanel:
     """Exibe as ultimas N linhas do combat log com cores."""
 
-    def __init__(self) -> None:
+    def __init__(self, max_visible: int = layout.LOG_MAX_VISIBLE) -> None:
         self._lines: list[tuple[str, tuple]] = []
+        self._max_visible = max_visible
+
+    @property
+    def max_visible(self) -> int:
+        return self._max_visible
+
+    @property
+    def line_count(self) -> int:
+        return len(self._lines)
 
     def add_line(self, text: str, color: tuple = colors.TEXT_WHITE) -> None:
         """Adiciona uma linha ao log."""
@@ -28,7 +37,7 @@ class CombatLogPanel:
         )
         pygame.draw.rect(surface, colors.BG_PANEL, panel, border_radius=4)
         pygame.draw.rect(surface, colors.BG_PANEL_BORDER, panel, 1, 4)
-        visible = self._lines[-layout.LOG_MAX_VISIBLE:]
+        visible = self._lines[-self._max_visible:]
         x = layout.LOG_PANEL_X + _PADDING_X
         y = layout.LOG_PANEL_Y + _PADDING_Y
         for text, color in visible:
