@@ -68,6 +68,16 @@ class TurnContext:
     round_number: int
 
 
+@dataclass(frozen=True)
+class TurnStepResult:
+    """Resultado imutavel de prepare_turn: contexto pronto ou motivo do skip."""
+
+    can_act: bool
+    context: TurnContext | None
+    effect_entries: tuple[EffectLogEntry, ...]
+    skip_reason: str = ""
+
+
 class TurnHandler(Protocol):
     """Strategy: decide e executa a acao de um combatente no turno."""
 
@@ -98,46 +108,86 @@ class CombatEngine:
         self._effect_log: list[EffectLogEntry] = []
         self._result: CombatResult | None = None
 
-    def run_round(self) -> CombatResult | None:
-        """Executa uma rodada. Retorna resultado se acabou, None se continua."""
+    def start_round(self) -> None:
+        """Incrementa round e reseta turn order."""
         self._round += 1
         self._turn_order.reset()
-        combatant_proto = self._turn_order.next()
-        while combatant_proto is not None:
-            result = self._execute_combatant_turn(combatant_proto)
-            if result is not None:
-                return result
-            combatant_proto = self._turn_order.next()
-        return self._result
 
-    def _execute_combatant_turn(
-        self, combatant_proto: Combatant,
-    ) -> CombatResult | None:
-        combatant = self._participants[combatant_proto.name]
-        economy = self._economies[combatant.name]
+    def get_next_combatant(self) -> str | None:
+        """Retorna nome do proximo combatente ou None se round acabou."""
+        proto = self._turn_order.next()
+        return proto.name if proto is not None else None
+
+    def prepare_turn(self, combatant_name: str) -> TurnStepResult:
+        """Fase 1: reset economy, tick cooldowns, process effects, check skip."""
+        combatant = self._participants[combatant_name]
+        economy = self._economies[combatant_name]
         economy.reset()
         _tick_cooldowns(combatant)
         tick_results = process_effect_ticks(combatant.effect_manager)
-        self._effect_log.extend(
+        entries = tuple(
             apply_tick_results(combatant, tick_results, self._round),
         )
+        self._effect_log.extend(entries)
         skip = should_skip_turn(tick_results)
-        if combatant.is_alive and not skip:
-            self._execute_handler(combatant, economy)
-        elif combatant.is_alive and skip:
-            self._log_skip(combatant, tick_results)
+        if not combatant.is_alive or skip:
+            reason = self._get_skip_reason(combatant, tick_results)
+            if combatant.is_alive and skip:
+                self._log_skip(combatant, tick_results)
+            return TurnStepResult(
+                can_act=False, context=None,
+                effect_entries=entries, skip_reason=reason,
+            )
+        context = self._build_context(combatant, economy)
+        return TurnStepResult(
+            can_act=True, context=context, effect_entries=entries,
+        )
+
+    def resolve_turn(self, events: list[CombatEvent]) -> CombatResult | None:
+        """Fase 2: registra eventos e checa vitoria/derrota."""
+        self._events.extend(events)
         self._result = self._check_result()
         return self._result
 
-    def _execute_handler(
+    def run_round(self) -> CombatResult | None:
+        """Executa uma rodada. Retorna resultado se acabou, None se continua."""
+        self.start_round()
+        name = self.get_next_combatant()
+        while name is not None:
+            result = self._execute_combatant_turn_internal(name)
+            if result is not None:
+                return result
+            name = self.get_next_combatant()
+        return self._result
+
+    def _execute_combatant_turn_internal(
+        self, combatant_name: str,
+    ) -> CombatResult | None:
+        step = self.prepare_turn(combatant_name)
+        if step.can_act:
+            self._execute_handler_from_context(step.context)
+        self._result = self._check_result()
+        return self._result
+
+    def _build_context(
         self, combatant: Character, economy: ActionEconomy,
-    ) -> None:
+    ) -> TurnContext:
         allies, enemies = self._get_teams(combatant)
-        context = TurnContext(
+        return TurnContext(
             combatant=combatant, allies=allies, enemies=enemies,
             action_economy=economy, round_number=self._round,
         )
+
+    def _execute_handler_from_context(self, context: TurnContext) -> None:
         self._events.extend(self._handler.execute_turn(context))
+
+    def _get_skip_reason(
+        self, combatant: Character, tick_results: list[TickResult],
+    ) -> str:
+        if not combatant.is_alive:
+            return "Dead"
+        skip_msgs = [r.message for r in tick_results if r.skip_turn]
+        return skip_msgs[0] if skip_msgs else DEFAULT_SKIP_MESSAGE
 
     def _log_skip(
         self, combatant: Character, tick_results: list[TickResult],
