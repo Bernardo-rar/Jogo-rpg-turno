@@ -45,6 +45,7 @@ def _apply_damage(
         events.append(CombatEvent(
             round_number=rnd, actor_name=combatant.name,
             target_name=target.name, damage=result,
+            element=effect.element,
         ))
     return events
 

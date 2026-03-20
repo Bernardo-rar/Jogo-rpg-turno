@@ -7,6 +7,8 @@ import pygame
 from src.core.combat.combat_engine import CombatEvent, EventType
 from src.core.combat.player_action import PlayerAction, PlayerActionType
 from src.ui import colors, layout
+from src.ui.animations.animation_factory import AnimationFactory
+from src.ui.animations.animation_manager import AnimationManager
 from src.ui.components.action_economy_bar import draw_economy_bar
 from src.ui.components.action_panel import draw_action_panel
 from src.ui.components.battlefield import Battlefield
@@ -51,12 +53,16 @@ class PlayableCombatScene:
         self._enemies = enemies
         self._fonts = fonts
         self._log = CombatLogPanel(max_visible=_LOG_COMPACT_VISIBLE)
+        self._anim_manager = AnimationManager()
+        self._anim_factory = AnimationFactory()
         self._menu: ActionMenu | None = None
         self._menu_combatant: str | None = None
         self._running = True
         self._event_index = 0
         snap = create_live_snapshot(party, enemies, 0)
         self._battlefield = Battlefield(snap)
+        self._all_names = [c.name for c in party] + [c.name for c in enemies]
+        self._prev_alive = {c.name: c.is_alive for c in party + enemies}
         self._elapsed_ms = 0
 
     def handle_event(self, event: pygame.event.Event) -> None:
@@ -67,6 +73,9 @@ class PlayableCombatScene:
         if not self._running:
             return False
         self._elapsed_ms += dt_ms
+        self._anim_manager.update(dt_ms)
+        if self._anim_manager.has_blocking:
+            return self._running
         self._scene.update(dt_ms)
         self._refresh_battlefield()
         self._refresh_menu()
@@ -76,7 +85,9 @@ class PlayableCombatScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         self._draw_round(surface)
-        self._battlefield.draw(surface, self._fonts)
+        offsets = _build_shake_offsets(self._anim_manager, self._all_names)
+        self._battlefield.draw(surface, self._fonts, offsets=offsets)
+        self._anim_manager.draw(surface)
         self._draw_turn_highlight(surface)
         self._log.draw(surface, self._fonts.small)
         if self._scene.phase == TurnPhase.WAITING_INPUT:
@@ -85,6 +96,8 @@ class PlayableCombatScene:
             self._draw_result(surface)
 
     def _handle_key(self, key: int) -> None:
+        if self._anim_manager.has_blocking:
+            return
         if key == pygame.K_ESCAPE:
             if self._scene.phase == TurnPhase.COMBAT_OVER:
                 self._running = False
@@ -125,12 +138,24 @@ class PlayableCombatScene:
             self._menu_combatant = None
 
     def _flush_new_events(self) -> None:
-        """Loga eventos novos do engine no combat log."""
+        """Loga eventos novos e spawna animacoes."""
         all_events = self._scene._engine.events
         while self._event_index < len(all_events):
             event = all_events[self._event_index]
             self._log_event(event)
+            _spawn_event_animations(
+                event, self._battlefield, self._anim_manager, self._anim_factory,
+            )
             self._event_index += 1
+        self._detect_deaths()
+
+    def _detect_deaths(self) -> None:
+        """Detecta mortes e spawna DeathFade."""
+        current = {c.name: c.is_alive for c in self._party + self._enemies}
+        died = [n for n, alive in self._prev_alive.items() if alive and not current.get(n, True)]
+        if died:
+            _spawn_death_fades(died, self._battlefield, self._anim_manager)
+        self._prev_alive = current
 
     def _log_event(self, event: CombatEvent) -> None:
         text = _format_event(event)
@@ -174,6 +199,47 @@ class PlayableCombatScene:
             center=(layout.WINDOW_WIDTH // 2, layout.BATTLEFIELD_HEIGHT // 2),
         )
         surface.blit(rendered, rect)
+
+
+def _spawn_event_animations(
+    event: CombatEvent,
+    battlefield: Battlefield,
+    anim_manager: AnimationManager,
+    anim_factory: AnimationFactory,
+) -> None:
+    """Spawna animacoes para um evento de combate."""
+    rect = battlefield.get_card_rect(event.target_name)
+    if rect is None:
+        return
+    for anim in anim_factory.create(event, rect):
+        anim_manager.spawn(anim)
+
+
+def _spawn_death_fades(
+    died_names: list[str],
+    battlefield: Battlefield,
+    anim_manager: AnimationManager,
+) -> None:
+    """Spawna DeathFade para cada personagem que morreu."""
+    from src.ui.animations.death_fade import DeathFade
+    for name in died_names:
+        rect = battlefield.get_card_rect(name)
+        if rect is None:
+            continue
+        x, y, w, h = rect
+        anim_manager.spawn(DeathFade(x=x, y=y, width=w, height=h))
+
+
+def _build_shake_offsets(
+    manager: AnimationManager, names: list[str],
+) -> dict[str, tuple[int, int]]:
+    """Coleta offsets de CardShake ativos para aplicar nos cards."""
+    offsets: dict[str, tuple[int, int]] = {}
+    for name in names:
+        offset = manager.get_shake_offset(name)
+        if offset != (0, 0):
+            offsets[name] = offset
+    return offsets
 
 
 def _format_event(event: CombatEvent) -> str:

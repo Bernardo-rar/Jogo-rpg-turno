@@ -1,6 +1,7 @@
 """Testes para AnimationManager."""
 
 from src.ui.animations.animation_manager import AnimationManager
+from src.ui.animations.card_shake import CardShake
 
 
 class FakeAnimation:
@@ -96,3 +97,20 @@ class TestAnimationManager:
         mgr.spawn(FakeAnimation(100))
         mgr.update(100)
         assert not mgr.has_active
+
+    def test_get_shake_offset_no_shakes_returns_zero(self) -> None:
+        mgr = AnimationManager()
+        assert mgr.get_shake_offset("Goblin") == (0, 0)
+
+    def test_get_shake_offset_with_active_shake(self) -> None:
+        mgr = AnimationManager()
+        mgr.spawn(CardShake(target_name="Goblin"))
+        mgr.update(50)
+        dx, dy = mgr.get_shake_offset("Goblin")
+        assert (dx, dy) != (0, 0)
+
+    def test_get_shake_offset_wrong_name_returns_zero(self) -> None:
+        mgr = AnimationManager()
+        mgr.spawn(CardShake(target_name="Goblin"))
+        mgr.update(50)
+        assert mgr.get_shake_offset("Hero") == (0, 0)

@@ -39,6 +39,7 @@ class CombatScene:
         self._anim_manager = AnimationManager()
         self._anim_factory = AnimationFactory()
         self._effects_by_round = _group_effects_by_round(replay)
+        self._all_names = [c.name for c in replay.snapshots[0].characters]
         self._event_index = 0
         self._current_round = 0
         self._timer_ms = 0
@@ -65,7 +66,8 @@ class CombatScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         self._draw_round_indicator(surface)
-        self._battlefield.draw(surface, self._fonts)
+        offsets = _build_shake_offsets(self._anim_manager, self._all_names)
+        self._battlefield.draw(surface, self._fonts, offsets=offsets)
         self._anim_manager.draw(surface)
         self._log_panel.draw(surface, self._fonts.medium)
         if self._finished:
@@ -77,9 +79,13 @@ class CombatScene:
             return
         event = self._replay.events[self._event_index]
         self._update_round(event.round_number)
+        before = self._display.get_alive_map()
         self._apply_event_delta(event)
+        after = self._display.get_alive_map()
+        died = [n for n, alive in before.items() if alive and not after.get(n, True)]
         self._add_event_to_log(event)
         self._spawn_animations(event)
+        _spawn_death_fades(died, self._battlefield, self._anim_manager)
         self._event_index += 1
         if self._event_index >= len(self._replay.events):
             self._finished = True
@@ -94,6 +100,7 @@ class CombatScene:
             self._display.sync_from_snapshot(prev)
         ticks = self._effects_by_round.get(round_number, [])
         self._display.apply_effect_ticks(ticks)
+        _spawn_tick_animations(ticks, self._battlefield, self._anim_manager)
         self._push_display()
 
     def _apply_event_delta(self, event: CombatEvent) -> None:
@@ -135,6 +142,48 @@ class CombatScene:
             center=(layout.WINDOW_WIDTH // 2, layout.BATTLEFIELD_HEIGHT // 2),
         )
         surface.blit(rendered, rect)
+
+
+def _spawn_tick_animations(
+    ticks: list,
+    battlefield: Battlefield,
+    anim_manager: AnimationManager,
+) -> None:
+    """Spawna animacoes para ticks de efeitos (DoTs, regens)."""
+    from src.ui.animations.tick_animation_factory import create_tick_animations
+    for entry in ticks:
+        rect = battlefield.get_card_rect(entry.character_name)
+        if rect is None:
+            continue
+        for anim in create_tick_animations(entry, rect):
+            anim_manager.spawn(anim)
+
+
+def _spawn_death_fades(
+    died_names: list[str],
+    battlefield: Battlefield,
+    anim_manager: AnimationManager,
+) -> None:
+    """Spawna DeathFade para cada personagem que morreu."""
+    from src.ui.animations.death_fade import DeathFade
+    for name in died_names:
+        rect = battlefield.get_card_rect(name)
+        if rect is None:
+            continue
+        x, y, w, h = rect
+        anim_manager.spawn(DeathFade(x=x, y=y, width=w, height=h))
+
+
+def _build_shake_offsets(
+    manager: AnimationManager, names: list[str],
+) -> dict[str, tuple[int, int]]:
+    """Coleta offsets de CardShake ativos para aplicar nos cards."""
+    offsets: dict[str, tuple[int, int]] = {}
+    for name in names:
+        offset = manager.get_shake_offset(name)
+        if offset != (0, 0):
+            offsets[name] = offset
+    return offsets
 
 
 def _apply_damage(display: DisplayState, event: CombatEvent) -> None:

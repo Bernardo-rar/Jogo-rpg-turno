@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
+
+if TYPE_CHECKING:
+    from src.core.elements.element_type import ElementType
 
 from src.core.characters.character import Character
 from src.core.combat.action_economy import ActionEconomy
@@ -55,6 +58,7 @@ class CombatEvent:
     event_type: EventType = EventType.DAMAGE
     value: int = 0
     description: str = ""
+    element: ElementType | None = None
 
 
 @dataclass(frozen=True)

@@ -8,8 +8,10 @@ from src.core.combat.combat_engine import CombatEvent, EventType
 from src.ui import colors
 from src.ui.animations.buff_aura import BuffAura
 from src.ui.animations.card_shake import CardShake
+from src.ui.animations.element_colors import get_element_color
 from src.ui.animations.floating_text import FloatingText
 from src.ui.animations.heal_particles import HealParticles
+from src.ui.animations.magic_burst import MagicBurst
 from src.ui.animations.poison_bubbles import PoisonBubbles
 from src.ui.animations.slash_effect import SlashEffect
 
@@ -30,13 +32,38 @@ class AnimationFactory:
 def _create_damage(event: CombatEvent, rect: _Rect) -> list[Any]:
     x, y, w, h = rect
     value = event.damage.final_damage if event.damage else event.value
+    if event.element is not None:
+        return _create_magical_damage(event, rect, value)
+    return _create_physical_damage(event, rect, value)
+
+
+def _damage_text(event: CombatEvent, value: int, x: int, y: int) -> FloatingText:
+    """Cria FloatingText de dano, com destaque visual para criticos."""
+    is_crit = event.damage is not None and event.damage.is_critical
+    text = f"-{value} CRIT!" if is_crit else f"-{value}"
+    color = colors.TEXT_CRITICAL if is_crit else colors.TEXT_DAMAGE
+    return FloatingText(text, x=x, y=y, color=color)
+
+
+def _create_physical_damage(
+    event: CombatEvent, rect: _Rect, value: int,
+) -> list[Any]:
+    x, y, w, h = rect
     return [
         SlashEffect(x=x, y=y, width=w, height=h),
         CardShake(target_name=event.target_name),
-        FloatingText(
-            f"-{value}", x=x + w // 2, y=y,
-            color=colors.TEXT_DAMAGE,
-        ),
+        _damage_text(event, value, x + w // 2, y),
+    ]
+
+
+def _create_magical_damage(
+    event: CombatEvent, rect: _Rect, value: int,
+) -> list[Any]:
+    x, y, w, h = rect
+    element_color = get_element_color(event.element)
+    return [
+        MagicBurst(cx=x + w // 2, cy=y + h // 2, color=element_color),
+        _damage_text(event, value, x + w // 2, y),
     ]
 
 

@@ -21,12 +21,18 @@ class Battlefield:
         """Atualiza estado dos personagens."""
         self._snapshot = snapshot
 
-    def draw(self, surface: pygame.Surface, fonts: FontManager) -> None:
+    def draw(
+        self,
+        surface: pygame.Surface,
+        fonts: FontManager,
+        offsets: dict[str, tuple[int, int]] | None = None,
+    ) -> None:
         """Desenha todos os character cards."""
         enemies = [s for s in self._snapshot.characters if not s.is_party]
         party = [s for s in self._snapshot.characters if s.is_party]
-        _draw_team(surface, enemies, is_party=False, fonts=fonts)
-        _draw_team(surface, party, is_party=True, fonts=fonts)
+        safe = offsets or {}
+        _draw_team(surface, enemies, is_party=False, fonts=fonts, offsets=safe)
+        _draw_team(surface, party, is_party=True, fonts=fonts, offsets=safe)
 
     def get_card_rect(self, name: str) -> tuple[int, int, int, int] | None:
         """Retorna (x, y, w, h) do card de um personagem pelo nome."""
@@ -44,12 +50,14 @@ def _draw_team(
     *,
     is_party: bool,
     fonts: FontManager,
+    offsets: dict[str, tuple[int, int]],
 ) -> None:
     start_y = layout.ENEMY_START_Y if not is_party else layout.PARTY_START_Y
     for i, snap in enumerate(team):
         x = _pick_x(snap.position, is_party)
         y = start_y + i * layout.CARD_SPACING_Y
-        draw_character_card(surface, snap, x, y, fonts)
+        dx, dy = offsets.get(snap.name, (0, 0))
+        draw_character_card(surface, snap, x + dx, y + dy, fonts)
 
 
 def _pick_x(position: Position, is_party: bool) -> int:

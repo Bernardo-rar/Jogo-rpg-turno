@@ -574,13 +574,31 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
 - **Notas**: Primeira dependencia externa alem do pytest (pygame). Tudo em src/ui/ (core/ NAO importa ui/). Assets reais ficam para Fase 4. Wireframe de referencia em `Coisas interessantes/WhatsApp Image 2022-05-26 at 21.25.41.jpeg`.
 
 #### Task 2.22 - Animacoes de Combate (Visual Polish)
-- **Status**: PENDENTE
+- **Status**: CONCLUIDA
 - **Descricao**: Sistema de animacoes baseado em particulas e shapes para feedback visual de acoes de combate (ataque, magia, cura, veneno, buffs, morte). Zero assets externos — tudo com geometria e particulas Pygame.
 - **Criterio de aceite**: Cada tipo de evento tem animacao visual distinta, CombatScene espera animacao acabar antes de avancar pro proximo evento, floating damage/heal numbers visiveis
 - **Dependencias**: Task 2.21
-- **Notas**: Ver plano detalhado abaixo.
 
-**Arquitetura de Animacoes:**
+- **Arquivos criados**:
+  - `src/ui/animations/element_colors.py` — mapping ElementType -> cor RGB + get_element_color()
+  - `src/ui/animations/tick_animation_factory.py` — create_tick_animations() para DoTs/regens
+  - `tests/ui/test_animations/test_element_colors.py` — 5 testes
+  - `tests/ui/test_animations/test_tick_animations.py` — 5 testes
+  - `tests/ui/test_scenes/test_death_detection.py` — 4 testes
+- **Arquivos modificados**:
+  - `src/ui/colors.py` — +12 constantes (ELEMENT_FIRE..FORCE, DEFAULT_MAGIC_COLOR, TEXT_CRITICAL)
+  - `src/core/combat/combat_engine.py` — +1 campo `element: ElementType | None = None` no CombatEvent
+  - `src/core/combat/skill_effect_applier.py` — passa element ao CombatEvent em _apply_damage
+  - `src/ui/animations/animation_factory.py` — dispatch fisico(SlashEffect) vs magico(MagicBurst), criticos amarelos
+  - `src/ui/animations/animation_manager.py` — +get_shake_offset(target_name) para CardShake funcional
+  - `src/ui/components/battlefield.py` — draw() aceita offsets dict, aplica shake nos cards
+  - `src/ui/scenes/combat_scene.py` — shake offsets, death detection via alive diff, tick animations
+  - `src/ui/replay/display_state.py` — +get_alive_map() para death detection
+  - `tests/ui/test_animations/test_animation_factory.py` — +6 testes (magic, crit, physical)
+  - `tests/ui/test_animations/test_animation_manager.py` — +3 testes (shake offset)
+- **Notas**: 2315 testes totais (2292+23). 6 gaps fechados: (A) cores elementais, (B) MagicBurst para dano magico, (C) criticos visuais amarelos, (D) CardShake funcional com offset no card, (E) DeathFade ao morrer via alive diff, (F) animacoes de effect ticks. Campo `element` adicionado ao CombatEvent (backward-compatible, default None). AnimationFactory despacha SlashEffect+CardShake para fisico, MagicBurst para magico. PlayableCombatScene sem animacoes (deferred).
+
+**Arquitetura de Animacoes (referencia):**
 
 ```
 src/ui/
@@ -843,3 +861,15 @@ class Animation(Protocol):
 - docs/BALANCE_DECISIONS.md criado com todas as decisoes de balanceamento
 - 2074 testes passando, 0 CRITICAL, 0 HIGH
 - **Decisoes**: Consumable heals sao flat (nao escalam com stats). Skill heals escalam com magical_attack inteiro. CON bonus aplica ANTES de effect modifiers. DoT scaling com %HP maximo documentado como TODO futuro.
+
+### Sessao 15 - 2026-03-19
+
+- Task 2.22 concluida: 23 testes novos (2315 total)
+- Sistema de animacoes completado: 6 gaps fechados
+- Gap A: 12 constantes de cor elemental em colors.py + element_colors.py com mapping e get_element_color()
+- Gap B: Campo `element: ElementType | None = None` adicionado ao CombatEvent (backward-compatible). skill_effect_applier passa element. AnimationFactory despacha SlashEffect para fisico, MagicBurst(element_color) para magico
+- Gap C: Criticos visuais — texto amarelo "-{value} CRIT!" via helper _damage_text()
+- Gap D: CardShake funcional — AnimationManager.get_shake_offset(), Battlefield.draw(offsets=), CombatScene passa offsets
+- Gap E: DeathFade trigger — DisplayState.get_alive_map(), diff before/after em _advance_event, _spawn_death_fades()
+- Gap F: Animacoes de effect ticks — tick_animation_factory.py, PoisonBubbles+FloatingText para DoT, HealParticles+FloatingText para regen
+- **Decisoes**: element no CombatEvent apesar do plano dizer "nenhum core modificado" — impossivel distinguir fisico/magico sem isso. Mudanca minima (1 campo, default None). CardShake usa isinstance() para query (nao dispatch) — aceitavel. Funcoes novas no CombatScene sao module-level (0 metodos adicionados a classe). PlayableCombatScene sem animacoes (deferred).

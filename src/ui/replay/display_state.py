@@ -78,6 +78,10 @@ class DisplayState:
         for c in snapshot.characters:
             self._chars[c.name] = _char_from_snapshot(c)
 
+    def get_alive_map(self) -> dict[str, bool]:
+        """Retorna mapa nome -> is_alive."""
+        return {name: s.is_alive for name, s in self._chars.items()}
+
     def to_round_snapshot(self, round_number: int) -> RoundSnapshot:
         chars = tuple(_to_frozen(s) for s in self._chars.values())
         return RoundSnapshot(round_number=round_number, characters=chars)
