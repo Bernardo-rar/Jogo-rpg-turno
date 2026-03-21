@@ -21,5 +21,17 @@ class TestSkillEffectType:
     def test_has_apply_ailment(self) -> None:
         assert SkillEffectType.APPLY_AILMENT is not None
 
-    def test_has_five_members(self) -> None:
-        assert len(SkillEffectType) == 5
+    def test_has_trigger_class_mechanic(self) -> None:
+        assert SkillEffectType.TRIGGER_CLASS_MECHANIC is not None
+
+    def test_has_resource_gain(self) -> None:
+        assert SkillEffectType.RESOURCE_GAIN is not None
+
+    def test_has_shield(self) -> None:
+        assert SkillEffectType.SHIELD is not None
+
+    def test_has_counter_attack(self) -> None:
+        assert SkillEffectType.COUNTER_ATTACK is not None
+
+    def test_has_nine_members(self) -> None:
+        assert len(SkillEffectType) == 9

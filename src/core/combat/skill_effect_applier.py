@@ -139,12 +139,108 @@ def _apply_ailment(
     return events
 
 
+def _apply_trigger_mechanic(
+    effect: SkillEffect, targets: list[Character],
+    rnd: int, combatant: Character,
+) -> list[CombatEvent]:
+    """Ativa mecanica de classe via mechanic_id dispatch."""
+    if effect.mechanic_id is None:
+        return []
+    handler = _MECHANIC_DISPATCH.get(effect.mechanic_id)
+    if handler is None:
+        return []
+    events: list[CombatEvent] = []
+    for target in targets:
+        handler(target)
+        events.append(CombatEvent(
+            round_number=rnd, actor_name=combatant.name,
+            target_name=target.name,
+            event_type=EventType.SKILL_USE,
+            description=effect.mechanic_id,
+        ))
+    return events
+
+
+def _apply_resource_gain(
+    effect: SkillEffect, targets: list[Character],
+    rnd: int, combatant: Character,
+) -> list[CombatEvent]:
+    """Concede recurso de classe ao alvo."""
+    if effect.resource_type is None:
+        return []
+    events: list[CombatEvent] = []
+    for target in targets:
+        resource = getattr(target, effect.resource_type, None)
+        if resource is None:
+            continue
+        gain_fn = getattr(resource, "gain", None)
+        if gain_fn is None:
+            continue
+        gain_fn(effect.base_power)
+        events.append(CombatEvent(
+            round_number=rnd, actor_name=combatant.name,
+            target_name=target.name,
+            event_type=EventType.BUFF,
+            value=effect.base_power,
+            description=f"+{effect.base_power} {effect.resource_type}",
+        ))
+    return events
+
+
+def _apply_shield(
+    effect: SkillEffect, targets: list[Character],
+    rnd: int, combatant: Character,
+) -> list[CombatEvent]:
+    """Cria barreira/temp HP no alvo."""
+    events: list[CombatEvent] = []
+    for target in targets:
+        barrier = getattr(target, "barrier", None)
+        if barrier is not None:
+            add_fn = getattr(barrier, "add", None)
+            if add_fn is not None:
+                add_fn(effect.base_power)
+        events.append(CombatEvent(
+            round_number=rnd, actor_name=combatant.name,
+            target_name=target.name,
+            event_type=EventType.BUFF,
+            value=effect.base_power,
+            description="shield",
+        ))
+    return events
+
+
+def _apply_counter_attack(
+    effect: SkillEffect, targets: list[Character],
+    rnd: int, combatant: Character,
+) -> list[CombatEvent]:
+    """Contra-ataque reativo (dano baseado no ATK do reator)."""
+    events: list[CombatEvent] = []
+    attack = effect.base_power + combatant.physical_attack
+    for target in targets:
+        defense = target.physical_defense
+        result = resolve_damage(attack_power=attack, defense=defense)
+        target.take_damage(result.final_damage)
+        events.append(CombatEvent(
+            round_number=rnd, actor_name=combatant.name,
+            target_name=target.name, damage=result,
+            description="counter_attack",
+        ))
+    return events
+
+
+_MECHANIC_DISPATCH: dict[str, Callable[..., None]] = {}
+
+
 _APPLIERS: dict[SkillEffectType, Callable[..., list[CombatEvent]]] = {
     SkillEffectType.DAMAGE: _apply_damage,
     SkillEffectType.HEAL: _apply_heal,
     SkillEffectType.BUFF: _apply_buff,
     SkillEffectType.DEBUFF: _apply_debuff,
     SkillEffectType.APPLY_AILMENT: _apply_ailment,
+    SkillEffectType.TRIGGER_CLASS_MECHANIC: _apply_trigger_mechanic,
+    SkillEffectType.RESOURCE_GAIN: _apply_resource_gain,
+    SkillEffectType.SHIELD: _apply_shield,
+    SkillEffectType.COUNTER_ATTACK: _apply_counter_attack,
 }
 
 _AILMENT_FACTORIES: dict[str, Callable[..., object]] = {

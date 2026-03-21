@@ -22,6 +22,8 @@ class SkillEffect:
     stat: ModifiableStat | None = None
     ailment_id: str | None = None
     duration: int = _DEFAULT_DURATION
+    mechanic_id: str | None = None
+    resource_type: str | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> SkillEffect:
@@ -35,6 +37,8 @@ class SkillEffect:
             stat=stat,
             ailment_id=data.get("ailment_id"),  # type: ignore[arg-type]
             duration=int(data.get("duration", _DEFAULT_DURATION)),  # type: ignore[arg-type]
+            mechanic_id=data.get("mechanic_id"),  # type: ignore[arg-type]
+            resource_type=data.get("resource_type"),  # type: ignore[arg-type]
         )
 
 

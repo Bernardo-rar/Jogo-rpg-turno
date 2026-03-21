@@ -11,3 +11,7 @@ class SkillEffectType(Enum):
     BUFF = auto()
     DEBUFF = auto()
     APPLY_AILMENT = auto()
+    TRIGGER_CLASS_MECHANIC = auto()
+    RESOURCE_GAIN = auto()
+    SHIELD = auto()
+    COUNTER_ATTACK = auto()
