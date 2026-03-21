@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from src.core.elements.element_type import ElementType
 
 from src.core.characters.character import Character
-from src.core.combat.action_economy import ActionEconomy
+from src.core.combat.action_economy import ActionEconomy, ActionType
 from src.core.combat.damage import DamageResult
 from src.core.combat.effect_phase import (
     EffectLogEntry,
@@ -96,10 +96,12 @@ class CombatEngine:
         party: list[Character],
         enemies: list[Character],
         turn_handler: TurnHandler,
+        reaction_manager: object | None = None,
     ) -> None:
         self._party = party
         self._enemies = enemies
         self._handler = turn_handler
+        self._reaction_manager = reaction_manager
         all_combatants = party + enemies
         names = [c.name for c in all_combatants]
         if len(names) != len(set(names)):
@@ -226,6 +228,43 @@ class CombatEngine:
     @property
     def effect_log(self) -> list[EffectLogEntry]:
         return list(self._effect_log)
+
+    def process_damage_reactions(
+        self, events: list[CombatEvent],
+    ) -> list[CombatEvent]:
+        """Checa reacoes para eventos de dano. Retorna eventos de reacao."""
+        if self._reaction_manager is None:
+            return []
+        reaction_events: list[CombatEvent] = []
+        for event in events:
+            if event.damage is None:
+                continue
+            reaction_events.extend(
+                self._trigger_on_damage(event),
+            )
+        return reaction_events
+
+    def _trigger_on_damage(
+        self, event: CombatEvent,
+    ) -> list[CombatEvent]:
+        """Dispara ON_DAMAGE_RECEIVED para o alvo do dano."""
+        from src.core.combat.reaction_system import ReactionTrigger
+
+        target = self._participants.get(event.target_name)
+        if target is None or not target.is_alive:
+            return []
+        economy = self._economies.get(event.target_name)
+        if economy is None:
+            return []
+        check_fn = getattr(self._reaction_manager, "check_trigger", None)
+        if check_fn is None:
+            return []
+        return check_fn(
+            trigger=ReactionTrigger.ON_DAMAGE_RECEIVED,
+            target=target,
+            economy=economy,
+            round_number=self._round,
+        )
 
     def _get_teams(
         self, combatant: Character
