@@ -138,6 +138,12 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
     def on_level_up(self) -> None:
         """Hook para subclasses atualizarem recursos ao subir de nivel."""
 
+    def get_resource_snapshots(
+        self,
+    ) -> tuple[()]:
+        """Retorna snapshots dos recursos de classe. Override nas subclasses."""
+        return ()
+
 
 CON_HEAL_BONUS_PER_POINT = 0.05
 

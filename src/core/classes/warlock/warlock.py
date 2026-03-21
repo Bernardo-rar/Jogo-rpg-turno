@@ -4,6 +4,10 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.warlock.familiar import (
     FamiliarType,
     load_familiar_configs,
@@ -160,3 +164,15 @@ class Warlock(Character):
         if fam_config.stat_bonus_type == stat_name:
             return 1.0 + fam_config.stat_bonus_pct
         return 1.0
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Warlock para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Insanity",
+                display_type=ResourceDisplayType.BAR,
+                current=self.insanity.current,
+                maximum=InsanityBar.MAX_INSANITY,
+                color=(180, 50, 200),
+            ),
+        )

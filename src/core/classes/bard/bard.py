@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.bard.bard_config import load_bard_config
 from src.core.classes.bard.musical_groove import MusicalGroove, load_groove_config
 
@@ -77,3 +81,15 @@ class Bard(Character):
         passive = int(base * _CONFIG.speed_bonus_pct)
         groove = int(base * self._groove.speed_bonus)
         return base + passive + groove
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Bard para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Groove",
+                display_type=ResourceDisplayType.COUNTER,
+                current=self.groove.stacks,
+                maximum=self.groove.max_stacks,
+                color=(255, 120, 180),
+            ),
+        )

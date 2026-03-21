@@ -4,6 +4,10 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.rogue.rogue_config import load_rogue_config
 from src.core.classes.rogue.stealth import Stealth
 
@@ -95,3 +99,16 @@ class Rogue(Character):
         """Decrementa boost de speed no fim do turno."""
         if self._crit_speed_remaining > 0:
             self._crit_speed_remaining -= 1
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Rogue para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Stealth",
+                display_type=ResourceDisplayType.TOGGLE,
+                current=1 if self.stealth.is_active else 0,
+                maximum=1,
+                color=(80, 80, 120),
+                label="Active" if self.stealth.is_active else "Hidden",
+            ),
+        )

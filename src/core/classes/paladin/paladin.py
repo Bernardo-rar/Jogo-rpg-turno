@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.paladin.aura import Aura, AuraModifier, load_aura_modifiers
 from src.core.classes.paladin.divine_favor import DivineFavor
 from src.core.classes.paladin.glory_config import load_glory_config
@@ -109,3 +113,23 @@ class Paladin(Character):
     def hp_regen(self) -> int:
         base = super().hp_regen
         return int(base * self._aura_multiplier("regen_multiplier"))
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Paladin para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Divine Favor",
+                display_type=ResourceDisplayType.COUNTER,
+                current=self.divine_favor.current,
+                maximum=self.divine_favor.max_stacks,
+                color=(255, 220, 100),
+            ),
+            ClassResourceSnapshot(
+                name="Aura",
+                display_type=ResourceDisplayType.TOGGLE,
+                current=1,
+                maximum=1,
+                color=(255, 220, 100),
+                label=self._aura.name,
+            ),
+        )

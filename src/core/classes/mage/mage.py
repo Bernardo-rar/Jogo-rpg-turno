@@ -4,6 +4,10 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.mage.barrier import BARRIER_EFFICIENCY, Barrier
 from src.core.classes.mage.overcharge import OverchargeConfig, load_overcharge_config
 
@@ -77,3 +81,23 @@ class Mage(Character):
         """Mana gerada por ataque basico: MIND * mod."""
         mind = self._attributes.get(AttributeType.MIND)
         return mind * MANA_PER_BASIC_ATTACK_MOD
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Mage para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Barrier",
+                display_type=ResourceDisplayType.BAR,
+                current=self.barrier.current,
+                maximum=self.barrier.current,
+                color=(150, 200, 255),
+            ),
+            ClassResourceSnapshot(
+                name="Overcharge",
+                display_type=ResourceDisplayType.TOGGLE,
+                current=1 if self.is_overcharged else 0,
+                maximum=1,
+                color=(150, 200, 255),
+                label="ON" if self.is_overcharged else "OFF",
+            ),
+        )

@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from src.core.characters.class_resource_snapshot import ClassResourceSnapshot
 from src.core.characters.position import Position
 from src.core.combat.combat_engine import CombatEvent, CombatResult
 from src.core.combat.effect_phase import EffectLogEntry
@@ -26,6 +27,7 @@ class CharacterSnapshot:
     is_alive: bool
     active_effects: tuple[str, ...]
     is_party: bool
+    class_resources: tuple[ClassResourceSnapshot, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -50,6 +52,7 @@ class BattleReplay:
 def snapshot_character(char: Character, *, is_party: bool) -> CharacterSnapshot:
     """Captura estado atual de um Character como snapshot imutavel."""
     effects = _extract_effect_names(char)
+    resources = _extract_class_resources(char)
     return CharacterSnapshot(
         name=char.name,
         current_hp=char.current_hp,
@@ -60,8 +63,18 @@ def snapshot_character(char: Character, *, is_party: bool) -> CharacterSnapshot:
         is_alive=char.is_alive,
         active_effects=effects,
         is_party=is_party,
+        class_resources=resources,
     )
 
 
 def _extract_effect_names(char: Character) -> tuple[str, ...]:
     return tuple(e.name for e in char.effect_manager.active_effects)
+
+
+def _extract_class_resources(
+    char: Character,
+) -> tuple[ClassResourceSnapshot, ...]:
+    get_fn = getattr(char, "get_resource_snapshots", None)
+    if get_fn is None:
+        return ()
+    return tuple(get_fn())

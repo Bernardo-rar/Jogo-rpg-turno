@@ -4,6 +4,10 @@ from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.cleric.divinity import Divinity, load_divinity_configs
 from src.core.classes.cleric.holy_power import HOLY_POWER_PER_HEAL, HolyPower
 
@@ -85,3 +89,15 @@ class Cleric(Character):
         if self._channeling:
             return int(base * CHANNEL_DEF_MULTIPLIER)
         return base
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Cleric para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Holy Power",
+                display_type=ResourceDisplayType.COUNTER,
+                current=self.holy_power.current,
+                maximum=self.holy_power.limit,
+                color=(255, 255, 150),
+            ),
+        )

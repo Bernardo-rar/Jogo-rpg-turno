@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.druid.animal_form import (
     AnimalForm,
     AnimalFormModifier,
@@ -145,3 +149,16 @@ class Druid(Character):
     @property
     def _form_mod(self) -> AnimalFormModifier:
         return _FORM_MODIFIERS[self._current_form]
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Druid para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Form",
+                display_type=ResourceDisplayType.TOGGLE,
+                current=1,
+                maximum=1,
+                color=(109, 139, 34),
+                label=self._current_form.name,
+            ),
+        )

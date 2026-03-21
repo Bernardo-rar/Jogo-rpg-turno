@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.fighter.action_points import ActionPoints
 from src.core.classes.fighter.stance import Stance, StanceModifier, load_stance_modifiers
 
@@ -60,3 +64,23 @@ class Fighter(Character):
     @property
     def _current_stance_mod(self) -> StanceModifier:
         return _STANCE_MODIFIERS[self._stance]
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Fighter para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="AP",
+                display_type=ResourceDisplayType.COUNTER,
+                current=self.action_points.current,
+                maximum=self.action_points.limit,
+                color=(255, 200, 50),
+            ),
+            ClassResourceSnapshot(
+                name="Stance",
+                display_type=ResourceDisplayType.TOGGLE,
+                current=1,
+                maximum=1,
+                color=(255, 200, 50),
+                label=self._stance.name,
+            ),
+        )

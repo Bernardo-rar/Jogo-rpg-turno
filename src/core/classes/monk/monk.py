@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.monk.equilibrium_bar import (
     EquilibriumBar,
     EquilibriumState,
@@ -87,3 +91,16 @@ class Monk(Character):
         if state == EquilibriumState.BALANCED:
             return _EQ_CONFIG.balance_def_bonus
         return 0.0
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Monk para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Equilibrium",
+                display_type=ResourceDisplayType.BAR,
+                current=self.equilibrium.value,
+                maximum=self.equilibrium.max_value,
+                color=(100, 220, 220),
+                label=self.equilibrium.state.name,
+            ),
+        )

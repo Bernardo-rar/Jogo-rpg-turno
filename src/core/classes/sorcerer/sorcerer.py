@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.sorcerer.mana_rotation import (
     ManaRotation,
     load_mana_rotation_config,
@@ -105,3 +109,23 @@ class Sorcerer(Character):
     def on_level_up(self) -> None:
         new_max = int(self.max_mana * _ROTATION_CONFIG.max_ratio)
         self._mana_rotation.update_max(new_max)
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Sorcerer para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Mana Rotation",
+                display_type=ResourceDisplayType.BAR,
+                current=self.mana_rotation.current,
+                maximum=self.mana_rotation.max_mana,
+                color=(26, 188, 156),
+            ),
+            ClassResourceSnapshot(
+                name="Overcharged",
+                display_type=ResourceDisplayType.TOGGLE,
+                current=1 if self.is_overcharged else 0,
+                maximum=1,
+                color=(26, 188, 156),
+                label="ON" if self.is_overcharged else "OFF",
+            ),
+        )

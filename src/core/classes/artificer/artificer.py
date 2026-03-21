@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.artificer.artificer_config import load_artificer_config
 from src.core.classes.artificer.tech_suit import TechSuit, load_suit_config
 
@@ -62,3 +66,16 @@ class Artificer(Character):
     def scroll_potentiation(self) -> float:
         """Bonus percentual ao dano de scrolls."""
         return _CONFIG.scroll_potentiation
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Artificer para a UI."""
+        energy = int(self._mana_ratio() * 100)
+        return (
+            ClassResourceSnapshot(
+                name="Suit Energy",
+                display_type=ResourceDisplayType.BAR,
+                current=energy,
+                maximum=100,
+                color=(80, 200, 180),
+            ),
+        )

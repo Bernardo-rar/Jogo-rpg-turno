@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.barbarian.fury_bar import FuryBar
 from src.core.classes.barbarian.fury_config import load_fury_config
 
@@ -71,3 +75,15 @@ class Barbarian(Character):
         """Atualiza fury max baseado no novo max_hp."""
         new_max = int(self.max_hp * _FURY_CONFIG.fury_max_ratio)
         self._fury_bar.update_max(new_max)
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Barbarian para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Fury",
+                display_type=ResourceDisplayType.BAR,
+                current=self.fury_bar.current,
+                maximum=self.fury_bar.max_fury,
+                color=(220, 50, 30),
+            ),
+        )

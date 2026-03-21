@@ -3,6 +3,10 @@ from __future__ import annotations
 from src.core.attributes.attributes import Attributes
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
+from src.core.characters.class_resource_snapshot import (
+    ClassResourceSnapshot,
+    ResourceDisplayType,
+)
 from src.core.classes.ranger.hunters_mark import HuntersMark, load_hunters_mark_config
 from src.core.classes.ranger.predatory_focus import PredatoryFocus
 from src.core.classes.ranger.predatory_focus_config import load_predatory_focus_config
@@ -78,3 +82,15 @@ class Ranger(Character):
         base = super().physical_attack
         focus_mult = 1.0 + self._focus.current * _FOCUS_CONFIG.atk_bonus_per_stack
         return int(base * focus_mult)
+
+    def get_resource_snapshots(self) -> tuple[ClassResourceSnapshot, ...]:
+        """Retorna snapshots dos recursos do Ranger para a UI."""
+        return (
+            ClassResourceSnapshot(
+                name="Focus",
+                display_type=ResourceDisplayType.COUNTER,
+                current=self.predatory_focus.current,
+                maximum=self.predatory_focus.max_stacks,
+                color=(50, 200, 80),
+            ),
+        )
