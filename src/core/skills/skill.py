@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from src.core.combat.action_economy import ActionType
+from src.core.skills.resource_cost import ResourceCost
 from src.core.skills.skill_effect import SkillEffect
 from src.core.skills.target_type import TargetType
 
@@ -28,6 +29,10 @@ class Skill:
     stamina_cost: int = _DEFAULT_STAMINA
     required_level: int = _DEFAULT_LEVEL
     description: str = ""
+    class_id: str = ""
+    resource_costs: tuple[ResourceCost, ...] = ()
+    reaction_trigger: str = ""
+    reaction_mode: str = ""
 
     @classmethod
     def from_dict(cls, skill_id: str, data: dict[str, object]) -> Skill:
@@ -36,6 +41,7 @@ class Skill:
         effects = tuple(
             SkillEffect.from_dict(e) for e in raw_effects  # type: ignore[union-attr]
         )
+        resource_costs = _parse_resource_costs(data.get("resource_costs"))
         return cls(
             skill_id=skill_id,
             name=str(data["name"]),
@@ -48,4 +54,16 @@ class Skill:
             stamina_cost=int(data.get("stamina_cost", _DEFAULT_STAMINA)),  # type: ignore[arg-type]
             required_level=int(data.get("required_level", _DEFAULT_LEVEL)),  # type: ignore[arg-type]
             description=str(data.get("description", "")),
+            class_id=str(data.get("class_id", "")),
+            resource_costs=resource_costs,
+            reaction_trigger=str(data.get("reaction_trigger", "")),
+            reaction_mode=str(data.get("reaction_mode", "")),
         )
+
+
+def _parse_resource_costs(
+    raw: object,
+) -> tuple[ResourceCost, ...]:
+    if not raw:
+        return ()
+    return tuple(ResourceCost.from_dict(rc) for rc in raw)  # type: ignore[union-attr]

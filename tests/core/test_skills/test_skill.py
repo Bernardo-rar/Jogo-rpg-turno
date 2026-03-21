@@ -7,6 +7,7 @@ import pytest
 from src.core.combat.action_economy import ActionType
 from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.elements.element_type import ElementType
+from src.core.skills.resource_cost import ResourceCost
 from src.core.skills.skill import Skill
 from src.core.skills.skill_effect import SkillEffect
 from src.core.skills.skill_effect_type import SkillEffectType
@@ -65,6 +66,37 @@ class TestSkillCreation:
         assert sk.stamina_cost == 0
         assert sk.required_level == 1
         assert sk.description == ""
+        assert sk.class_id == ""
+        assert sk.resource_costs == ()
+        assert sk.reaction_trigger == ""
+        assert sk.reaction_mode == ""
+
+    def test_class_id_and_resource_costs(self) -> None:
+        costs = (ResourceCost("action_points", 2),)
+        sk = Skill(
+            skill_id="power_strike", name="Power Strike", mana_cost=5,
+            action_type=ActionType.ACTION, target_type=TargetType.SINGLE_ENEMY,
+            effects=(_damage_effect(),), slot_cost=4,
+            class_id="fighter", resource_costs=costs,
+        )
+        assert sk.class_id == "fighter"
+        assert len(sk.resource_costs) == 1
+        assert sk.resource_costs[0].resource_type == "action_points"
+        assert sk.resource_costs[0].amount == 2
+
+    def test_reaction_fields(self) -> None:
+        sk = Skill(
+            skill_id="parry", name="Parry", mana_cost=0,
+            action_type=ActionType.REACTION, target_type=TargetType.SELF,
+            effects=(), slot_cost=3,
+            class_id="fighter",
+            resource_costs=(ResourceCost("action_points", 1),),
+            reaction_trigger="on_damage_received",
+            reaction_mode="passive",
+        )
+        assert sk.action_type == ActionType.REACTION
+        assert sk.reaction_trigger == "on_damage_received"
+        assert sk.reaction_mode == "passive"
 
     def test_is_frozen(self) -> None:
         sk = Skill(
@@ -185,3 +217,60 @@ class TestSkillFromDict:
         assert sk.stamina_cost == 20
         assert sk.required_level == 6
         assert sk.description == "Revive um aliado caido"
+
+    def test_from_dict_new_fields_default_empty(self) -> None:
+        data: dict[str, object] = {
+            "name": "Zap",
+            "mana_cost": 5,
+            "action_type": "ACTION",
+            "target_type": "SINGLE_ENEMY",
+            "effects": [{"effect_type": "DAMAGE", "base_power": 10}],
+            "slot_cost": 1,
+        }
+        sk = Skill.from_dict("zap", data)
+        assert sk.class_id == ""
+        assert sk.resource_costs == ()
+        assert sk.reaction_trigger == ""
+        assert sk.reaction_mode == ""
+
+    def test_from_dict_with_class_id_and_resource_costs(self) -> None:
+        data: dict[str, object] = {
+            "name": "Power Strike",
+            "mana_cost": 5,
+            "action_type": "ACTION",
+            "target_type": "SINGLE_ENEMY",
+            "effects": [{"effect_type": "DAMAGE", "base_power": 40}],
+            "slot_cost": 4,
+            "class_id": "fighter",
+            "resource_costs": [
+                {"resource_type": "action_points", "amount": 2},
+            ],
+        }
+        sk = Skill.from_dict("power_strike", data)
+        assert sk.class_id == "fighter"
+        assert len(sk.resource_costs) == 1
+        assert sk.resource_costs[0].resource_type == "action_points"
+        assert sk.resource_costs[0].amount == 2
+
+    def test_from_dict_with_reaction_fields(self) -> None:
+        data: dict[str, object] = {
+            "name": "Parry",
+            "mana_cost": 0,
+            "action_type": "REACTION",
+            "target_type": "SELF",
+            "effects": [
+                {"effect_type": "BUFF", "base_power": 15,
+                 "stat": "PHYSICAL_DEFENSE", "duration": 1},
+            ],
+            "slot_cost": 3,
+            "class_id": "fighter",
+            "resource_costs": [
+                {"resource_type": "action_points", "amount": 1},
+            ],
+            "reaction_trigger": "on_damage_received",
+            "reaction_mode": "passive",
+        }
+        sk = Skill.from_dict("parry", data)
+        assert sk.reaction_trigger == "on_damage_received"
+        assert sk.reaction_mode == "passive"
+        assert sk.resource_costs[0].amount == 1
