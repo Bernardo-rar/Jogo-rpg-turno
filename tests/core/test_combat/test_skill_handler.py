@@ -6,6 +6,7 @@ from src.core.combat.action_economy import ActionEconomy, ActionType
 from src.core.combat.combat_engine import EventType, TurnContext
 from src.core.combat.skill_handler import SkillHandler
 from src.core.skills.cooldown_tracker import CooldownTracker
+from src.core.skills.resource_cost import ResourceCost
 from src.core.skills.skill import Skill
 from src.core.skills.skill_bar import SkillBar
 from src.core.skills.skill_effect import SkillEffect
@@ -150,3 +151,74 @@ class TestSkillHandler:
         events = handler.execute_turn(_context(hero))
         assert len(events) == 1
         assert events[0].damage is not None
+
+
+class _FakeResource:
+    """Recurso com interface spend/current para testes."""
+
+    def __init__(self, current: int) -> None:
+        self._current = current
+
+    @property
+    def current(self) -> int:
+        return self._current
+
+    def spend(self, amount: int) -> bool:
+        if self._current < amount:
+            return False
+        self._current -= amount
+        return True
+
+
+def _power_strike() -> Skill:
+    return Skill(
+        skill_id="power_strike", name="Power Strike", mana_cost=5,
+        action_type=ActionType.ACTION, target_type=TargetType.SINGLE_ENEMY,
+        effects=(SkillEffect(effect_type=SkillEffectType.DAMAGE, base_power=40),),
+        slot_cost=4,
+        class_id="fighter",
+        resource_costs=(ResourceCost("action_points", 2),),
+    )
+
+
+class TestSkillHandlerResourceCosts:
+    def test_skip_skill_when_resource_not_affordable(self) -> None:
+        hero = _build_char("Hero")
+        hero.action_points = _FakeResource(1)
+        hero._skill_bar = _make_bar(_power_strike())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert events == []
+
+    def test_skill_picked_when_resource_affordable(self) -> None:
+        hero = _build_char("Hero")
+        hero.action_points = _FakeResource(5)
+        hero._skill_bar = _make_bar(_power_strike())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert len(events) == 1
+
+    def test_skill_spends_class_resource(self) -> None:
+        hero = _build_char("Hero")
+        resource = _FakeResource(5)
+        hero.action_points = resource
+        hero._skill_bar = _make_bar(_power_strike())
+        handler = SkillHandler()
+        handler.execute_turn(_context(hero))
+        assert resource.current == 3
+
+    def test_skill_without_resource_costs_works_normally(self) -> None:
+        hero = _build_char("Hero")
+        hero._skill_bar = _make_bar(_fireball())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert len(events) == 1
+
+    def test_fallback_to_cheaper_skill(self) -> None:
+        hero = _build_char("Hero")
+        hero.action_points = _FakeResource(0)
+        hero._skill_bar = _make_bar(_power_strike(), _fireball())
+        handler = SkillHandler()
+        events = handler.execute_turn(_context(hero))
+        assert len(events) == 1
+        assert events[0].event_type == EventType.DAMAGE

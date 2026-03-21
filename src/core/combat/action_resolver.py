@@ -13,6 +13,10 @@ from src.core.combat.damage import resolve_damage
 from src.core.combat.player_action import PlayerAction, PlayerActionType
 from src.core.combat.skill_effect_applier import apply_skill_effect
 from src.core.combat.target_resolver import resolve_targets
+from src.core.skills.class_resource_resolver import (
+    can_afford_resource,
+    spend_resource,
+)
 from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.items.consumable import Consumable
 from src.core.skills.skill import Skill
@@ -136,12 +140,15 @@ def _resolve_skill(
         return []
     if skill.mana_cost > context.combatant.current_mana:
         return []
+    if not _can_afford_skill_resources(context.combatant, skill):
+        return []
     bar = context.combatant.skill_bar
     if not bar.cooldown_tracker.is_ready(skill.skill_id):
         return []
     if not context.action_economy.use(skill.action_type):
         return []
     context.combatant.spend_mana(skill.mana_cost)
+    _spend_skill_resources(context.combatant, skill)
     targets = _resolve_player_targets(skill.target_type, action, context)
     events: list[CombatEvent] = []
     for effect in skill.effects:
@@ -150,6 +157,17 @@ def _resolve_skill(
         ))
     _start_skill_cooldown(context.combatant, skill)
     return events
+
+
+def _can_afford_skill_resources(combatant: object, skill: Skill) -> bool:
+    return all(
+        can_afford_resource(combatant, c) for c in skill.resource_costs
+    )
+
+
+def _spend_skill_resources(combatant: object, skill: Skill) -> None:
+    for cost in skill.resource_costs:
+        spend_resource(combatant, cost)
 
 
 def _find_skill(skill_id: str, combatant: Character) -> Skill | None:
