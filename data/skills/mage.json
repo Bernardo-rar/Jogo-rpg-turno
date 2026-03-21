@@ -1,0 +1,82 @@
+{
+  "fire_bolt": {
+    "name": "Fire Bolt",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 25, "element": "FIRE"}
+    ],
+    "slot_cost": 3,
+    "class_id": "mage",
+    "required_level": 1,
+    "description": "Projétil de fogo que causa dano elemental"
+  },
+  "ice_lance": {
+    "name": "Ice Lance",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 25, "element": "ICE"}
+    ],
+    "slot_cost": 3,
+    "class_id": "mage",
+    "required_level": 1,
+    "description": "Lanca de gelo que perfura a defesa magica"
+  },
+  "arcane_barrier": {
+    "name": "Arcane Barrier",
+    "mana_cost": 15,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "SHIELD", "base_power": 30}
+    ],
+    "slot_cost": 4,
+    "class_id": "mage",
+    "required_level": 1,
+    "description": "Cria uma barreira arcana que absorve dano"
+  },
+  "overcharge_toggle": {
+    "name": "Overcharge Toggle",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "activate_overcharge"}
+    ],
+    "slot_cost": 3,
+    "class_id": "mage",
+    "required_level": 2,
+    "description": "Ativa modo overcharge: magias custam mais mana mas causam mais dano"
+  },
+  "chain_lightning": {
+    "name": "Chain Lightning",
+    "mana_cost": 18,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 35, "element": "LIGHTNING"}
+    ],
+    "slot_cost": 6,
+    "class_id": "mage",
+    "required_level": 3,
+    "description": "Relampago que salta entre todos os inimigos"
+  },
+  "mana_shield": {
+    "name": "Mana Shield",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 20, "stat": "MAGICAL_DEFENSE", "duration": 1}
+    ],
+    "slot_cost": 4,
+    "class_id": "mage",
+    "reaction_trigger": "on_damage_received",
+    "reaction_mode": "prepared",
+    "required_level": 2,
+    "description": "Escudo de mana que aumenta defesa magica ao receber dano"
+  }
+}

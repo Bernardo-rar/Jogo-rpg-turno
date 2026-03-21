@@ -1,0 +1,96 @@
+{
+  "reckless_strike": {
+    "name": "Reckless Strike",
+    "mana_cost": 5,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 45},
+      {"effect_type": "DEBUFF", "base_power": 10, "stat": "PHYSICAL_DEFENSE", "duration": 1}
+    ],
+    "slot_cost": 4,
+    "class_id": "barbarian",
+    "resource_costs": [
+      {"resource_type": "fury_bar", "amount": 20}
+    ],
+    "required_level": 1,
+    "description": "Ataque imprudente que causa dano alto mas reduz a propria defesa"
+  },
+  "whirlwind": {
+    "name": "Whirlwind",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 30}
+    ],
+    "slot_cost": 5,
+    "class_id": "barbarian",
+    "resource_costs": [
+      {"resource_type": "fury_bar", "amount": 30}
+    ],
+    "required_level": 2,
+    "description": "Gira a arma atingindo todos os inimigos"
+  },
+  "reckless_stance": {
+    "name": "Reckless Stance",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "activate_reckless_stance"}
+    ],
+    "slot_cost": 2,
+    "class_id": "barbarian",
+    "required_level": 1,
+    "description": "Ativa estancia imprudente: mais dano, menos defesa"
+  },
+  "war_cry": {
+    "name": "War Cry",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 8, "stat": "PHYSICAL_ATTACK", "duration": 2}
+    ],
+    "slot_cost": 3,
+    "class_id": "barbarian",
+    "resource_costs": [
+      {"resource_type": "fury_bar", "amount": 10}
+    ],
+    "required_level": 1,
+    "description": "Grito de guerra que aumenta o ataque fisico de todos os aliados"
+  },
+  "blood_frenzy": {
+    "name": "Blood Frenzy",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 60}
+    ],
+    "slot_cost": 8,
+    "class_id": "barbarian",
+    "cooldown_turns": 5,
+    "required_level": 5,
+    "description": "Consome toda a furia para desferir um golpe devastador"
+  },
+  "tough_it_out": {
+    "name": "Tough It Out",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "COUNTER_ATTACK", "base_power": 15}
+    ],
+    "slot_cost": 3,
+    "class_id": "barbarian",
+    "resource_costs": [
+      {"resource_type": "fury_bar", "amount": 15}
+    ],
+    "reaction_trigger": "on_damage_received",
+    "reaction_mode": "passive",
+    "required_level": 1,
+    "description": "Aguenta o golpe e contra-ataca com furia"
+  }
+}

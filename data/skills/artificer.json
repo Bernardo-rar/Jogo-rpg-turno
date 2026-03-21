@@ -1,0 +1,85 @@
+{
+  "energy_blast": {
+    "name": "Energy Blast",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 30, "element": "LIGHTNING"}
+    ],
+    "slot_cost": 3,
+    "class_id": "artificer",
+    "required_level": 1,
+    "description": "Disparo de energia eletrica contra um unico alvo"
+  },
+  "overclock": {
+    "name": "Overclock",
+    "mana_cost": 15,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 10, "stat": "PHYSICAL_ATTACK", "duration": 2},
+      {"effect_type": "BUFF", "base_power": 5, "stat": "SPEED", "duration": 2}
+    ],
+    "slot_cost": 4,
+    "class_id": "artificer",
+    "required_level": 1,
+    "description": "Overclock nos sistemas que aumenta ataque e velocidade"
+  },
+  "repair_protocol": {
+    "name": "Repair Protocol",
+    "mana_cost": 18,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 30}
+    ],
+    "slot_cost": 4,
+    "class_id": "artificer",
+    "required_level": 1,
+    "description": "Protocolo de reparo que restaura vida de um aliado"
+  },
+  "deploy_turret": {
+    "name": "Deploy Turret",
+    "mana_cost": 25,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 20, "element": "LIGHTNING"}
+    ],
+    "slot_cost": 6,
+    "class_id": "artificer",
+    "cooldown_turns": 3,
+    "required_level": 3,
+    "description": "Deploia uma torreta que dispara energia eletrica no alvo"
+  },
+  "emp_blast": {
+    "name": "EMP Blast",
+    "mana_cost": 20,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 25, "element": "LIGHTNING"},
+      {"effect_type": "DEBUFF", "base_power": 10, "stat": "MAGICAL_ATTACK", "duration": 2}
+    ],
+    "slot_cost": 6,
+    "class_id": "artificer",
+    "required_level": 3,
+    "description": "Pulso eletromagnetico que causa dano e reduz ataque magico de todos os inimigos"
+  },
+  "energy_shield": {
+    "name": "Energy Shield",
+    "mana_cost": 15,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "SHIELD", "base_power": 35}
+    ],
+    "slot_cost": 4,
+    "class_id": "artificer",
+    "reaction_trigger": "on_ally_damaged",
+    "reaction_mode": "prepared",
+    "required_level": 2,
+    "description": "Escudo de energia ativado quando um aliado e ferido"
+  }
+}

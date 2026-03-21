@@ -1,0 +1,92 @@
+{
+  "eldritch_blast": {
+    "name": "Eldritch Blast",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 30, "element": "DARKNESS"},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 10, "resource_type": "insanity"}
+    ],
+    "slot_cost": 3,
+    "class_id": "warlock",
+    "required_level": 1,
+    "description": "Raio eldritchiano que causa dano sombrio e gera insanidade"
+  },
+  "drain_life": {
+    "name": "Drain Life",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 25, "element": "DARKNESS"}
+    ],
+    "slot_cost": 4,
+    "class_id": "warlock",
+    "required_level": 1,
+    "description": "Drena vida do alvo, parte do dano retorna como cura"
+  },
+  "hex": {
+    "name": "Hex",
+    "mana_cost": 8,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DEBUFF", "base_power": 10, "stat": "PHYSICAL_DEFENSE", "duration": 3},
+      {"effect_type": "DEBUFF", "base_power": 10, "stat": "PHYSICAL_ATTACK", "duration": 3},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 10, "resource_type": "insanity"}
+    ],
+    "slot_cost": 3,
+    "class_id": "warlock",
+    "required_level": 1,
+    "description": "Maldicao que reduz defesa e ataque do alvo, gerando insanidade"
+  },
+  "dark_pact": {
+    "name": "Dark Pact",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "RESOURCE_GAIN", "base_power": 20, "resource_type": "insanity"}
+    ],
+    "slot_cost": 2,
+    "class_id": "warlock",
+    "required_level": 2,
+    "description": "Pacto sombrio que gera insanidade rapidamente"
+  },
+  "madness_unleashed": {
+    "name": "Madness Unleashed",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 60, "element": "DARKNESS"}
+    ],
+    "slot_cost": 8,
+    "class_id": "warlock",
+    "resource_costs": [
+      {"resource_type": "insanity", "amount": 80}
+    ],
+    "cooldown_turns": 6,
+    "required_level": 5,
+    "description": "Libera toda a insanidade acumulada em uma explosao de trevas"
+  },
+  "shadow_step": {
+    "name": "Shadow Step",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 20, "stat": "PHYSICAL_DEFENSE", "duration": 1}
+    ],
+    "slot_cost": 3,
+    "class_id": "warlock",
+    "resource_costs": [
+      {"resource_type": "insanity", "amount": 20}
+    ],
+    "reaction_trigger": "on_enemy_attack",
+    "reaction_mode": "passive",
+    "required_level": 2,
+    "description": "Desliza pelas sombras para esquivar de um ataque"
+  }
+}

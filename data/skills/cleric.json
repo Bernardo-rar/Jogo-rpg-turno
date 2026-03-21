@@ -1,0 +1,94 @@
+{
+  "holy_heal": {
+    "name": "Holy Heal",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 30},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 1, "resource_type": "holy_power"}
+    ],
+    "slot_cost": 4,
+    "class_id": "cleric",
+    "required_level": 1,
+    "description": "Cura divina que restaura vida e gera poder sagrado"
+  },
+  "prayer_of_healing": {
+    "name": "Prayer of Healing",
+    "mana_cost": 22,
+    "action_type": "ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 20}
+    ],
+    "slot_cost": 6,
+    "class_id": "cleric",
+    "required_level": 2,
+    "description": "Oracao que cura todos os aliados simultaneamente"
+  },
+  "divine_smite": {
+    "name": "Divine Smite",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 35, "element": "HOLY"}
+    ],
+    "slot_cost": 4,
+    "class_id": "cleric",
+    "resource_costs": [
+      {"resource_type": "holy_power", "amount": 1}
+    ],
+    "required_level": 1,
+    "description": "Golpe divino que canaliza poder sagrado contra o inimigo"
+  },
+  "channel_divinity": {
+    "name": "Channel Divinity",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 15, "stat": "MAGICAL_ATTACK", "duration": 3},
+      {"effect_type": "BUFF", "base_power": 15, "stat": "MAGICAL_DEFENSE", "duration": 3}
+    ],
+    "slot_cost": 7,
+    "class_id": "cleric",
+    "resource_costs": [
+      {"resource_type": "holy_power", "amount": 3}
+    ],
+    "required_level": 3,
+    "description": "Canaliza divindade para aumentar ataque e defesa magica"
+  },
+  "blessing": {
+    "name": "Blessing",
+    "mana_cost": 8,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 10, "stat": "PHYSICAL_DEFENSE", "duration": 3},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 1, "resource_type": "holy_power"}
+    ],
+    "slot_cost": 3,
+    "class_id": "cleric",
+    "required_level": 1,
+    "description": "Abencoa um aliado aumentando sua defesa e gerando poder sagrado"
+  },
+  "divine_shield": {
+    "name": "Divine Shield",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "SHIELD", "base_power": 40}
+    ],
+    "slot_cost": 5,
+    "class_id": "cleric",
+    "resource_costs": [
+      {"resource_type": "holy_power", "amount": 2}
+    ],
+    "reaction_trigger": "on_ally_damaged",
+    "reaction_mode": "prepared",
+    "required_level": 2,
+    "description": "Escudo divino que protege quando um aliado e ferido"
+  }
+}

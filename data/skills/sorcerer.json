@@ -1,0 +1,89 @@
+{
+  "arcane_blast": {
+    "name": "Arcane Blast",
+    "mana_cost": 15,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 38}
+    ],
+    "slot_cost": 4,
+    "class_id": "sorcerer",
+    "required_level": 1,
+    "description": "Explosao arcana concentrada contra um unico alvo"
+  },
+  "inferno": {
+    "name": "Inferno",
+    "mana_cost": 22,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 28, "element": "FIRE"}
+    ],
+    "slot_cost": 6,
+    "class_id": "sorcerer",
+    "required_level": 2,
+    "description": "Inferno que engole todos os inimigos em chamas"
+  },
+  "metamagic": {
+    "name": "Metamagic",
+    "mana_cost": 8,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "set_metamagic"}
+    ],
+    "slot_cost": 3,
+    "class_id": "sorcerer",
+    "required_level": 2,
+    "description": "Ativa metamagia para modificar a proxima magia lancada"
+  },
+  "overcharge_toggle": {
+    "name": "Overcharge Toggle",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "activate_overcharged"}
+    ],
+    "slot_cost": 3,
+    "class_id": "sorcerer",
+    "required_level": 3,
+    "description": "Ativa modo sobrecarregado para potencializar magias"
+  },
+  "spell_surge": {
+    "name": "Spell Surge",
+    "mana_cost": 25,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 18},
+      {"effect_type": "DAMAGE", "base_power": 18},
+      {"effect_type": "DAMAGE", "base_power": 18}
+    ],
+    "slot_cost": 7,
+    "class_id": "sorcerer",
+    "cooldown_turns": 3,
+    "required_level": 3,
+    "description": "Surto magico que dispara tres projéteis contra o alvo"
+  },
+  "mana_burst": {
+    "name": "Mana Burst",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "COUNTER_ATTACK", "base_power": 25},
+      {"effect_type": "DAMAGE", "base_power": 20}
+    ],
+    "slot_cost": 5,
+    "class_id": "sorcerer",
+    "resource_costs": [
+      {"resource_type": "mana_rotation", "amount": 20}
+    ],
+    "reaction_trigger": "on_damage_received",
+    "reaction_mode": "prepared",
+    "required_level": 3,
+    "description": "Explode mana acumulada ao receber dano, contra-atacando o agressor"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "flurry_of_blows": {
+    "name": "Flurry of Blows",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 15},
+      {"effect_type": "DAMAGE", "base_power": 15},
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "shift_destruction"}
+    ],
+    "slot_cost": 3,
+    "class_id": "monk",
+    "required_level": 1,
+    "description": "Sequencia rapida de dois golpes que desloca equilibrio para destruicao"
+  },
+  "ki_strike": {
+    "name": "Ki Strike",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 35},
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "shift_destruction"}
+    ],
+    "slot_cost": 4,
+    "class_id": "monk",
+    "required_level": 1,
+    "description": "Golpe concentrado com ki que desloca equilibrio para destruicao"
+  },
+  "inner_peace": {
+    "name": "Inner Peace",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 25},
+      {"effect_type": "SHIELD", "base_power": 15},
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "shift_vitality"}
+    ],
+    "slot_cost": 4,
+    "class_id": "monk",
+    "required_level": 1,
+    "description": "Paz interior que cura, gera escudo e desloca equilibrio para vitalidade"
+  },
+  "meditate": {
+    "name": "Meditate",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "shift_balance"},
+      {"effect_type": "HEAL", "base_power": 10}
+    ],
+    "slot_cost": 2,
+    "class_id": "monk",
+    "required_level": 1,
+    "description": "Meditacao que restaura equilibrio e cura levemente"
+  },
+  "hundred_fists": {
+    "name": "Hundred Fists",
+    "mana_cost": 20,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 12},
+      {"effect_type": "DAMAGE", "base_power": 12},
+      {"effect_type": "DAMAGE", "base_power": 12},
+      {"effect_type": "DAMAGE", "base_power": 12}
+    ],
+    "slot_cost": 8,
+    "class_id": "monk",
+    "cooldown_turns": 4,
+    "required_level": 4,
+    "description": "Rajada de cem punhos que atinge o alvo quatro vezes"
+  },
+  "deflect": {
+    "name": "Deflect",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 18, "stat": "PHYSICAL_DEFENSE", "duration": 1},
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "shift_vitality"}
+    ],
+    "slot_cost": 3,
+    "class_id": "monk",
+    "reaction_trigger": "on_damage_received",
+    "reaction_mode": "passive",
+    "required_level": 1,
+    "description": "Desvia o ataque recebido e desloca equilibrio para vitalidade"
+  }
+}

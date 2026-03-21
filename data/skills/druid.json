@@ -1,0 +1,83 @@
+{
+  "natures_wrath": {
+    "name": "Nature's Wrath",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 28, "element": "EARTH"}
+    ],
+    "slot_cost": 3,
+    "class_id": "druid",
+    "required_level": 1,
+    "description": "Furia da natureza que causa dano elemental de terra"
+  },
+  "rejuvenation": {
+    "name": "Rejuvenation",
+    "mana_cost": 15,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 15},
+      {"effect_type": "HEAL", "base_power": 10}
+    ],
+    "slot_cost": 4,
+    "class_id": "druid",
+    "required_level": 1,
+    "description": "Rejuvenescimento natural que cura em duas ondas"
+  },
+  "transform": {
+    "name": "Transform",
+    "mana_cost": 20,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "transform_animal_form"}
+    ],
+    "slot_cost": 5,
+    "class_id": "druid",
+    "required_level": 2,
+    "description": "Transforma-se em forma animal, ganhando novas habilidades"
+  },
+  "wild_growth": {
+    "name": "Wild Growth",
+    "mana_cost": 15,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "create_field_condition"}
+    ],
+    "slot_cost": 4,
+    "class_id": "druid",
+    "required_level": 2,
+    "description": "Cria uma condicao de campo com vegetacao selvagem"
+  },
+  "primal_strike": {
+    "name": "Primal Strike",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 35}
+    ],
+    "slot_cost": 3,
+    "class_id": "druid",
+    "required_level": 1,
+    "description": "Golpe primal com forca da natureza"
+  },
+  "natures_guard": {
+    "name": "Nature's Guard",
+    "mana_cost": 10,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 20, "stat": "MAGICAL_DEFENSE", "duration": 1}
+    ],
+    "slot_cost": 3,
+    "class_id": "druid",
+    "reaction_trigger": "on_enemy_cast",
+    "reaction_mode": "passive",
+    "required_level": 1,
+    "description": "Protecao natural que aumenta defesa magica contra magias inimigas"
+  }
+}

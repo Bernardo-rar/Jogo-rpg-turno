@@ -1,0 +1,84 @@
+{
+  "backstab": {
+    "name": "Backstab",
+    "mana_cost": 8,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 45}
+    ],
+    "slot_cost": 4,
+    "class_id": "rogue",
+    "required_level": 1,
+    "description": "Golpe pelas costas que causa dano critico elevado"
+  },
+  "fan_of_knives": {
+    "name": "Fan of Knives",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 20},
+      {"effect_type": "APPLY_AILMENT", "base_power": 8, "ailment_id": "poison", "duration": 3}
+    ],
+    "slot_cost": 5,
+    "class_id": "rogue",
+    "required_level": 2,
+    "description": "Leque de facas envenenadas que atinge todos os inimigos"
+  },
+  "vanish": {
+    "name": "Vanish",
+    "mana_cost": 10,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "enter_stealth"}
+    ],
+    "slot_cost": 3,
+    "class_id": "rogue",
+    "required_level": 1,
+    "description": "Desaparece nas sombras entrando em modo furtivo"
+  },
+  "envenom": {
+    "name": "Envenom",
+    "mana_cost": 8,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "envenom_weapon"}
+    ],
+    "slot_cost": 3,
+    "class_id": "rogue",
+    "required_level": 2,
+    "description": "Envenena a arma para causar dano adicional de veneno"
+  },
+  "cheap_shot": {
+    "name": "Cheap Shot",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 25},
+      {"effect_type": "DEBUFF", "base_power": 10, "stat": "SPEED", "duration": 2}
+    ],
+    "slot_cost": 3,
+    "class_id": "rogue",
+    "required_level": 1,
+    "description": "Golpe baixo que causa dano e reduz velocidade do alvo"
+  },
+  "evasion": {
+    "name": "Evasion",
+    "mana_cost": 5,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 25, "stat": "PHYSICAL_DEFENSE", "duration": 1}
+    ],
+    "slot_cost": 3,
+    "class_id": "rogue",
+    "reaction_trigger": "on_enemy_attack",
+    "reaction_mode": "passive",
+    "required_level": 1,
+    "description": "Esquiva agil que aumenta a defesa fisica contra o ataque"
+  }
+}

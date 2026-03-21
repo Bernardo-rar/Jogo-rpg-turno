@@ -1,0 +1,96 @@
+{
+  "dissonance": {
+    "name": "Dissonance",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 22, "element": "PSYCHIC"},
+      {"effect_type": "DEBUFF", "base_power": 8, "stat": "PHYSICAL_ATTACK", "duration": 2},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 1, "resource_type": "groove"}
+    ],
+    "slot_cost": 3,
+    "class_id": "bard",
+    "required_level": 1,
+    "description": "Nota dissonante que causa dano psiquico, enfraquece o alvo e gera groove"
+  },
+  "inspiring_song": {
+    "name": "Inspiring Song",
+    "mana_cost": 12,
+    "action_type": "ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 8, "stat": "PHYSICAL_ATTACK", "duration": 2},
+      {"effect_type": "BUFF", "base_power": 8, "stat": "PHYSICAL_DEFENSE", "duration": 2},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 1, "resource_type": "groove"}
+    ],
+    "slot_cost": 4,
+    "class_id": "bard",
+    "required_level": 1,
+    "description": "Cancao inspiradora que aumenta ataque e defesa de todos os aliados"
+  },
+  "lullaby": {
+    "name": "Lullaby",
+    "mana_cost": 10,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DEBUFF", "base_power": 15, "stat": "SPEED", "duration": 2},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 1, "resource_type": "groove"}
+    ],
+    "slot_cost": 3,
+    "class_id": "bard",
+    "required_level": 2,
+    "description": "Cancao de ninar que reduz drasticamente a velocidade do alvo"
+  },
+  "healing_melody": {
+    "name": "Healing Melody",
+    "mana_cost": 18,
+    "action_type": "ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 20},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 1, "resource_type": "groove"}
+    ],
+    "slot_cost": 5,
+    "class_id": "bard",
+    "required_level": 2,
+    "description": "Melodia curativa que restaura vida de todos os aliados"
+  },
+  "grand_finale": {
+    "name": "Grand Finale",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 50, "element": "PSYCHIC"},
+      {"effect_type": "BUFF", "base_power": 12, "stat": "PHYSICAL_ATTACK", "duration": 2}
+    ],
+    "slot_cost": 8,
+    "class_id": "bard",
+    "resource_costs": [
+      {"resource_type": "groove", "amount": 8}
+    ],
+    "cooldown_turns": 5,
+    "required_level": 4,
+    "description": "Gran finale que consome todo o groove para causar dano massivo e buffar aliados"
+  },
+  "counter_melody": {
+    "name": "Counter Melody",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 15, "stat": "MAGICAL_DEFENSE", "duration": 1}
+    ],
+    "slot_cost": 4,
+    "class_id": "bard",
+    "resource_costs": [
+      {"resource_type": "groove", "amount": 3}
+    ],
+    "reaction_trigger": "on_enemy_cast",
+    "reaction_mode": "passive",
+    "required_level": 2,
+    "description": "Contra-melodia que aumenta defesa magica ao detectar magia inimiga"
+  }
+}

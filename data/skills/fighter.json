@@ -1,0 +1,100 @@
+{
+  "power_strike": {
+    "name": "Power Strike",
+    "mana_cost": 5,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 40}
+    ],
+    "slot_cost": 4,
+    "class_id": "fighter",
+    "resource_costs": [
+      {"resource_type": "action_points", "amount": 2}
+    ],
+    "required_level": 1,
+    "description": "Golpe poderoso que gasta Pontos de Acao"
+  },
+  "second_wind": {
+    "name": "Second Wind",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "SHIELD", "base_power": 25}
+    ],
+    "slot_cost": 3,
+    "class_id": "fighter",
+    "resource_costs": [
+      {"resource_type": "action_points", "amount": 2}
+    ],
+    "required_level": 1,
+    "description": "Ganha vida temporaria (escala com nivel)"
+  },
+  "action_surge": {
+    "name": "Action Surge",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "action_surge"}
+    ],
+    "slot_cost": 5,
+    "class_id": "fighter",
+    "resource_costs": [
+      {"resource_type": "action_points", "amount": 1}
+    ],
+    "cooldown_turns": 3,
+    "required_level": 2,
+    "description": "Gasta 1 AP para ganhar 1 acao e 1 bonus action extra"
+  },
+  "stance_offensive": {
+    "name": "Stance: Offensive",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "change_stance_offensive"}
+    ],
+    "slot_cost": 2,
+    "class_id": "fighter",
+    "required_level": 1,
+    "description": "Muda para estancia ofensiva"
+  },
+  "legend": {
+    "name": "Legend",
+    "mana_cost": 10,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 80}
+    ],
+    "slot_cost": 8,
+    "class_id": "fighter",
+    "resource_costs": [
+      {"resource_type": "action_points", "amount": 0}
+    ],
+    "cooldown_turns": 5,
+    "required_level": 5,
+    "description": "Gasta TODOS os AP para dano massivo. Debuffa ATK e DEF depois"
+  },
+  "parry": {
+    "name": "Parry",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 20, "stat": "PHYSICAL_DEFENSE", "duration": 1},
+      {"effect_type": "COUNTER_ATTACK", "base_power": 10}
+    ],
+    "slot_cost": 3,
+    "class_id": "fighter",
+    "resource_costs": [
+      {"resource_type": "action_points", "amount": 1}
+    ],
+    "reaction_trigger": "on_damage_received",
+    "reaction_mode": "passive",
+    "required_level": 1,
+    "description": "Bloqueia parte do dano e contra-ataca"
+  }
+}

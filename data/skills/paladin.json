@@ -1,0 +1,93 @@
+{
+  "holy_strike": {
+    "name": "Holy Strike",
+    "mana_cost": 8,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 30, "element": "HOLY"},
+      {"effect_type": "RESOURCE_GAIN", "base_power": 1, "resource_type": "divine_favor"}
+    ],
+    "slot_cost": 3,
+    "class_id": "paladin",
+    "required_level": 1,
+    "description": "Golpe sagrado que causa dano holy e gera favor divino"
+  },
+  "lay_on_hands": {
+    "name": "Lay on Hands",
+    "mana_cost": 15,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "HEAL", "base_power": 45}
+    ],
+    "slot_cost": 5,
+    "class_id": "paladin",
+    "resource_costs": [
+      {"resource_type": "divine_favor", "amount": 2}
+    ],
+    "required_level": 1,
+    "description": "Imposicao de maos que cura um aliado com poder divino"
+  },
+  "aura_offensive": {
+    "name": "Aura: Offensive",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "switch_aura_offensive"}
+    ],
+    "slot_cost": 2,
+    "class_id": "paladin",
+    "required_level": 1,
+    "description": "Ativa aura ofensiva que beneficia o grupo"
+  },
+  "aura_defensive": {
+    "name": "Aura: Defensive",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "switch_aura_defensive"}
+    ],
+    "slot_cost": 2,
+    "class_id": "paladin",
+    "required_level": 1,
+    "description": "Ativa aura defensiva que protege o grupo"
+  },
+  "glimpse_of_glory": {
+    "name": "Glimpse of Glory",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 12, "stat": "PHYSICAL_ATTACK", "duration": 3},
+      {"effect_type": "BUFF", "base_power": 12, "stat": "MAGICAL_ATTACK", "duration": 3}
+    ],
+    "slot_cost": 7,
+    "class_id": "paladin",
+    "resource_costs": [
+      {"resource_type": "divine_favor", "amount": 3}
+    ],
+    "required_level": 3,
+    "description": "Vislumbre de gloria que aumenta ataque fisico e magico de todos os aliados"
+  },
+  "intercept": {
+    "name": "Intercept",
+    "mana_cost": 0,
+    "action_type": "REACTION",
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 25, "stat": "PHYSICAL_DEFENSE", "duration": 1}
+    ],
+    "slot_cost": 4,
+    "class_id": "paladin",
+    "resource_costs": [
+      {"resource_type": "divine_favor", "amount": 1}
+    ],
+    "reaction_trigger": "on_ally_damaged",
+    "reaction_mode": "prepared",
+    "required_level": 2,
+    "description": "Intercepta o ataque direcionado a um aliado, aumentando a propria defesa"
+  }
+}
