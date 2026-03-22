@@ -215,9 +215,9 @@ def _apply_counter_attack(
 ) -> list[CombatEvent]:
     """Contra-ataque reativo (dano baseado no ATK do reator)."""
     events: list[CombatEvent] = []
-    attack = effect.base_power + combatant.physical_attack
+    attack = effect.base_power + combatant.attack_power
     for target in targets:
-        defense = target.physical_defense
+        defense = target.defense_for(combatant.preferred_attack_type)
         result = resolve_damage(attack_power=attack, defense=defense)
         target.take_damage(result.final_damage)
         events.append(CombatEvent(

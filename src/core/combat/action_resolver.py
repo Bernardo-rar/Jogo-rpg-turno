@@ -46,9 +46,10 @@ def _resolve_basic_attack(
     target = _find_alive_target(action.target_name, context)
     if target is None:
         return []
+    atk_type = context.combatant.preferred_attack_type
     result = resolve_damage(
-        attack_power=context.combatant.physical_attack,
-        defense=target.physical_defense,
+        attack_power=context.combatant.attack_power,
+        defense=target.defense_for(atk_type),
     )
     target.take_damage(result.final_damage)
     return [CombatEvent(

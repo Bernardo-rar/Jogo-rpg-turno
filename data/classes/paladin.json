@@ -1,12 +1,13 @@
 {
   "hit_dice": 10,
-  "vida_mod": 0,
-  "mod_hp": 10,
+  "mod_hp_flat": 0,
+  "mod_hp_mult": 10,
   "mana_multiplier": 10,
   "mod_atk_physical": 8,
   "mod_atk_magical": 6,
   "mod_def_physical": 5,
   "mod_def_magical": 4,
   "regen_hp_mod": 5,
-  "regen_mana_mod": 3
+  "regen_mana_mod": 3,
+  "preferred_attack_type": "PHYSICAL"
 }

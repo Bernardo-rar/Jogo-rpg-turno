@@ -76,8 +76,8 @@ class CombatStatsMixin:
         base = calculate_hp(HpInput(
             hit_dice=self._modifiers.hit_dice,
             con=con,
-            vida_mod=self._modifiers.vida_mod + bonus,
-            mod_hp=self._modifiers.mod_hp,
+            mod_hp_flat=self._modifiers.mod_hp_flat + bonus,
+            mod_hp_mult=self._modifiers.mod_hp_mult,
             level=self._level,
         ))
         base += self._armor_bonus("hp_bonus")
@@ -146,6 +146,24 @@ class CombatStatsMixin:
         base += self._armor_bonus("magical_defense_bonus")
         base += self._total_accessory_flat(ModifiableStat.MAGICAL_DEFENSE)
         return self._apply_effect_modifiers(ModifiableStat.MAGICAL_DEFENSE, base)
+
+    @property
+    def preferred_attack_type(self) -> DamageType:
+        """Tipo de ataque preferido da classe (PHYSICAL ou MAGICAL)."""
+        return self._modifiers.preferred_attack_type
+
+    @property
+    def attack_power(self) -> int:
+        """Retorna ataque preferido da classe."""
+        if self._modifiers.preferred_attack_type == DamageType.PHYSICAL:
+            return self.physical_attack
+        return self.magical_attack
+
+    def defense_for(self, damage_type: DamageType) -> int:
+        """Retorna defesa correspondente ao tipo de dano."""
+        if damage_type == DamageType.PHYSICAL:
+            return self.physical_defense
+        return self.magical_defense
 
     @property
     def proficiency_bonus(self) -> int:
