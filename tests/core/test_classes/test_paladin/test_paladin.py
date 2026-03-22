@@ -12,7 +12,7 @@ from src.core.classes.paladin.divine_favor import DivineFavor
 from src.core.classes.paladin.paladin import Paladin
 
 # Paladin stats: STR=8, DEX=6, CON=8, INT=5, WIS=7, CHA=9, MIND=6
-# Modifiers from paladin.json: hit_dice=10, mod_hp=10, mod_atk_physical=8,
+# Modifiers from paladin.json: hit_dice=10, mod_hp_mult=10, mod_atk_physical=8,
 #   mod_atk_magical=6, mod_def_physical=5, mod_def_magical=4
 # base physical_attack = (0 + 8 + 6) * 8 = 112
 # base physical_defense = (6 + 8 + 8) * 5 = 110

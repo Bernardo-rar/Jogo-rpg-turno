@@ -12,8 +12,8 @@ from src.core.classes.mage.mage import MANA_PER_BASIC_ATTACK_MOD, Mage
 
 MAGE_MODS = ClassModifiers(
     hit_dice=6,
-    vida_mod=0,
-    mod_hp=6,
+    mod_hp_flat=0,
+    mod_hp_mult=6,
     mana_multiplier=12,
     mod_atk_physical=4,
     mod_atk_magical=10,
@@ -83,7 +83,7 @@ class TestMageIsCharacter:
 
 class TestMageStats:
     def test_max_hp_low(self, mage: Mage):
-        # ((hit_dice + CON + vida_mod) * 2) * mod_hp
+        # ((hit_dice + CON + mod_hp_flat) * 2) * mod_hp_mult
         # ((6 + 4 + 0) * 2) * 6 = 120
         assert mage.max_hp == 120
 

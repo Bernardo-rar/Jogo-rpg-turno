@@ -184,7 +184,7 @@ Guia completo com exemplos: `docs/DESIGN_PATTERNS.md`
 - **Defesa Magica**: `(CON + WIS + INT) * def_magica_mod`
 
 ## Referencia Rapida - Formulas de Balanceamento
-- **HP lvl1**: `((hit_dice + CON + vida_mod) * 2) * mod_hp`
+- **HP lvl1**: `((hit_dice + CON + mod_hp_flat) * 2) * mod_hp_mult`
 - **Mana lvl1**: `dado_mana * MIND * 10`
 - **Bonus de atributo**: Cada +1 da bonus incremental; thresholds EXTRAS em 18, 22, 26 (tier 1) e 30, 32 (tier 2)
 - **Regen HP**: `CON * nivel * constante`

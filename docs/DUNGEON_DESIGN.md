@@ -232,7 +232,7 @@ class EliteModifier:
   "tier": 1,
   "archetype": "dps",
   "class_modifiers": {
-    "hit_dice": 6, "vida_mod": 0, "mod_hp": 3,
+    "hit_dice": 6, "mod_hp_flat": 0, "mod_hp_mult": 3,
     "mana_multiplier": 0,
     "mod_atk_physical": 4, "mod_atk_magical": 1,
     "mod_def_physical": 2, "mod_def_magical": 1,

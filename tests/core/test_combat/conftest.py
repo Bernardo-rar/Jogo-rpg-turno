@@ -12,8 +12,8 @@ from src.core.elements.elemental_profile import ElementalProfile
 
 SIMPLE_MODS = ClassModifiers(
     hit_dice=10,
-    vida_mod=0,
-    mod_hp=1,
+    mod_hp_flat=0,
+    mod_hp_mult=1,
     mana_multiplier=1,
     mod_atk_physical=2,
     mod_atk_magical=1,

@@ -23,8 +23,8 @@ _FIELDS = load_field_condition_configs()
 
 DRUID_MODS = ClassModifiers(
     hit_dice=8,
-    vida_mod=0,
-    mod_hp=6,
+    mod_hp_flat=0,
+    mod_hp_mult=6,
     mana_multiplier=10,
     mod_atk_physical=5,
     mod_atk_magical=7,

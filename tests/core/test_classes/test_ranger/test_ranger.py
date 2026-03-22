@@ -10,7 +10,7 @@ from src.core.characters.position import Position
 from src.core.classes.ranger.ranger import Ranger
 
 # Ranger stats: STR=8, DEX=12, CON=6, INT=5, WIS=10, CHA=4, MIND=7
-# Modifiers from ranger.json: hit_dice=10, vida_mod=0, mod_hp=8,
+# Modifiers from ranger.json: hit_dice=10, mod_hp_flat=0, mod_hp_mult=8,
 #   mod_atk_physical=8, mod_atk_magical=8, mod_def_physical=3, mod_def_magical=3
 # base physical_attack = (0 + 8 + 12) * 8 = 160 (weapon_die=0, STR=8, DEX=12)
 # base physical_defense = (12 + 6 + 8) * 3 = 78
@@ -74,7 +74,7 @@ class TestRangerLSP:
 
 class TestRangerStats:
     def test_max_hp(self, ranger: Ranger):
-        # (hit_dice + CON + vida_mod) * 2 * mod_hp = (10 + 6 + 0) * 2 * 8 = 256
+        # (hit_dice + CON + mod_hp_flat) * 2 * mod_hp_mult = (10 + 6 + 0) * 2 * 8 = 256
         assert ranger.max_hp == 256
 
     def test_base_physical_attack(self, ranger: Ranger):

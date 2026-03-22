@@ -16,8 +16,8 @@ _CONFIG = load_rogue_config()
 
 ROGUE_MODS = ClassModifiers(
     hit_dice=8,
-    vida_mod=0,
-    mod_hp=6,
+    mod_hp_flat=0,
+    mod_hp_mult=6,
     mana_multiplier=6,
     mod_atk_physical=8,
     mod_atk_magical=4,

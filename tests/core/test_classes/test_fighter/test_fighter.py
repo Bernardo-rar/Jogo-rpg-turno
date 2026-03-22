@@ -12,7 +12,7 @@ from src.core.classes.fighter.fighter import Fighter
 from src.core.classes.fighter.stance import Stance
 
 # Fighter stats: STR=10, DEX=8, CON=5, WIS=4, INT=3, CHA=6, MIND=7
-# Modifiers from fighter.json: hit_dice=12, mod_hp=10, mod_atk_physical=10, etc.
+# Modifiers from fighter.json: hit_dice=12, mod_hp_mult=10, mod_atk_physical=10, etc.
 # base physical_attack = (0+10+8)*10 = 180
 # base physical_defense = (8+5+10)*5 = 115
 # base magical_attack = (0+4+3)*6 = 42

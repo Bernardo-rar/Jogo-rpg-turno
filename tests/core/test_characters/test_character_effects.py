@@ -22,8 +22,8 @@ from src.core.elements.elemental_profile import ElementalProfile
 
 FIGHTER_MODS = ClassModifiers(
     hit_dice=12,
-    vida_mod=0,
-    mod_hp=10,
+    mod_hp_flat=0,
+    mod_hp_mult=10,
     mana_multiplier=6,
     mod_atk_physical=10,
     mod_atk_magical=6,
@@ -223,8 +223,8 @@ class TestSubclassEffectInteraction:
 
         mage_mods = ClassModifiers(
             hit_dice=6,
-            vida_mod=0,
-            mod_hp=4,
+            mod_hp_flat=0,
+            mod_hp_mult=4,
             mana_multiplier=12,
             mod_atk_physical=4,
             mod_atk_magical=10,

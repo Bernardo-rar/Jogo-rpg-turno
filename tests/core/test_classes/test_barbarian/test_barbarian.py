@@ -13,7 +13,7 @@ from src.core.classes.barbarian.barbarian import Barbarian
 from src.core.classes.barbarian.fury_bar import FuryBar
 
 # Barbarian stats: STR=12, DEX=6, CON=10, INT=3, WIS=4, CHA=5, MIND=4
-# Modifiers from barbarian.json: hit_dice=12, vida_mod=2, mod_hp=12,
+# Modifiers from barbarian.json: hit_dice=12, mod_hp_flat=2, mod_hp_mult=12,
 #   mod_atk_physical=12, mod_atk_magical=2, mod_def_physical=5, mod_def_magical=3
 # base physical_attack = (0 + 12 + 6) * 12 = 216 (weapon_die=0, STR=12, DEX=6)
 # base physical_defense = (6 + 10 + 12) * 5 = 140

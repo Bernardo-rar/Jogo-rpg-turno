@@ -12,7 +12,7 @@ from src.core.effects.effect_manager import EffectManager
 from src.core.elements.elemental_profile import ElementalProfile
 
 MODS = ClassModifiers(
-    hit_dice=10, vida_mod=0, mod_hp=8, mana_multiplier=6,
+    hit_dice=10, mod_hp_flat=0, mod_hp_mult=8, mana_multiplier=6,
     mod_atk_physical=5, mod_atk_magical=3, mod_def_physical=4,
     mod_def_magical=2, regen_hp_mod=3, regen_mana_mod=2,
 )

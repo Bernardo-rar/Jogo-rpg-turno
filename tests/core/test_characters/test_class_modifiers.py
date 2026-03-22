@@ -7,8 +7,8 @@ class TestClassModifiersCreation:
     def test_create_fighter_modifiers(self):
         mods = ClassModifiers(
             hit_dice=12,
-            vida_mod=0,
-            mod_hp=10,
+            mod_hp_flat=0,
+            mod_hp_mult=10,
             mana_multiplier=6,
             mod_atk_physical=10,
             mod_atk_magical=6,
@@ -18,13 +18,13 @@ class TestClassModifiersCreation:
             regen_mana_mod=3,
         )
         assert mods.hit_dice == 12
-        assert mods.mod_hp == 10
+        assert mods.mod_hp_mult == 10
 
     def test_modifiers_are_immutable(self):
         mods = ClassModifiers(
             hit_dice=12,
-            vida_mod=0,
-            mod_hp=10,
+            mod_hp_flat=0,
+            mod_hp_mult=10,
             mana_multiplier=6,
             mod_atk_physical=10,
             mod_atk_magical=6,
@@ -46,8 +46,8 @@ class TestClassModifiersFromJson:
 
     def test_all_fields_loaded(self):
         mods = ClassModifiers.from_json("data/classes/fighter.json")
-        assert mods.vida_mod == 0
-        assert mods.mod_hp == 10
+        assert mods.mod_hp_flat == 0
+        assert mods.mod_hp_mult == 10
         assert mods.mana_multiplier == 6
         assert mods.mod_atk_magical == 6
         assert mods.mod_def_magical == 3

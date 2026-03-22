@@ -17,8 +17,8 @@ _ROTATION_CONFIG = load_mana_rotation_config()
 
 SORCERER_MODS = ClassModifiers(
     hit_dice=6,
-    vida_mod=0,
-    mod_hp=5,
+    mod_hp_flat=0,
+    mod_hp_mult=5,
     mana_multiplier=14,
     mod_atk_physical=2,
     mod_atk_magical=12,

@@ -18,8 +18,8 @@ from src.core.items.stat_bonus import StatBonus
 
 MODS = ClassModifiers(
     hit_dice=10,
-    vida_mod=0,
-    mod_hp=6,
+    mod_hp_flat=0,
+    mod_hp_mult=6,
     mana_multiplier=6,
     mod_atk_physical=6,
     mod_atk_magical=4,

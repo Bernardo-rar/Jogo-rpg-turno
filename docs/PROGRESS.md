@@ -327,14 +327,14 @@ Este arquivo e o "cerebro persistente" do projeto. A cada sessao de trabalho:
   - `tests/core/test_progression/test_character_hooks.py` - 10 testes
   - `tests/core/test_progression/test_level_up_integration.py` - 10 testes (Fighter/Mage/Cleric level up)
 - **Arquivos modificados**:
-  - `src/core/attributes/derived_stats.py` - HP acumulativo: `base * (level+1) * mod_hp`, regen scaling com level
+  - `src/core/attributes/derived_stats.py` - HP acumulativo: `base * (level+1) * mod_hp_mult`, regen scaling com level
   - `src/core/characters/character.py` - `_set_level()` + `on_level_up()` hook (Template Method), removidos `add_effect`/`has_active_effects` (delegacao desnecessaria)
   - `src/core/characters/combat_stats_mixin.py` - `proficiency_bonus` property, level passado para regen
   - `src/core/classes/fighter/action_points.py` - `update_limit(level)` method
   - `src/core/classes/fighter/fighter.py` - `on_level_up()` override (atualiza AP limit)
   - `tests/core/test_attributes/test_derived_stats.py` - Testes de HP acumulativo e regen scaling
   - `tests/core/test_characters/test_character.py` - Adaptado para HP acumulativo e effect_manager direto
-- **Notas**: 1103 testes totais (1035+68), 100% cobertura (1872 stmts). HP formula: `(hit_dice + CON + vida_mod) * (level+1) * mod_hp` (level 1 = base*2, backward-compatible). Regen: `CON * level * mod`. Proficiency bonus = level. XP table data-driven do JSON (sem formula nos docs). LevelUpSystem externo ao Character (SRP — Character nao sabe de XP). Pontos de atributo: fisicos (STR/DEX/CON) e mentais (INT/WIS/CHA/MIND), distribuicao livre dentro da categoria. Niveis impares = 0 pontos (reservados para subclasses/talentos). on_level_up() como Template Method hook: Fighter atualiza AP limit, base e noop.
+- **Notas**: 1103 testes totais (1035+68), 100% cobertura (1872 stmts). HP formula: `(hit_dice + CON + mod_hp_flat) * (level+1) * mod_hp_mult` (level 1 = base*2, backward-compatible). Regen: `CON * level * mod`. Proficiency bonus = level. XP table data-driven do JSON (sem formula nos docs). LevelUpSystem externo ao Character (SRP — Character nao sabe de XP). Pontos de atributo: fisicos (STR/DEX/CON) e mentais (INT/WIS/CHA/MIND), distribuicao livre dentro da categoria. Niveis impares = 0 pontos (reservados para subclasses/talentos). on_level_up() como Template Method hook: Fighter atualiza AP limit, base e noop.
 
 ### Bloco C - 10 Classes Restantes (RF02.3)
 
@@ -714,7 +714,7 @@ class Animation(Protocol):
 - Task 2.6 concluida: 68 testes novos (1103 total), 100% cobertura (1872 stmts)
 - Sistema de progressao completo: XP table, level 1-10, pontos de atributo, HP/regen scaling, proficiency bonus
 - Modulo `src/core/progression/` criado (4 arquivos), `data/progression/` (2 JSONs)
-- HP acumulativo: `base * (level+1) * mod_hp`, regen scaling: `CON * level * mod`
+- HP acumulativo: `base * (level+1) * mod_hp_mult`, regen scaling: `CON * level * mod`
 - Template Method hook: `on_level_up()` no Character, Fighter override atualiza AP limit
 - Refactor gate: extraido conftest.py, removido dead code (LEVEL_1_HP_MULTIPLIER, ZERO_POINTS), removidas delegacoes desnecessarias (add_effect/has_active_effects), monkey-patch substituido por unittest.mock.patch
 - **Decisoes**: LevelUpSystem externo ao Character (SRP — Character nao sabe de XP). XP table data-driven do JSON. Niveis impares = 0 pontos (reservados para subclasses/talentos). Proficiency bonus = level (property no CombatStatsMixin). add_effect/has_active_effects removidos do Character (pura delegacao, callers ja usavam effect_manager direto).

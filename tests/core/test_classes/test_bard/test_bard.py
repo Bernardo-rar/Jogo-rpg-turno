@@ -16,8 +16,8 @@ _CONFIG = load_bard_config()
 
 BARD_MODS = ClassModifiers(
     hit_dice=8,
-    vida_mod=0,
-    mod_hp=6,
+    mod_hp_flat=0,
+    mod_hp_mult=6,
     mana_multiplier=8,
     mod_atk_physical=4,
     mod_atk_magical=6,

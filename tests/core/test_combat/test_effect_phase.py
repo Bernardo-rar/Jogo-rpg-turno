@@ -23,8 +23,8 @@ from src.core.effects.tick_result import TickResult
 
 BASIC_MODS = ClassModifiers(
     hit_dice=10,
-    vida_mod=0,
-    mod_hp=8,
+    mod_hp_flat=0,
+    mod_hp_mult=8,
     mana_multiplier=6,
     mod_atk_physical=8,
     mod_atk_magical=6,

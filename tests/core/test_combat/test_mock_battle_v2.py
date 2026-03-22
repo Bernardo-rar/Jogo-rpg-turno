@@ -39,32 +39,32 @@ EMPTY_THRESHOLDS = ThresholdCalculator({})
 # --- ClassModifiers por arquetipo ---
 
 FIGHTER_MODS = ClassModifiers(
-    hit_dice=12, vida_mod=0, mod_hp=10, mana_multiplier=6,
+    hit_dice=12, mod_hp_flat=0, mod_hp_mult=10, mana_multiplier=6,
     mod_atk_physical=10, mod_atk_magical=6, mod_def_physical=5,
     mod_def_magical=3, regen_hp_mod=5, regen_mana_mod=3,
 )
 RANGER_MODS = ClassModifiers(
-    hit_dice=10, vida_mod=0, mod_hp=8, mana_multiplier=7,
+    hit_dice=10, mod_hp_flat=0, mod_hp_mult=8, mana_multiplier=7,
     mod_atk_physical=8, mod_atk_magical=6, mod_def_physical=3,
     mod_def_magical=3, regen_hp_mod=3, regen_mana_mod=3,
 )
 CLERIC_MODS = ClassModifiers(
-    hit_dice=8, vida_mod=0, mod_hp=8, mana_multiplier=8,
+    hit_dice=8, mod_hp_flat=0, mod_hp_mult=8, mana_multiplier=8,
     mod_atk_physical=5, mod_atk_magical=8, mod_def_physical=3,
     mod_def_magical=4, regen_hp_mod=3, regen_mana_mod=4,
 )
 SORCERER_MODS = ClassModifiers(
-    hit_dice=6, vida_mod=0, mod_hp=6, mana_multiplier=12,
+    hit_dice=6, mod_hp_flat=0, mod_hp_mult=6, mana_multiplier=12,
     mod_atk_physical=4, mod_atk_magical=10, mod_def_physical=2,
     mod_def_magical=5, regen_hp_mod=2, regen_mana_mod=5,
 )
 ORC_MODS = ClassModifiers(
-    hit_dice=10, vida_mod=0, mod_hp=8, mana_multiplier=5,
+    hit_dice=10, mod_hp_flat=0, mod_hp_mult=8, mana_multiplier=5,
     mod_atk_physical=8, mod_atk_magical=4, mod_def_physical=4,
     mod_def_magical=3, regen_hp_mod=3, regen_mana_mod=2,
 )
 SHAMAN_MODS = ClassModifiers(
-    hit_dice=6, vida_mod=0, mod_hp=5, mana_multiplier=10,
+    hit_dice=6, mod_hp_flat=0, mod_hp_mult=5, mana_multiplier=10,
     mod_atk_physical=4, mod_atk_magical=8, mod_def_physical=2,
     mod_def_magical=4, regen_hp_mod=2, regen_mana_mod=4,
 )

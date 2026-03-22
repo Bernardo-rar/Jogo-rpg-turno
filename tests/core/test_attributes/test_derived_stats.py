@@ -13,29 +13,29 @@ from src.core.attributes.derived_stats import (
 
 class TestCalculateHp:
     def test_level_1_doubles_base(self):
-        # ((hit_dice + CON + vida_mod) * 2) * mod_hp
+        # ((hit_dice + CON + mod_hp_flat) * 2) * mod_hp_mult
         # ((12 + 5 + 0) * 2) * 10 = 340
-        hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=1)
+        hp_input = HpInput(hit_dice=12, con=5, mod_hp_flat=0, mod_hp_mult=10, level=1)
         assert calculate_hp(hp_input) == 340
 
     def test_level_2_accumulates(self):
-        # base * (level + 1) * mod_hp = 17 * 3 * 10 = 510
-        hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=2)
+        # base * (level + 1) * mod_hp_mult = 17 * 3 * 10 = 510
+        hp_input = HpInput(hit_dice=12, con=5, mod_hp_flat=0, mod_hp_mult=10, level=2)
         assert calculate_hp(hp_input) == 510
 
     def test_level_5_accumulates(self):
-        # base * (5 + 1) * mod_hp = 17 * 6 * 10 = 1020
-        hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=5)
+        # base * (5 + 1) * mod_hp_mult = 17 * 6 * 10 = 1020
+        hp_input = HpInput(hit_dice=12, con=5, mod_hp_flat=0, mod_hp_mult=10, level=5)
         assert calculate_hp(hp_input) == 1020
 
     def test_level_10_accumulates(self):
-        # base * (10 + 1) * mod_hp = 17 * 11 * 10 = 1870
-        hp_input = HpInput(hit_dice=12, con=5, vida_mod=0, mod_hp=10, level=10)
+        # base * (10 + 1) * mod_hp_mult = 17 * 11 * 10 = 1870
+        hp_input = HpInput(hit_dice=12, con=5, mod_hp_flat=0, mod_hp_mult=10, level=10)
         assert calculate_hp(hp_input) == 1870
 
     def test_vida_mod_adds_to_base(self):
         # ((12 + 5 + 3) * 2) * 10 = 400
-        hp_input = HpInput(hit_dice=12, con=5, vida_mod=3, mod_hp=10, level=1)
+        hp_input = HpInput(hit_dice=12, con=5, mod_hp_flat=3, mod_hp_mult=10, level=1)
         assert calculate_hp(hp_input) == 400
 
 

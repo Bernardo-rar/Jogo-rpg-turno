@@ -11,7 +11,7 @@ from src.core.classes.monk.equilibrium_bar import EquilibriumState
 from src.core.classes.monk.monk import Monk
 
 # Monk stats: STR=10, DEX=10, CON=8, INT=5, WIS=10, CHA=4, MIND=6
-# Modifiers from monk.json: hit_dice=10, vida_mod=0, mod_hp=8,
+# Modifiers from monk.json: hit_dice=10, mod_hp_flat=0, mod_hp_mult=8,
 #   mod_atk_physical=6, mod_atk_magical=5, mod_def_physical=4, mod_def_magical=4
 # base HP = (10 + 8 + 0) * 2 * 8 = 288
 # base physical_attack = (0 + 10 + 10) * 6 = 120

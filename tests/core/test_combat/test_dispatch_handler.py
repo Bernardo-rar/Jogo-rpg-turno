@@ -11,7 +11,7 @@ from src.core.combat.damage import DamageResult
 from src.core.combat.dispatch_handler import DispatchTurnHandler
 
 MODS = ClassModifiers(
-    hit_dice=10, vida_mod=0, mod_hp=10, mana_multiplier=6,
+    hit_dice=10, mod_hp_flat=0, mod_hp_mult=10, mana_multiplier=6,
     mod_atk_physical=10, mod_atk_magical=6, mod_def_physical=5,
     mod_def_magical=3, regen_hp_mod=5, regen_mana_mod=3,
 )

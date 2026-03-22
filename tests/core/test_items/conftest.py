@@ -13,7 +13,7 @@ from src.core.items.weapon_category import WeaponCategory
 from src.core.items.weapon_type import WeaponType
 
 SIMPLE_MODS = ClassModifiers(
-    hit_dice=10, vida_mod=0, mod_hp=5,
+    hit_dice=10, mod_hp_flat=0, mod_hp_mult=5,
     mana_multiplier=6,
     mod_atk_physical=5, mod_atk_magical=5,
     mod_def_physical=3, mod_def_magical=3,

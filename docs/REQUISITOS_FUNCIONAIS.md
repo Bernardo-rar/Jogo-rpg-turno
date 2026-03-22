@@ -36,7 +36,7 @@ Os bonus sao **cumulativos**: um personagem com STR 26 recebeu bonus nos marcos 
 
 ### RF01.3 - Atributos Derivados
 Calculados a partir dos primarios:
-- **HP**: `((hit_dice + CON + vida_mod) * 2) * mod_hp` (lvl 1, dobrado como Tormenta)
+- **HP**: `((hit_dice + CON + mod_hp_flat) * 2) * mod_hp_mult` (lvl 1, dobrado como Tormenta)
 - **Mana**: `dado_mana * MIND * 10`
 - **Stamina**: Baseada em CON + STR (para classes marciais)
 - **CA (Armor Class)**: `CA_armadura + DEX + nivel`

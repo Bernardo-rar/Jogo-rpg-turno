@@ -164,7 +164,7 @@ class TestResourceSnapshotIntegration:
         for at in AttributeType:
             attrs.set(at, 10)
         mods = ClassModifiers(
-            hit_dice=12, vida_mod=0, mod_hp=10,
+            hit_dice=12, mod_hp_flat=0, mod_hp_mult=10,
             mana_multiplier=6,
             mod_atk_physical=10, mod_atk_magical=6,
             mod_def_physical=5, mod_def_magical=3,

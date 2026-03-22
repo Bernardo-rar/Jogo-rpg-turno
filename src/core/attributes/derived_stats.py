@@ -2,7 +2,7 @@
 
 Cada funcao recebe os valores necessarios como parametros (DI),
 nao depende de nenhuma classe concreta.
-Os modificadores de classe (mod_hp, mod_atk_physical, etc.) sao injetados.
+Os modificadores de classe (mod_hp_mult, mod_atk_physical, etc.) sao injetados.
 """
 
 from __future__ import annotations
@@ -18,8 +18,8 @@ class HpInput:
 
     hit_dice: int
     con: int
-    vida_mod: int
-    mod_hp: int
+    mod_hp_flat: int
+    mod_hp_mult: int
     level: int
 
 
@@ -44,14 +44,14 @@ class DefenseInput:
 
 
 def calculate_hp(hp_input: HpInput) -> int:
-    """HP = (hit_dice + CON + vida_mod) * (level + 1) * mod_hp.
+    """HP = (hit_dice + CON + mod_hp_flat) * (level + 1) * mod_hp_mult.
 
-    Level 1: base * 2 * mod_hp (backward-compatible).
-    Level N: base * (N+1) * mod_hp (acumulativo).
+    Level 1: base * 2 * mod_hp_mult (backward-compatible).
+    Level N: base * (N+1) * mod_hp_mult (acumulativo).
     """
-    base = hp_input.hit_dice + hp_input.con + hp_input.vida_mod
+    base = hp_input.hit_dice + hp_input.con + hp_input.mod_hp_flat
     level_multiplier = hp_input.level + 1
-    return base * level_multiplier * hp_input.mod_hp
+    return base * level_multiplier * hp_input.mod_hp_mult
 
 
 def calculate_mana(mana_multiplier: int, mind: int) -> int:

@@ -18,8 +18,8 @@ from src.core.effects.modifiable_stat import ModifiableStat
 
 FIGHTER_MODS = ClassModifiers(
     hit_dice=12,
-    vida_mod=0,
-    mod_hp=10,
+    mod_hp_flat=0,
+    mod_hp_mult=10,
     mana_multiplier=6,
     mod_atk_physical=10,
     mod_atk_magical=6,
@@ -91,7 +91,7 @@ class TestCharacterCreation:
 
 class TestCharacterHp:
     def test_max_hp_level_1_fighter(self, fighter: Character):
-        # ((hit_dice + CON + vida_mod) * 2) * mod_hp
+        # ((hit_dice + CON + mod_hp_flat) * 2) * mod_hp_mult
         # ((12 + 5 + 0) * 2) * 10 = 340
         assert fighter.max_hp == 340
 
@@ -102,7 +102,7 @@ class TestCharacterHp:
             level=2,
         )
         char = Character(name="Roland", attributes=fighter_attrs, config=config)
-        # base * (level + 1) * mod_hp = 17 * 3 * 10 = 510
+        # base * (level + 1) * mod_hp_mult = 17 * 3 * 10 = 510
         assert char.max_hp == 510
 
     def test_current_hp_starts_at_max(self, fighter: Character):

@@ -19,8 +19,8 @@ from src.core.classes.cleric.divinity import Divinity
 
 CLERIC_MODS = ClassModifiers(
     hit_dice=8,
-    vida_mod=0,
-    mod_hp=8,
+    mod_hp_flat=0,
+    mod_hp_mult=8,
     mana_multiplier=8,
     mod_atk_physical=5,
     mod_atk_magical=8,
@@ -102,7 +102,7 @@ class TestClericIsCharacter:
 
 class TestClericStats:
     def test_max_hp_medium(self, cleric: Cleric):
-        # ((hit_dice + CON + vida_mod) * 2) * mod_hp
+        # ((hit_dice + CON + mod_hp_flat) * 2) * mod_hp_mult
         # ((8 + 6 + 0) * 2) * 8 = 224
         assert cleric.max_hp == 224
 

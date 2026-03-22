@@ -275,7 +275,7 @@ Com a factory, `create_flat_debuff(SPEED, 5, 3)` faz certo automaticamente.
 @dataclass(frozen=True)
 class ClassModifiers:
     hit_dice: int
-    vida_mod: int
+    mod_hp_flat: int
     # ...8+ campos
 
     @classmethod

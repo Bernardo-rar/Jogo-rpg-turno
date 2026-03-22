@@ -13,7 +13,7 @@ from src.core.items.inventory import Inventory
 
 def _default_config(inventory: Inventory | None = None) -> CharacterConfig:
     mods = ClassModifiers(
-        hit_dice=10, vida_mod=0, mod_hp=5, mana_multiplier=6,
+        hit_dice=10, mod_hp_flat=0, mod_hp_mult=5, mana_multiplier=6,
         mod_atk_physical=5, mod_atk_magical=5,
         mod_def_physical=3, mod_def_magical=3,
         regen_hp_mod=2, regen_mana_mod=2,
