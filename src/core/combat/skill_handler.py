@@ -18,7 +18,7 @@ class SkillHandler:
         skill = _pick_skill(context)
         if skill is None:
             return []
-        return _execute_skill(skill, context)
+        return execute_skill(skill, context)
 
 
 def _pick_skill(context: TurnContext) -> Skill | None:
@@ -75,7 +75,7 @@ def _spend_all_resources(combatant: object, skill: Skill) -> None:
         spend_resource(combatant, cost)
 
 
-def _execute_skill(skill: Skill, context: TurnContext) -> list[CombatEvent]:
+def execute_skill(skill: Skill, context: TurnContext) -> list[CombatEvent]:
     """Consome recursos e aplica efeitos da skill."""
     context.action_economy.use(skill.action_type)
     context.combatant.spend_mana(skill.mana_cost)
