@@ -1,0 +1,38 @@
+{
+  "slam": {
+    "name": "Slam",
+    "weapon_type": "NATURAL",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 4,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
+  },
+  "bite": {
+    "name": "Bite",
+    "weapon_type": "NATURAL",
+    "damage_kind": "PIERCING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 2,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
+  },
+  "spore_attack": {
+    "name": "Spore Attack",
+    "weapon_type": "NATURAL",
+    "damage_kind": "BLUDGEONING",
+    "damage_type": "MAGICAL",
+    "weapon_die": 3,
+    "attack_range": "RANGED",
+    "category": "SIMPLE"
+  },
+  "rusty_sword": {
+    "name": "Rusty Sword",
+    "weapon_type": "SWORD",
+    "damage_kind": "SLASHING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 6,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
+  }
+}

@@ -24,10 +24,16 @@ class ClassModifiers:
     preferred_attack_type: DamageType = DamageType.PHYSICAL
 
     @classmethod
-    def from_json(cls, filepath: str) -> ClassModifiers:
-        path = Path(filepath)
-        raw = json.loads(path.read_text(encoding="utf-8"))
+    def from_dict(cls, data: dict) -> ClassModifiers:
+        """Cria ClassModifiers a partir de um dict."""
+        raw = dict(data)
         raw["preferred_attack_type"] = DamageType[
             raw.pop("preferred_attack_type", "PHYSICAL")
         ]
         return cls(**raw)
+
+    @classmethod
+    def from_json(cls, filepath: str) -> ClassModifiers:
+        path = Path(filepath)
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        return cls.from_dict(raw)

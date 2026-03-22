@@ -4,14 +4,14 @@ from src.core.items.weapon_type import WeaponType
 
 EXPECTED_MEMBERS = {
     "SWORD", "DAGGER", "BOW", "STAFF",
-    "HAMMER", "LANCE", "MACE", "FIST",
+    "HAMMER", "LANCE", "MACE", "FIST", "NATURAL",
 }
 
 
 class TestWeaponTypeMembers:
 
-    def test_has_eight_members(self) -> None:
-        assert len(WeaponType) == 8
+    def test_has_nine_members(self) -> None:
+        assert len(WeaponType) == 9
 
     def test_members_match_expected(self) -> None:
         assert {m.name for m in WeaponType} == EXPECTED_MEMBERS

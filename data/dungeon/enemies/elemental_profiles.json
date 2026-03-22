@@ -1,0 +1,22 @@
+{
+  "goblin": {
+    "HOLY": 1.5,
+    "FIRE": 1.5
+  },
+  "slime": {
+    "LIGHTNING": 1.5,
+    "FIRE": 0.5
+  },
+  "rat_swarm": {
+    "FIRE": 1.5,
+    "FORCE": 1.5
+  },
+  "skeleton": {
+    "HOLY": 2.0,
+    "DARKNESS": 0.5
+  },
+  "mushroom": {
+    "FIRE": 1.5,
+    "ICE": 1.5
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "enemy_id": "skeleton",
+  "name": "Skeleton",
+  "tier": 1,
+  "archetype": "TANK",
+  "class_modifiers": {
+    "hit_dice": 8,
+    "mod_hp_flat": 0,
+    "mod_hp_mult": 4,
+    "mana_multiplier": 0,
+    "mod_atk_physical": 5,
+    "mod_atk_magical": 1,
+    "mod_def_physical": 3,
+    "mod_def_magical": 2,
+    "regen_hp_mod": 0,
+    "regen_mana_mod": 0,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 10,
+    "DEXTERITY": 8,
+    "CONSTITUTION": 8,
+    "INTELLIGENCE": 4,
+    "WISDOM": 6,
+    "CHARISMA": 2,
+    "MIND": 2
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "skeleton",
+  "weapon_id": "rusty_sword",
+  "skill_ids": ["bone_shield"],
+  "special_traits": ["revive_once"]
+}

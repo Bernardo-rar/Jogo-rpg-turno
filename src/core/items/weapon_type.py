@@ -14,3 +14,4 @@ class WeaponType(Enum):
     LANCE = auto()
     MACE = auto()
     FIST = auto()
+    NATURAL = auto()

@@ -1,0 +1,33 @@
+{
+  "enemy_id": "slime",
+  "name": "Slime",
+  "tier": 1,
+  "archetype": "TANK",
+  "class_modifiers": {
+    "hit_dice": 10,
+    "mod_hp_flat": 2,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 0,
+    "mod_atk_physical": 2,
+    "mod_atk_magical": 1,
+    "mod_def_physical": 4,
+    "mod_def_magical": 3,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 0,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 10,
+    "DEXTERITY": 4,
+    "CONSTITUTION": 14,
+    "INTELLIGENCE": 2,
+    "WISDOM": 4,
+    "CHARISMA": 2,
+    "MIND": 2
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "slime",
+  "weapon_id": "slam",
+  "skill_ids": [],
+  "special_traits": ["absorb_element"]
+}
