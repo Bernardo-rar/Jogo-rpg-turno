@@ -41,6 +41,7 @@ class ActionMenu:
         self._pending_type: PlayerActionType | None = None
         self._pending_skill_id: str = ""
         self._pending_consumable_id: str = ""
+        self._pending_target_type: TargetType = TargetType.SINGLE_ENEMY
         self._options: list[MenuOption] = []
         self._tags: dict[int, str] = {}
         self._rebuild()
@@ -150,6 +151,7 @@ class ActionMenu:
                 consumable_id=consumable_id,
             )
         self._pending_type = action_type
+        self._pending_target_type = target_type
         self._pending_skill_id = skill_id
         self._pending_consumable_id = consumable_id
         self._level = MenuLevel.TARGET_SELECT
@@ -168,7 +170,10 @@ class ActionMenu:
                 self._options, self._tags,
             )
         else:
-            _build_level3(self._context, self._options, self._tags)
+            _build_level3(
+                self._context, self._pending_target_type,
+                self._options, self._tags,
+            )
 
 
 def _build_level1(
@@ -245,14 +250,22 @@ def _build_item_options(
         key += 1
 
 
+_ALLY_TARGET_TYPES = frozenset({
+    TargetType.SINGLE_ALLY,
+})
+
+
 def _build_level3(
-    ctx: TurnContext,
+    ctx: TurnContext, target_type: TargetType,
     options: list[MenuOption], tags: dict[int, str],
 ) -> None:
-    """Constroi opcoes do nivel 3: alvos vivos."""
-    alive = [e for e in ctx.enemies if e.is_alive]
+    """Constroi opcoes do nivel 3: alvos vivos (allies ou enemies)."""
+    if target_type in _ALLY_TARGET_TYPES:
+        pool = [a for a in ctx.allies if a.is_alive]
+    else:
+        pool = [e for e in ctx.enemies if e.is_alive]
     key = 1
-    for char in alive:
+    for char in pool:
         _add(options, tags, key, char.name, char.name)
         key += 1
 
