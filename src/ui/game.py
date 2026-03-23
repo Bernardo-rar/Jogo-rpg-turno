@@ -37,6 +37,10 @@ class Game:
             pygame.display.flip()
         pygame.quit()
 
+    def set_scene(self, scene: Scene) -> None:
+        """Troca a cena ativa."""
+        self._scene = scene
+
     def _handle_events(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
