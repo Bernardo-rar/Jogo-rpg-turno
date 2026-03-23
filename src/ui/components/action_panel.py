@@ -23,6 +23,7 @@ def draw_action_panel(
     options: list[MenuOption],
     level: MenuLevel,
     font: pygame.font.Font,
+    combatant_name: str = "",
 ) -> None:
     """Renderiza o painel de opcoes do menu de acao."""
     panel = pygame.Rect(
@@ -33,6 +34,10 @@ def draw_action_panel(
     pygame.draw.rect(surface, colors.MENU_BORDER, panel, 1, 4)
     x = layout.ACTION_PANEL_X + _PADDING_X
     y = layout.ACTION_PANEL_Y + _PADDING_Y
+    if combatant_name:
+        name_text = font.render(combatant_name, True, colors.PARTY_COLOR)
+        surface.blit(name_text, (x, y))
+        y += layout.ACTION_LINE_HEIGHT
     _draw_title(surface, level, x, y, font)
     y += layout.ACTION_LINE_HEIGHT + 4
     for opt in options:

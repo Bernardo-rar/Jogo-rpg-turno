@@ -130,9 +130,7 @@ class InteractiveCombatScene:
     def _should_continue_turn(self, action: PlayerAction) -> bool:
         if action.action_type == PlayerActionType.END_TURN:
             return False
-        if self._current_context is None:
-            return False
-        return self._current_context.action_economy.has_actions
+        return True
 
     def _advance_to_next(self) -> None:
         name = self._engine.get_next_combatant()

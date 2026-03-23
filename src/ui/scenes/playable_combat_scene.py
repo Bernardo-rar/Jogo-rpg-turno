@@ -178,9 +178,11 @@ class PlayableCombatScene:
 
     def _draw_interactive_ui(self, surface: pygame.Surface) -> None:
         if self._menu is not None:
+            name = self._scene.active_combatant or ""
             draw_action_panel(
                 surface, self._menu.options,
                 self._menu.current_level, self._fonts.medium,
+                combatant_name=name,
             )
         ctx = self._scene.current_context
         if ctx is not None:

@@ -44,6 +44,18 @@ class Battlefield:
         return pos
 
 
+_MAX_CARD_AREA_Y = layout.LOG_PANEL_Y - 10
+
+
+def _spacing_for(count: int, start_y: int) -> int:
+    """Calcula espaçamento vertical para caber N cards."""
+    if count <= 1:
+        return layout.CARD_SPACING_Y
+    available = _MAX_CARD_AREA_Y - start_y
+    max_spacing = (available - layout.CARD_HEIGHT) // max(count - 1, 1)
+    return min(layout.CARD_SPACING_Y, max_spacing)
+
+
 def _draw_team(
     surface: pygame.Surface,
     team: list[CharacterSnapshot],
@@ -53,9 +65,10 @@ def _draw_team(
     offsets: dict[str, tuple[int, int]],
 ) -> None:
     start_y = layout.ENEMY_START_Y if not is_party else layout.PARTY_START_Y
+    spacing = _spacing_for(len(team), start_y)
     for i, snap in enumerate(team):
         x = _pick_x(snap.position, is_party)
-        y = start_y + i * layout.CARD_SPACING_Y
+        y = start_y + i * spacing
         dx, dy = offsets.get(snap.name, (0, 0))
         draw_character_card(surface, snap, x + dx, y + dy, fonts)
 
@@ -73,9 +86,10 @@ def _find_card_position(
     is_party: bool,
 ) -> tuple[int, int, int, int] | None:
     start_y = layout.PARTY_START_Y if is_party else layout.ENEMY_START_Y
+    spacing = _spacing_for(len(team), start_y)
     for i, snap in enumerate(team):
         if snap.name == name:
             x = _pick_x(snap.position, is_party)
-            y = start_y + i * layout.CARD_SPACING_Y
+            y = start_y + i * spacing
             return (x, y, layout.CARD_WIDTH, layout.CARD_HEIGHT)
     return None
