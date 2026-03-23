@@ -7,6 +7,7 @@ from enum import Enum, auto
 from src.core.combat.action_economy import ActionType
 from src.core.combat.combat_engine import TurnContext
 from src.core.combat.player_action import PlayerAction, PlayerActionType
+from src.core.skills.class_resource_resolver import can_afford_resource
 from src.core.skills.skill import Skill
 from src.core.skills.target_type import TargetType
 from src.ui.input.menu_state import MenuLevel, MenuOption
@@ -209,12 +210,9 @@ def _build_action_options(
     options: list[MenuOption], tags: dict[int, str],
 ) -> None:
     _add(options, tags, 1, "Basic Attack", "basic_attack")
-    bar = ctx.combatant.skill_bar
-    if bar is None:
-        return
     key = 2
-    for skill in bar.all_skills:
-        label = f"{skill.name} ({skill.mana_cost} mana)"
+    for skill in _skills_for_type(ctx, ActionType.ACTION):
+        label = _skill_label(skill)
         available = _is_skill_available(skill, ctx)
         reason = _skill_unavailable_reason(skill, ctx)
         _add(options, tags, key, label, f"skill:{skill.skill_id}",
@@ -227,6 +225,14 @@ def _build_bonus_options(
     options: list[MenuOption], tags: dict[int, str],
 ) -> None:
     _add(options, tags, 1, "Move", "move")
+    key = 2
+    for skill in _skills_for_type(ctx, ActionType.BONUS_ACTION):
+        label = _skill_label(skill)
+        available = _is_skill_available(skill, ctx)
+        reason = _skill_unavailable_reason(skill, ctx)
+        _add(options, tags, key, label, f"skill:{skill.skill_id}",
+             available=available, reason=reason)
+        key += 1
 
 
 def _build_reaction_options(
@@ -234,6 +240,52 @@ def _build_reaction_options(
     options: list[MenuOption], tags: dict[int, str],
 ) -> None:
     _add(options, tags, 1, "Defend", "defend")
+    key = 2
+    for skill in _skills_for_type(ctx, ActionType.REACTION):
+        label = _skill_label(skill)
+        available = _is_skill_available(skill, ctx)
+        reason = _skill_unavailable_reason(skill, ctx)
+        _add(options, tags, key, label, f"skill:{skill.skill_id}",
+             available=available, reason=reason)
+        key += 1
+
+
+def _skills_for_type(
+    ctx: TurnContext,
+    action_type: ActionType,
+) -> list[Skill]:
+    """Retorna skills do combatente filtradas por action_type."""
+    bar = ctx.combatant.skill_bar
+    if bar is None:
+        return []
+    return [s for s in bar.all_skills if s.action_type == action_type]
+
+
+def _skill_label(skill: Skill) -> str:
+    """Label da skill com custo de mana e/ou recurso."""
+    parts = [skill.name]
+    costs = []
+    if skill.mana_cost > 0:
+        costs.append(f"{skill.mana_cost} mana")
+    for rc in skill.resource_costs:
+        costs.append(f"{rc.amount} {_resource_display(rc.resource_type)}")
+    if costs:
+        parts.append(f"({', '.join(costs)})")
+    return " ".join(parts)
+
+
+_RESOURCE_NAMES: dict[str, str] = {
+    "fury_bar": "Fury",
+    "holy_power": "Holy",
+    "action_points": "AP",
+    "insanity_bar": "Insanity",
+    "equilibrium_bar": "Eq",
+    "groove": "Groove",
+}
+
+
+def _resource_display(resource_type: str) -> str:
+    return _RESOURCE_NAMES.get(resource_type, resource_type)
 
 
 def _build_item_options(
@@ -289,16 +341,29 @@ def _is_skill_available(skill: Skill, ctx: TurnContext) -> bool:
         return False
     if skill.mana_cost > ctx.combatant.current_mana:
         return False
+    if not _can_afford_all(ctx.combatant, skill):
+        return False
     return True
+
+
+def _can_afford_all(combatant: object, skill: Skill) -> bool:
+    return all(
+        can_afford_resource(combatant, cost)
+        for cost in skill.resource_costs
+    )
 
 
 def _skill_unavailable_reason(skill: Skill, ctx: TurnContext) -> str:
     bar = ctx.combatant.skill_bar
     if bar is not None and not bar.cooldown_tracker.is_ready(skill.skill_id):
         remaining = bar.cooldown_tracker.remaining(skill.skill_id)
-        return f"Cooldown: {remaining}"
+        return f"CD: {remaining}"
     if skill.mana_cost > ctx.combatant.current_mana:
-        return "Insufficient mana"
+        return "No mana"
+    for cost in skill.resource_costs:
+        if not can_afford_resource(ctx.combatant, cost):
+            name = _resource_display(cost.resource_type)
+            return f"No {name} ({cost.amount})"
     return ""
 
 
