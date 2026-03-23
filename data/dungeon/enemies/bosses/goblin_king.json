@@ -1,0 +1,46 @@
+{
+  "enemy_id": "goblin_king",
+  "name": "Goblin King",
+  "tier": 1,
+  "archetype": "DPS",
+  "class_modifiers": {
+    "hit_dice": 12,
+    "mod_hp_flat": 5,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 1,
+    "mod_atk_physical": 8,
+    "mod_atk_magical": 3,
+    "mod_def_physical": 6,
+    "mod_def_magical": 4,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 1,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 14,
+    "DEXTERITY": 12,
+    "CONSTITUTION": 12,
+    "INTELLIGENCE": 6,
+    "WISDOM": 6,
+    "CHARISMA": 10,
+    "MIND": 4
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "goblin",
+  "weapon_id": "rusty_sword",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.5,
+      "handler_key": "goblin_king_p1",
+      "skill_ids": ["gk_war_cry"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.0,
+      "handler_key": "goblin_king_p2",
+      "skill_ids": ["gk_enrage", "gk_cleave"]
+    }
+  ],
+  "special_traits": ["boss"]
+}

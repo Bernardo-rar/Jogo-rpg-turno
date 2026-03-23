@@ -1,0 +1,154 @@
+{
+  "gk_war_cry": {
+    "name": "Goblin King War Cry",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 8,
+        "stat": "PHYSICAL_ATTACK",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "gk_enrage": {
+    "name": "Goblin King Enrage",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 12,
+        "stat": "PHYSICAL_ATTACK",
+        "duration": 4
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 4
+  },
+  "gk_cleave": {
+    "name": "Royal Cleave",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 15
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 2
+  },
+  "golem_fortify": {
+    "name": "Golem Fortify",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 15,
+        "stat": "PHYSICAL_DEFENSE",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "golem_rage": {
+    "name": "Golem Rage",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 10,
+        "stat": "PHYSICAL_ATTACK",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "golem_stomp": {
+    "name": "Seismic Stomp",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 18
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "lich_dark_bolt": {
+    "name": "Dark Bolt",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 20
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 0
+  },
+  "lich_curse": {
+    "name": "Lich Curse",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DEBUFF",
+        "base_power": 10,
+        "stat": "MAGICAL_DEFENSE",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "lich_plague": {
+    "name": "Plague Wave",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 8,
+        "ailment_id": "poison",
+        "duration": 4
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 4
+  },
+  "lich_death_wave": {
+    "name": "Death Wave",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 22
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  }
+}
