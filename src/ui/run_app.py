@@ -58,6 +58,7 @@ class RunApp:
 
     def start(self) -> None:
         """Inicializa Pygame e inicia o game loop."""
+        pygame.init()
         self._load_catalogs()
         self._fonts = FontManager()
         menu = self._build_main_menu()
