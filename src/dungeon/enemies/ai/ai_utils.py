@@ -20,6 +20,8 @@ def do_basic_attack(
     target: Character,
 ) -> list[CombatEvent]:
     """Executa ataque basico em alvo especifico."""
+    from src.core.combat.basic_attack_resource import on_basic_attack
+
     if not context.action_economy.is_available(ActionType.ACTION):
         return []
     context.action_economy.use(ActionType.ACTION)
@@ -29,6 +31,7 @@ def do_basic_attack(
         defense=target.defense_for(atk_type),
     )
     target.take_damage(result.final_damage)
+    on_basic_attack(context.combatant)
     return [
         CombatEvent(
             round_number=context.round_number,

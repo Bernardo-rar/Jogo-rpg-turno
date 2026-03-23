@@ -41,6 +41,8 @@ def resolve_player_action(
 def _resolve_basic_attack(
     action: PlayerAction, context: TurnContext,
 ) -> list[CombatEvent]:
+    from src.core.combat.basic_attack_resource import on_basic_attack
+
     if not context.action_economy.use(ActionType.ACTION):
         return []
     target = _find_alive_target(action.target_name, context)
@@ -52,6 +54,7 @@ def _resolve_basic_attack(
         defense=target.defense_for(atk_type),
     )
     target.take_damage(result.final_damage)
+    on_basic_attack(context.combatant)
     return [CombatEvent(
         round_number=context.round_number,
         actor_name=context.combatant.name,
