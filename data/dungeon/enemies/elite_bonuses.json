@@ -1,0 +1,20 @@
+{
+  "1": {
+    "bonus_skill_pool": ["elite_regen", "elite_thorns", "elite_evasion"],
+    "bonus_count": 1,
+    "stat_scale_min": 1.3,
+    "stat_scale_max": 1.4
+  },
+  "2": {
+    "bonus_skill_pool": ["elite_war_cry", "elite_ground_slam", "elite_regen", "elite_thorns"],
+    "bonus_count": 1,
+    "stat_scale_min": 1.35,
+    "stat_scale_max": 1.45
+  },
+  "3": {
+    "bonus_skill_pool": ["elite_war_cry", "elite_ground_slam", "elite_regen", "elite_thorns", "elite_evasion"],
+    "bonus_count": 2,
+    "stat_scale_min": 1.4,
+    "stat_scale_max": 1.5
+  }
+}

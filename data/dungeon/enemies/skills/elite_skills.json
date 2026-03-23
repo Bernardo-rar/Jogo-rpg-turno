@@ -1,0 +1,78 @@
+{
+  "elite_regen": {
+    "name": "Elite Regen",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "HEAL",
+        "base_power": 15
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 2
+  },
+  "elite_thorns": {
+    "name": "Elite Thorns",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 8,
+        "stat": "PHYSICAL_DEFENSE",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "elite_evasion": {
+    "name": "Elite Evasion",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 8,
+        "stat": "MAGICAL_DEFENSE",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "elite_war_cry": {
+    "name": "Elite War Cry",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 6,
+        "stat": "PHYSICAL_ATTACK",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  },
+  "elite_ground_slam": {
+    "name": "Elite Ground Slam",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 12
+      }
+    ],
+    "slot_cost": 0,
+    "cooldown_turns": 3
+  }
+}
