@@ -47,11 +47,13 @@ class PlayableCombatScene:
         party: list,
         enemies: list,
         fonts: FontManager,
+        on_complete: object | None = None,
     ) -> None:
         self._scene = scene
         self._party = party
         self._enemies = enemies
         self._fonts = fonts
+        self._on_complete = on_complete
         self._log = CombatLogPanel(max_visible=_LOG_COMPACT_VISIBLE)
         self._anim_manager = AnimationManager()
         self._anim_factory = AnimationFactory()
@@ -100,7 +102,7 @@ class PlayableCombatScene:
             return
         if key == pygame.K_ESCAPE:
             if self._scene.phase == TurnPhase.COMBAT_OVER:
-                self._running = False
+                self._signal_complete()
                 return
             if self._menu is not None:
                 self._menu.cancel()
@@ -114,6 +116,17 @@ class PlayableCombatScene:
             if result is not None:
                 self._scene.submit_player_action(result)
                 self._force_menu_rebuild()
+
+    def _signal_complete(self) -> None:
+        """Sinaliza fim do combate via callback ou fecha a cena."""
+        if self._on_complete is not None:
+            from src.core.combat.combat_engine import CombatResult
+            result = self._scene._engine.result
+            self._on_complete({
+                "victory": result == CombatResult.PARTY_VICTORY,
+            })
+        else:
+            self._running = False
 
     def _refresh_battlefield(self) -> None:
         rnd = max(1, self._scene._engine.round_number)
