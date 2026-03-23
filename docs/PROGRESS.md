@@ -873,3 +873,16 @@ class Animation(Protocol):
 - Gap E: DeathFade trigger — DisplayState.get_alive_map(), diff before/after em _advance_event, _spawn_death_fades()
 - Gap F: Animacoes de effect ticks — tick_animation_factory.py, PoisonBubbles+FloatingText para DoT, HealParticles+FloatingText para regen
 - **Decisoes**: element no CombatEvent apesar do plano dizer "nenhum core modificado" — impossivel distinguir fisico/magico sem isso. Mudanca minima (1 campo, default None). CardShake usa isinstance() para query (nao dispatch) — aceitavel. Funcoes novas no CombatScene sao module-level (0 metodos adicionados a classe). PlayableCombatScene sem animacoes (deferred).
+
+### Sessao 16 - 2026-03-22
+
+- **Dungeon Crawler completo**: 6 fases implementadas (Phases 1-6)
+- Phase 1: Enemy data system — 5 monstros Tier 1, EnemyTemplate, EnemyFactory, loaders
+- Phase 2: AI behavior — 4 archetype handlers (DPS, Tank, Healer, Controller), target selection, archetype factory
+- Phase 3: Encounter system — EncounterTemplate, EncounterFactory, DispatchTurnHandler, 8 encounter templates
+- Phase 4: Elite system — EliteModifier escala stats +30-40%, bonus skills por tier, integrado no EncounterFactory
+- Phase 5: Boss system — PhaseHandler com HP threshold, 3 bosses (Goblin King, Ancient Golem, Lich Lord), BossFactory + registry
+- Phase 6: Scripts de teste — test_tier1_encounter, test_boss_fights, test_balance (win/loss report)
+- 2604 testes passando, 0 falhas
+- **Nota de balance**: Party vence 100% dos encounters — monstros Tier 1 muito fracos para party de 2. Ajustar stats dos monstros ou aumentar party para 4 para balanceamento real.
+- **Decisoes**: Bosses simplificados (sem summon/revive/split que exigiriam mudar core/). Summoning pode ser adicionado depois com metodo revive() no Character.

@@ -62,7 +62,7 @@ Todo codigo segue o ciclo **Red -> Green -> Refactor**:
 3. **Refactor** — Melhorar o codigo mantendo os testes verdes
 
 ```
-1369 testes passando | 100% cobertura | 0 falhas
+2604 testes passando | 100% cobertura | 0 falhas
 ```
 
 Estrutura de teste:
@@ -154,9 +154,18 @@ pytest --lf
 - [ ] Mock Battle v2 (integracao completa)
 - [ ] Pygame preview visual
 
+### Dungeon Crawler
+
+- [x] Enemy data system (5 monstros Tier 1, templates JSON, EnemyFactory)
+- [x] AI behavior (4 archetype handlers: DPS, Tank, Healer, Controller)
+- [x] Encounter system (8 templates, EncounterFactory, difficulty scaling)
+- [x] Elite system (stats +30-40%, bonus skills por tier)
+- [x] Boss system (3 bosses multi-fase com HP threshold transitions)
+- [x] Balance scripts (encounter testing, boss fights, win/loss reports)
+
 ### Futuro
 
 - [ ] Sistema de subclasses (escolha no lvl 3)
 - [ ] Sistema de habilidades e spell slots
-- [ ] IA de inimigos
 - [ ] UI completa com Pygame
+- [ ] Balance tuning (monstros vs party de 4)
