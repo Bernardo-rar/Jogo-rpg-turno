@@ -100,10 +100,11 @@ class PlayableCombatScene:
     def _handle_key(self, key: int) -> None:
         if self._anim_manager.has_blocking:
             return
-        if key == pygame.K_ESCAPE:
-            if self._scene.phase == TurnPhase.COMBAT_OVER:
+        if self._scene.phase == TurnPhase.COMBAT_OVER:
+            if key in (pygame.K_ESCAPE, pygame.K_RETURN, pygame.K_SPACE):
                 self._signal_complete()
-                return
+            return
+        if key == pygame.K_ESCAPE:
             if self._menu is not None:
                 self._menu.cancel()
             return
@@ -208,10 +209,14 @@ class PlayableCombatScene:
             return
         text = result.name.replace("_", " ")
         rendered = self._fonts.large.render(text, True, colors.TEXT_YELLOW)
-        rect = rendered.get_rect(
-            center=(layout.WINDOW_WIDTH // 2, layout.BATTLEFIELD_HEIGHT // 2),
-        )
+        cx = layout.WINDOW_WIDTH // 2
+        cy = layout.BATTLEFIELD_HEIGHT // 2
+        rect = rendered.get_rect(center=(cx, cy))
         surface.blit(rendered, rect)
+        hint = self._fonts.small.render(
+            "[ENTER] Continuar", True, colors.TEXT_MUTED,
+        )
+        surface.blit(hint, hint.get_rect(center=(cx, cy + 40)))
 
 
 def _spawn_event_animations(
