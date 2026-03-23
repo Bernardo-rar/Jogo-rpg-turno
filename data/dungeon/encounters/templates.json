@@ -1,0 +1,83 @@
+{
+  "easy_3dps": {
+    "template_id": "easy_3dps",
+    "difficulty": "EASY",
+    "slots": [
+      {"archetype": "DPS"},
+      {"archetype": "DPS"},
+      {"archetype": "DPS"}
+    ]
+  },
+  "easy_2dps_tank": {
+    "template_id": "easy_2dps_tank",
+    "difficulty": "EASY",
+    "slots": [
+      {"archetype": "DPS"},
+      {"archetype": "DPS"},
+      {"archetype": "TANK"}
+    ]
+  },
+  "medium_tank_2dps": {
+    "template_id": "medium_tank_2dps",
+    "difficulty": "MEDIUM",
+    "slots": [
+      {"archetype": "TANK"},
+      {"archetype": "DPS"},
+      {"archetype": "DPS"},
+      {"archetype": "CONTROLLER"}
+    ]
+  },
+  "medium_balanced": {
+    "template_id": "medium_balanced",
+    "difficulty": "MEDIUM",
+    "slots": [
+      {"archetype": "TANK"},
+      {"archetype": "DPS"},
+      {"archetype": "HEALER"},
+      {"archetype": "CONTROLLER"}
+    ]
+  },
+  "hard_double_tank": {
+    "template_id": "hard_double_tank",
+    "difficulty": "HARD",
+    "slots": [
+      {"archetype": "TANK"},
+      {"archetype": "TANK"},
+      {"archetype": "DPS"},
+      {"archetype": "DPS"},
+      {"archetype": "CONTROLLER"}
+    ]
+  },
+  "hard_full": {
+    "template_id": "hard_full",
+    "difficulty": "HARD",
+    "slots": [
+      {"archetype": "TANK"},
+      {"archetype": "DPS"},
+      {"archetype": "DPS"},
+      {"archetype": "HEALER"},
+      {"archetype": "CONTROLLER"}
+    ]
+  },
+  "elite_swarm": {
+    "template_id": "elite_swarm",
+    "difficulty": "ELITE",
+    "slots": [
+      {"archetype": "DPS", "is_elite": true},
+      {"archetype": "DPS"},
+      {"archetype": "DPS"},
+      {"archetype": "DPS"},
+      {"archetype": "CONTROLLER"}
+    ]
+  },
+  "elite_boss_guard": {
+    "template_id": "elite_boss_guard",
+    "difficulty": "ELITE",
+    "slots": [
+      {"archetype": "TANK", "is_elite": true},
+      {"archetype": "DPS", "is_elite": true},
+      {"archetype": "HEALER"},
+      {"archetype": "CONTROLLER"}
+    ]
+  }
+}
