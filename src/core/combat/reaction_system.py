@@ -4,6 +4,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import TYPE_CHECKING, Protocol
+
+if TYPE_CHECKING:
+    from src.core.combat.action_economy import ActionEconomy
+    from src.core.combat.combat_engine import CombatEvent
+    from src.core.characters.character import Character
 
 from src.core.skills.skill import Skill
 
@@ -23,6 +29,18 @@ class ReactionMode(Enum):
     PASSIVE = "passive"
     PREPARED = "prepared"
     TOGGLE = "toggle"
+
+
+class ReactionHandler(Protocol):
+    """Protocol para gerenciadores de reacao no combate."""
+
+    def check_trigger(
+        self,
+        trigger: ReactionTrigger,
+        target: Character,
+        economy: ActionEconomy,
+        round_number: int,
+    ) -> list[CombatEvent]: ...
 
 
 @dataclass(frozen=True)

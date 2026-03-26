@@ -6,10 +6,13 @@ import pytest
 
 from src.core.combat.reaction_system import (
     PreparedReaction,
+    ReactionHandler,
     ReactionMode,
     ReactionTrigger,
 )
-from src.core.combat.action_economy import ActionType
+from src.core.combat.action_economy import ActionEconomy, ActionType
+from src.core.characters.character import Character
+from src.core.combat.combat_engine import CombatEvent
 from src.core.skills.resource_cost import ResourceCost
 from src.core.skills.skill import Skill
 from src.core.skills.skill_effect import SkillEffect
@@ -82,3 +85,36 @@ class TestPreparedReaction:
         )
         with pytest.raises(AttributeError):
             reaction.combatant_name = "X"  # type: ignore[misc]
+
+
+class TestReactionHandler:
+    """Tests para o Protocol ReactionHandler."""
+
+    def test_concrete_class_satisfies_protocol(self) -> None:
+        """Uma classe com check_trigger satisfaz o Protocol."""
+
+        class FakeHandler:
+            def check_trigger(
+                self,
+                trigger: ReactionTrigger,
+                target: Character,
+                economy: ActionEconomy,
+                round_number: int,
+            ) -> list[CombatEvent]:
+                return []
+
+        handler: ReactionHandler = FakeHandler()
+        result = handler.check_trigger(
+            trigger=ReactionTrigger.ON_DAMAGE_RECEIVED,
+            target=None,  # type: ignore[arg-type]
+            economy=ActionEconomy(),
+            round_number=1,
+        )
+        assert result == []
+
+    def test_reaction_manager_satisfies_protocol(self) -> None:
+        """ReactionManager real satisfaz ReactionHandler Protocol."""
+        from src.core.combat.reaction_manager import ReactionManager
+
+        manager: ReactionHandler = ReactionManager()
+        assert hasattr(manager, "check_trigger")

@@ -4,10 +4,12 @@ import pytest
 
 from src.core.combat.basic_attack_handler import BasicAttackHandler
 from src.core.combat.combat_engine import (
+    DEFAULT_SKIP_MESSAGE,
     CombatEngine,
     CombatEvent,
     CombatResult,
     TurnContext,
+    _extract_skip_message,
 )
 from src.core.combat.effect_phase import EffectLogEntry
 from src.core.effects.ailments.ailment_factory import (
@@ -18,6 +20,7 @@ from src.core.effects.ailments.ailment_factory import (
 )
 from src.core.effects.buff_factory import create_flat_buff, create_flat_debuff
 from src.core.effects.modifiable_stat import ModifiableStat
+from src.core.effects.tick_result import TickResult
 
 from tests.core.test_combat.conftest import _build_char as _make_char
 
@@ -225,3 +228,24 @@ class TestRegressionNoEffects:
         hp_after_r1 = enemy.current_hp
         engine.run_round()
         assert enemy.current_hp < hp_after_r1
+
+
+class TestExtractSkipMessage:
+
+    def test_returns_message_from_skip_tick(self) -> None:
+        results = [TickResult(skip_turn=True, message="Frozen solid")]
+        assert _extract_skip_message(results) == "Frozen solid"
+
+    def test_returns_default_when_no_skip(self) -> None:
+        results = [TickResult(damage=5, message="Poison tick")]
+        assert _extract_skip_message(results) == DEFAULT_SKIP_MESSAGE
+
+    def test_returns_default_for_empty_list(self) -> None:
+        assert _extract_skip_message([]) == DEFAULT_SKIP_MESSAGE
+
+    def test_returns_first_skip_when_multiple(self) -> None:
+        results = [
+            TickResult(skip_turn=True, message="Stunned"),
+            TickResult(skip_turn=True, message="Frozen"),
+        ]
+        assert _extract_skip_message(results) == "Stunned"

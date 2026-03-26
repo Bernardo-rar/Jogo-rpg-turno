@@ -17,6 +17,7 @@ from src.core.combat.effect_phase import (
     process_effect_ticks,
     should_skip_turn,
 )
+from src.core.combat.reaction_system import ReactionHandler
 from src.core.effects.tick_result import TickResult
 from src.core.combat.turn_order import Combatant, TurnOrder
 
@@ -96,7 +97,7 @@ class CombatEngine:
         party: list[Character],
         enemies: list[Character],
         turn_handler: TurnHandler,
-        reaction_manager: object | None = None,
+        reaction_manager: ReactionHandler | None = None,
     ) -> None:
         self._party = party
         self._enemies = enemies
@@ -192,14 +193,12 @@ class CombatEngine:
     ) -> str:
         if not combatant.is_alive:
             return "Dead"
-        skip_msgs = [r.message for r in tick_results if r.skip_turn]
-        return skip_msgs[0] if skip_msgs else DEFAULT_SKIP_MESSAGE
+        return _extract_skip_message(tick_results)
 
     def _log_skip(
         self, combatant: Character, tick_results: list[TickResult],
     ) -> None:
-        skip_msgs = [r.message for r in tick_results if r.skip_turn]
-        msg = skip_msgs[0] if skip_msgs else DEFAULT_SKIP_MESSAGE
+        msg = _extract_skip_message(tick_results)
         self._effect_log.append(
             create_skip_entry(combatant.name, self._round, msg),
         )
@@ -256,10 +255,8 @@ class CombatEngine:
         economy = self._economies.get(event.target_name)
         if economy is None:
             return []
-        check_fn = getattr(self._reaction_manager, "check_trigger", None)
-        if check_fn is None:
-            return []
-        return check_fn(
+        assert self._reaction_manager is not None
+        return self._reaction_manager.check_trigger(
             trigger=ReactionTrigger.ON_DAMAGE_RECEIVED,
             target=target,
             economy=economy,
@@ -281,6 +278,12 @@ class CombatEngine:
         if not party_alive:
             return CombatResult.PARTY_DEFEAT
         return None
+
+
+def _extract_skip_message(tick_results: list[TickResult]) -> str:
+    """Extrai mensagem de skip dos tick results, ou retorna default."""
+    skip_msgs = [r.message for r in tick_results if r.skip_turn]
+    return skip_msgs[0] if skip_msgs else DEFAULT_SKIP_MESSAGE
 
 
 def _tick_cooldowns(combatant: Character) -> None:
