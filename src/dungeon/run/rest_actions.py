@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 REST_HEAL_PERCENT = 0.30
 REST_MANA_PERCENT = 0.40
+REST_REVIVE_HP_PERCENT = 0.30
 
 
 def apply_rest_heal(party: list[Character]) -> dict[str, int]:
@@ -20,6 +21,16 @@ def apply_rest_heal(party: list[Character]) -> dict[str, int]:
             healed = c.heal(amount)
             results[c.name] = healed
     return results
+
+
+def apply_rest_revive(party: list[Character]) -> list[str]:
+    """Revive membros mortos com 30% HP. Retorna nomes revividos."""
+    revived: list[str] = []
+    for c in party:
+        if not c.is_alive:
+            c.revive(REST_REVIVE_HP_PERCENT)
+            revived.append(c.name)
+    return revived
 
 
 def apply_rest_meditate(party: list[Character]) -> dict[str, int]:

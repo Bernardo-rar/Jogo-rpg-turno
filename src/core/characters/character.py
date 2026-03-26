@@ -95,6 +95,13 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
             self._alive = False
         return actual
 
+    def revive(self, hp_fraction: float = 0.5) -> None:
+        """Revive personagem morto com fracao do HP maximo."""
+        if self._alive:
+            return
+        self._alive = True
+        self._current_hp = max(1, int(self.max_hp * hp_fraction))
+
     def heal(self, amount: int) -> int:
         if not self._alive:
             return 0
