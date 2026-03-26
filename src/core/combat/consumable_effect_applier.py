@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Callable
 from src.core.combat.combat_engine import CombatEvent, EventType
 from src.core.combat.damage import resolve_damage
 from src.core.effects.buff_factory import create_flat_buff
-from src.core.effects.stat_buff import StatBuff
+from src.core.effects.effect_category import EffectCategory
 from src.core.items.consumable_effect import ConsumableEffect
 from src.core.items.consumable_effect_type import ConsumableEffectType
 
@@ -111,10 +111,10 @@ def _apply_cleanse(
 
 
 def _remove_negative_effects(target: Character) -> None:
-    """Remove todos os efeitos que NAO sao StatBuff."""
+    """Remove todos os efeitos que NAO sao buffs."""
     negatives = [
         e for e in target.effect_manager.active_effects
-        if not isinstance(e, StatBuff)
+        if e.category != EffectCategory.BUFF
     ]
     for effect in negatives:
         target.effect_manager.remove_effect(effect)

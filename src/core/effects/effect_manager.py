@@ -51,9 +51,7 @@ class EffectManager:
         if effect not in self._effects:
             return
         effect.force_expire()
-        if not effect._expire_handled:
-            effect._expire_handled = True
-            effect.on_expire()
+        effect.expire_safely()
         self._effects.remove(effect)
 
     def remove_by_key(self, stacking_key: str) -> int:
@@ -98,9 +96,7 @@ class EffectManager:
         """Remove todos os efeitos, chamando on_expire em cada um."""
         for effect in list(self._effects):
             effect.force_expire()
-            if not effect._expire_handled:
-                effect._expire_handled = True
-                effect.on_expire()
+            effect.expire_safely()
         self._effects.clear()
 
     def _get_policy(self, stacking_key: str) -> StackingPolicy:
@@ -140,9 +136,7 @@ class EffectManager:
         """Remove existentes e adiciona novo (REPLACE policy)."""
         for old in existing:
             old.force_expire()
-            if not old._expire_handled:
-                old._expire_handled = True
-                old.on_expire()
+            old.expire_safely()
             self._effects.remove(old)
         self._add_and_apply(new_effect)
 
@@ -156,7 +150,5 @@ class EffectManager:
         """Remove efeitos expirados, chamando on_expire uma unica vez."""
         expired = [e for e in self._effects if e.is_expired]
         for effect in expired:
-            if not effect._expire_handled:
-                effect._expire_handled = True
-                effect.on_expire()
+            effect.expire_safely()
             self._effects.remove(effect)

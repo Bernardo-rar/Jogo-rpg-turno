@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from src.core.effects.effect_category import EffectCategory
 from src.core.effects.stat_modifier import StatModifier
 from src.core.effects.tick_result import TickResult
 
@@ -40,6 +41,12 @@ class Effect(ABC):
         ...
 
     @property
+    @abstractmethod
+    def category(self) -> EffectCategory:
+        """Categoria do efeito (BUFF, DEBUFF, AILMENT)."""
+        ...
+
+    @property
     def duration(self) -> int:
         """Duracao original em turnos."""
         return self._duration
@@ -67,6 +74,13 @@ class Effect(ABC):
 
     def on_expire(self) -> None:
         """Hook chamado quando o efeito expira ou e removido."""
+
+    def expire_safely(self) -> None:
+        """Chama on_expire() no maximo uma vez. Idempotente."""
+        if self._expire_handled:
+            return
+        self._expire_handled = True
+        self.on_expire()
 
     def force_expire(self) -> None:
         """Marca como expirado (ex: cleanse, dispel)."""

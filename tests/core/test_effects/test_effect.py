@@ -3,6 +3,7 @@
 import pytest
 
 from src.core.effects.effect import Effect, PERMANENT_DURATION
+from src.core.effects.effect_category import EffectCategory
 from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.effects.stat_modifier import StatModifier
 from src.core.effects.tick_result import TickResult
@@ -22,6 +23,10 @@ class _FlatAttackBuff(Effect):
     def stacking_key(self) -> str:
         return "attack_buff"
 
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.BUFF
+
     def get_modifiers(self) -> list[StatModifier]:
         return [StatModifier(stat=ModifiableStat.PHYSICAL_ATTACK, flat=10)]
 
@@ -39,6 +44,10 @@ class _PoisonDot(Effect):
     def stacking_key(self) -> str:
         return "poison"
 
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.AILMENT
+
     def _do_tick(self) -> TickResult:
         return TickResult(damage=self.DAMAGE_PER_TICK, message="Poison tick")
 
@@ -51,6 +60,7 @@ class _TrackingEffect(Effect):
         self.applied = False
         self.tick_count = 0
         self.expired_called = False
+        self.expire_call_count = 0
 
     @property
     def name(self) -> str:
@@ -59,6 +69,10 @@ class _TrackingEffect(Effect):
     @property
     def stacking_key(self) -> str:
         return "tracker"
+
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.BUFF
 
     def on_apply(self) -> None:
         self.applied = True
@@ -69,6 +83,7 @@ class _TrackingEffect(Effect):
 
     def on_expire(self) -> None:
         self.expired_called = True
+        self.expire_call_count += 1
 
 
 # --- Testes ---
@@ -185,3 +200,16 @@ class TestEffectModifiers:
         assert buff.is_expired is True
         result = buff.tick()
         assert result.damage == 0
+
+
+class TestExpireSafely:
+    def test_expire_safely_calls_on_expire_once(self):
+        tracker = _TrackingEffect(duration=3)
+        tracker.expire_safely()
+        assert tracker.expired_called is True
+
+    def test_expire_safely_is_idempotent(self):
+        tracker = _TrackingEffect(duration=3)
+        tracker.expire_safely()
+        tracker.expire_safely()
+        assert tracker.expire_call_count == 1

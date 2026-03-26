@@ -3,6 +3,7 @@
 import pytest
 
 from src.core.effects.effect import Effect, PERMANENT_DURATION
+from src.core.effects.effect_category import EffectCategory
 from src.core.effects.effect_manager import EffectManager
 from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.effects.stacking import StackingPolicy
@@ -24,6 +25,10 @@ class _AttackBuff(Effect):
     def stacking_key(self) -> str:
         return "attack_buff"
 
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.BUFF
+
     def get_modifiers(self) -> list[StatModifier]:
         return [StatModifier(stat=ModifiableStat.PHYSICAL_ATTACK, flat=10)]
 
@@ -38,6 +43,10 @@ class _DefenseDebuff(Effect):
     @property
     def stacking_key(self) -> str:
         return "defense_debuff"
+
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.DEBUFF
 
     def get_modifiers(self) -> list[StatModifier]:
         return [StatModifier(stat=ModifiableStat.PHYSICAL_DEFENSE, percent=-20.0)]
@@ -54,6 +63,10 @@ class _SpeedBuff(Effect):
     def stacking_key(self) -> str:
         return "speed_buff"
 
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.BUFF
+
     def get_modifiers(self) -> list[StatModifier]:
         return [StatModifier(stat=ModifiableStat.SPEED, flat=5, percent=10.0)]
 
@@ -68,6 +81,10 @@ class _PoisonDot(Effect):
     @property
     def stacking_key(self) -> str:
         return "poison"
+
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.AILMENT
 
     def _do_tick(self) -> TickResult:
         return TickResult(damage=5, message="Poison tick")
@@ -90,6 +107,10 @@ class _TrackingEffect(Effect):
     @property
     def stacking_key(self) -> str:
         return self._key
+
+    @property
+    def category(self) -> EffectCategory:
+        return EffectCategory.BUFF
 
     def on_apply(self) -> None:
         self.applied = True
