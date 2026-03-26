@@ -104,22 +104,14 @@ class TestPaladinDivineFavor:
     def test_favor_starts_at_zero(self, paladin: Paladin):
         assert paladin.divine_favor.current == 0
 
-    def test_gain_favor_from_protect(self, paladin: Paladin):
-        paladin.gain_favor_from_protect()
+    def test_gain_favor_increments_by_one(self, paladin: Paladin):
+        paladin.gain_favor()
         assert paladin.divine_favor.current == 1
 
-    def test_gain_favor_from_buff(self, paladin: Paladin):
-        paladin.gain_favor_from_buff()
-        assert paladin.divine_favor.current == 1
-
-    def test_gain_favor_from_heal(self, paladin: Paladin):
-        paladin.gain_favor_from_heal()
-        assert paladin.divine_favor.current == 1
-
-    def test_multiple_favor_sources_accumulate(self, paladin: Paladin):
-        paladin.gain_favor_from_protect()
-        paladin.gain_favor_from_buff()
-        paladin.gain_favor_from_heal()
+    def test_multiple_gain_favor_accumulate(self, paladin: Paladin):
+        paladin.gain_favor()
+        paladin.gain_favor()
+        paladin.gain_favor()
         assert paladin.divine_favor.current == 3
 
 

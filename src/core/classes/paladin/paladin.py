@@ -43,16 +43,8 @@ class Paladin(Character):
     def change_aura(self, new_aura: Aura) -> None:
         self._aura = new_aura
 
-    def gain_favor_from_protect(self) -> int:
-        """Ganha +1 favor ao proteger aliado."""
-        return self._divine_favor.gain()
-
-    def gain_favor_from_buff(self) -> int:
-        """Ganha +1 favor ao buffar aliado."""
-        return self._divine_favor.gain()
-
-    def gain_favor_from_heal(self) -> int:
-        """Ganha +1 favor ao curar aliado."""
+    def gain_favor(self) -> int:
+        """Ganha +1 favor divino (proteger, buffar ou curar aliado)."""
         return self._divine_favor.gain()
 
     @property

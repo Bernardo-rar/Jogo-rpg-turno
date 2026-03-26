@@ -7,75 +7,29 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.core.attributes.attribute_types import AttributeType
-from src.core.attributes.attributes import Attributes
-from src.core.attributes.threshold_calculator import ThresholdCalculator
-from src.core.characters.character import Character
-from src.core.characters.character_config import CharacterConfig
-from src.core.characters.class_modifiers import ClassModifiers
-from src.core.characters.position import Position
-from src.core.items.accessory_loader import load_accessories
-from src.core.items.armor_loader import load_armors
-from src.core.items.consumable_loader import load_consumables
-from src.core.items.inventory import Inventory
-from src.core.items.weapon_loader import load_weapons
-from src.core.skills.skill_bar import SkillBar
-from src.core.skills.skill_loader import load_skills
-from src.core.skills.spell_slot import SpellSlot
-import pygame
-
-from src.ui.font_manager import FontManager
-from src.ui.game import Game
-from src.ui.scenes.interactive_combat_factory import create_interactive_combat
-from src.ui.scenes.playable_combat_scene import PlayableCombatScene
-
-EMPTY_THRESHOLDS = ThresholdCalculator({})
-
-FIGHTER_MODS = ClassModifiers(
-    hit_dice=12, mod_hp_flat=0, mod_hp_mult=10, mana_multiplier=6,
-    mod_atk_physical=10, mod_atk_magical=6, mod_def_physical=5,
-    mod_def_magical=3, regen_hp_mod=5, regen_mana_mod=3,
-)
-CLERIC_MODS = ClassModifiers(
-    hit_dice=8, mod_hp_flat=0, mod_hp_mult=8, mana_multiplier=8,
-    mod_atk_physical=5, mod_atk_magical=8, mod_def_physical=3,
-    mod_def_magical=4, regen_hp_mod=3, regen_mana_mod=4,
-)
-SORCERER_MODS = ClassModifiers(
-    hit_dice=6, mod_hp_flat=0, mod_hp_mult=6, mana_multiplier=12,
-    mod_atk_physical=4, mod_atk_magical=10, mod_def_physical=2,
-    mod_def_magical=5, regen_hp_mod=2, regen_mana_mod=5,
-)
-ORC_MODS = ClassModifiers(
-    hit_dice=10, mod_hp_flat=0, mod_hp_mult=8, mana_multiplier=5,
-    mod_atk_physical=8, mod_atk_magical=4, mod_def_physical=4,
-    mod_def_magical=3, regen_hp_mod=3, regen_mana_mod=2,
+from scripts.battle_setup import (  # noqa: E402
+    CLERIC_MODS,
+    EMPTY_THRESHOLDS,
+    FIGHTER_MODS,
+    ORC_MODS,
+    SORCERER_MODS,
+    _attrs,
+    _make_inventory,
+    _make_skill_bar,
 )
 
+from src.core.characters.character import Character  # noqa: E402
+from src.core.characters.character_config import CharacterConfig  # noqa: E402
+from src.core.characters.position import Position  # noqa: E402
+from src.core.items.accessory_loader import load_accessories  # noqa: E402
+from src.core.items.armor_loader import load_armors  # noqa: E402
+from src.core.items.weapon_loader import load_weapons  # noqa: E402
+import pygame  # noqa: E402
 
-def _attrs(s, d, c, i, w, ch, m):
-    return Attributes({
-        AttributeType.STRENGTH: s, AttributeType.DEXTERITY: d,
-        AttributeType.CONSTITUTION: c, AttributeType.INTELLIGENCE: i,
-        AttributeType.WISDOM: w, AttributeType.CHARISMA: ch,
-        AttributeType.MIND: m,
-    })
-
-
-def _make_skill_bar(skill_ids):
-    all_skills = load_skills()
-    skills = tuple(all_skills[sid] for sid in skill_ids)
-    total_cost = sum(s.slot_cost for s in skills)
-    slot = SpellSlot(max_cost=total_cost + 10, skills=skills)
-    return SkillBar(slots=(slot,))
-
-
-def _make_inventory(item_quantities):
-    all_consumables = load_consumables()
-    inv = Inventory()
-    for cid, qty in item_quantities.items():
-        inv.add_item(all_consumables[cid], quantity=qty)
-    return inv
+from src.ui.font_manager import FontManager  # noqa: E402
+from src.ui.game import Game  # noqa: E402
+from src.ui.scenes.interactive_combat_factory import create_interactive_combat  # noqa: E402
+from src.ui.scenes.playable_combat_scene import PlayableCombatScene  # noqa: E402
 
 
 def main():
