@@ -50,6 +50,12 @@ class TestMusicalGrooveStacks:
     def test_max_stacks_property(self, groove: MusicalGroove) -> None:
         assert groove.max_stacks == _CONFIG.max_stacks
 
+    def test_musical_groove_gain_accepts_amount_parameter(
+        self, groove: MusicalGroove
+    ) -> None:
+        groove.gain(5)
+        assert groove.stacks == _CONFIG.gain_per_skill
+
     def test_gain_caps_at_max(self, groove: MusicalGroove) -> None:
         for _ in range(_CONFIG.max_stacks + 5):
             groove.gain()

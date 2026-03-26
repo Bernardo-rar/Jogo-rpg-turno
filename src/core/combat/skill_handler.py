@@ -5,7 +5,7 @@ from __future__ import annotations
 from src.core.combat.combat_engine import CombatEvent, EventType, TurnContext
 from src.core.combat.skill_effect_applier import apply_skill_effect
 from src.core.combat.target_resolver import resolve_targets
-from src.core.skills.class_resource_resolver import can_afford_resource, spend_resource
+from src.core.skills.class_resource_resolver import can_afford_all, spend_all
 from src.core.skills.skill import Skill
 from src.core.skills.skill_effect_type import SkillEffectType
 from src.core.skills.target_type import TargetType
@@ -33,7 +33,7 @@ def _pick_skill(context: TurnContext) -> Skill | None:
             continue
         if not economy.is_available(skill.action_type):
             continue
-        if not _can_afford_all_resources(context.combatant, skill):
+        if not can_afford_all(context.combatant, skill.resource_costs):
             continue
         if _is_wasteful_heal(skill, context):
             continue
@@ -63,23 +63,11 @@ def _heal_targets(target_type: TargetType, context: TurnContext):
     return []
 
 
-def _can_afford_all_resources(combatant: object, skill: Skill) -> bool:
-    return all(
-        can_afford_resource(combatant, cost)
-        for cost in skill.resource_costs
-    )
-
-
-def _spend_all_resources(combatant: object, skill: Skill) -> None:
-    for cost in skill.resource_costs:
-        spend_resource(combatant, cost)
-
-
 def execute_skill(skill: Skill, context: TurnContext) -> list[CombatEvent]:
     """Consome recursos e aplica efeitos da skill."""
     context.action_economy.use(skill.action_type)
     context.combatant.spend_mana(skill.mana_cost)
-    _spend_all_resources(context.combatant, skill)
+    spend_all(context.combatant, skill.resource_costs)
     targets = resolve_targets(skill.target_type, context)
     events: list[CombatEvent] = []
     for effect in skill.effects:

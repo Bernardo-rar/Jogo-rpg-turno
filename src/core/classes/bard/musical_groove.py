@@ -52,8 +52,8 @@ class MusicalGroove:
     def is_crescendo(self) -> bool:
         return self._crescendo_remaining > 0
 
-    def gain(self) -> None:
-        """Ganha stacks ao usar skill."""
+    def gain(self, amount: int = 1) -> None:
+        """Ganha stacks ao usar skill. amount aceito por compatibilidade."""
         self._stacks = min(
             self._stacks + self._config.gain_per_skill,
             self._config.max_stacks,

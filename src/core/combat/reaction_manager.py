@@ -10,10 +10,7 @@ from src.core.combat.reaction_system import (
     ReactionTrigger,
 )
 from src.core.combat.skill_effect_applier import apply_skill_effect
-from src.core.skills.class_resource_resolver import (
-    can_afford_resource,
-    spend_resource,
-)
+from src.core.skills.class_resource_resolver import can_afford_all, spend_all
 from src.core.skills.skill import Skill
 
 
@@ -63,7 +60,7 @@ class ReactionManager:
         skill = self._find_matching_reaction(trigger, target)
         if skill is None:
             return []
-        if not _can_afford_reaction(target, skill):
+        if not can_afford_all(target, skill.resource_costs):
             return []
         return _fire_reaction(skill, target, economy, round_number)
 
@@ -97,12 +94,6 @@ class ReactionManager:
         return prep.skill
 
 
-def _can_afford_reaction(target: object, skill: Skill) -> bool:
-    return all(
-        can_afford_resource(target, c) for c in skill.resource_costs
-    )
-
-
 def _fire_reaction(
     skill: Skill,
     target: object,
@@ -111,8 +102,7 @@ def _fire_reaction(
 ) -> list[CombatEvent]:
     """Dispara a reacao: consome REACTION + recursos + aplica efeitos."""
     economy.use(ActionType.REACTION)
-    for cost in skill.resource_costs:
-        spend_resource(target, cost)
+    spend_all(target, skill.resource_costs)
     targets = [target]
     events: list[CombatEvent] = []
     for effect in skill.effects:

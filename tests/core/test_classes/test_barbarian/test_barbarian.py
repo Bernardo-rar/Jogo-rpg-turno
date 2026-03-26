@@ -141,13 +141,13 @@ class TestBarbarianFuryOnDamage:
 class TestBarbarianFuryFromAttack:
     def test_generate_fury_from_attack(self, barbarian: Barbarian):
         barbarian.generate_fury_from_attack()
-        # fury_on_basic_attack = 5
-        assert barbarian.fury_bar.current == 5
+        # fury_on_basic_attack = 10
+        assert barbarian.fury_bar.current == 10
 
     def test_multiple_attacks_accumulate(self, barbarian: Barbarian):
         barbarian.generate_fury_from_attack()
         barbarian.generate_fury_from_attack()
-        assert barbarian.fury_bar.current == 10
+        assert barbarian.fury_bar.current == 20
 
 
 class TestBarbarianFuryDecay:

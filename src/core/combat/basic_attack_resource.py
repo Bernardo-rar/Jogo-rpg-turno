@@ -31,13 +31,5 @@ def on_basic_attack(combatant: Character) -> None:
             continue
         gain_fn = getattr(resource, "gain", None)
         if gain_fn is not None:
-            _safe_gain(gain_fn, amount)
+            gain_fn(amount)
             return
-
-
-def _safe_gain(gain_fn: object, amount: int) -> None:
-    """Chama gain(amount) ou gain() se não aceitar argumento."""
-    try:
-        gain_fn(amount)
-    except TypeError:
-        gain_fn()

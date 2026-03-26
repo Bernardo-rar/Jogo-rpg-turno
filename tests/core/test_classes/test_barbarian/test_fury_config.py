@@ -18,7 +18,7 @@ class TestFuryConfig:
 
     def test_fury_on_basic_attack(self):
         config = load_fury_config()
-        assert config.fury_on_basic_attack == 5
+        assert config.fury_on_basic_attack == 10
 
     def test_fury_decay_per_turn(self):
         config = load_fury_config()
