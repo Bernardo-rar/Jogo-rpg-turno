@@ -18,6 +18,8 @@ class FuryConfig:
     atk_bonus_at_max_fury: float
     regen_bonus_at_max_fury: float
     missing_hp_atk_bonus: float
+    reckless_atk_multiplier: float
+    reckless_def_multiplier: float
 
 
 def load_fury_config(

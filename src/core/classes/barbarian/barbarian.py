@@ -25,10 +25,19 @@ class Barbarian(Character):
         super().__init__(name, attributes, config)
         fury_max = int(self.max_hp * _FURY_CONFIG.fury_max_ratio)
         self._fury_bar = FuryBar(fury_max)
+        self._reckless = False
 
     @property
     def fury_bar(self) -> FuryBar:
         return self._fury_bar
+
+    @property
+    def is_reckless(self) -> bool:
+        return self._reckless
+
+    def toggle_reckless(self) -> None:
+        """Alterna estancia imprudente: +ATK, -DEF."""
+        self._reckless = not self._reckless
 
     def take_damage(self, amount: int) -> int:
         """Recebe dano e ganha fury proporcional."""
@@ -61,7 +70,24 @@ class Barbarian(Character):
         missing_mult = 1.0 + (
             self._missing_hp_ratio * _FURY_CONFIG.missing_hp_atk_bonus
         )
-        return int(base * fury_mult * missing_mult)
+        reckless_mult = (
+            _FURY_CONFIG.reckless_atk_multiplier if self._reckless else 1.0
+        )
+        return int(base * fury_mult * missing_mult * reckless_mult)
+
+    @property
+    def physical_defense(self) -> int:
+        base = super().physical_defense
+        if self._reckless:
+            return int(base * _FURY_CONFIG.reckless_def_multiplier)
+        return base
+
+    @property
+    def magical_defense(self) -> int:
+        base = super().magical_defense
+        if self._reckless:
+            return int(base * _FURY_CONFIG.reckless_def_multiplier)
+        return base
 
     @property
     def hp_regen(self) -> int:
@@ -85,5 +111,13 @@ class Barbarian(Character):
                 current=self.fury_bar.current,
                 maximum=self.fury_bar.max_fury,
                 color=(220, 50, 30),
+            ),
+            ClassResourceSnapshot(
+                name="Reckless",
+                display_type=ResourceDisplayType.TOGGLE,
+                current=1 if self._reckless else 0,
+                maximum=1,
+                color=(220, 100, 30),
+                label="ACTIVE" if self._reckless else "OFF",
             ),
         )
