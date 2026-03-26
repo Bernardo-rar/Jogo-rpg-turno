@@ -234,3 +234,24 @@ class TestCombatEngineDuplicateNames:
                 [_make_char("Alpha")],
                 handler,
             )
+
+
+class TestCombatEngineEdgeCases:
+
+    def test_empty_enemies_returns_party_victory(self, handler) -> None:
+        engine = CombatEngine(
+            [_make_char("Hero")],
+            [],
+            handler,
+        )
+        result = engine.run_combat()
+        assert result == CombatResult.PARTY_VICTORY
+
+    def test_empty_party_returns_party_defeat(self, handler) -> None:
+        engine = CombatEngine(
+            [],
+            [_make_char("Goblin")],
+            handler,
+        )
+        result = engine.run_combat()
+        assert result == CombatResult.PARTY_DEFEAT

@@ -44,3 +44,42 @@ class TestBasicAttackHandlerNoTargets:
         handler = BasicAttackHandler()
         events = handler.execute_turn(context)
         assert events == []
+
+
+class TestBasicAttackHandlerHappyPath:
+
+    def test_basic_attack_on_valid_target_returns_damage_event(self) -> None:
+        attacker = _build_char("Attacker")
+        enemy = _build_char("Enemy")
+        economy = ActionEconomy()
+        context = TurnContext(
+            combatant=attacker,
+            allies=[attacker],
+            enemies=[enemy],
+            action_economy=economy,
+            round_number=1,
+        )
+        handler = BasicAttackHandler()
+        events = handler.execute_turn(context)
+        assert len(events) == 1
+        event = events[0]
+        assert event.damage is not None
+        assert event.damage.final_damage > 0
+        assert event.actor_name == "Attacker"
+        assert event.target_name == "Enemy"
+
+    def test_basic_attack_consumes_normal_action(self) -> None:
+        attacker = _build_char("Attacker")
+        enemy = _build_char("Enemy")
+        economy = ActionEconomy()
+        context = TurnContext(
+            combatant=attacker,
+            allies=[attacker],
+            enemies=[enemy],
+            action_economy=economy,
+            round_number=1,
+        )
+        handler = BasicAttackHandler()
+        assert economy.is_available(ActionType.ACTION) is True
+        handler.execute_turn(context)
+        assert economy.is_available(ActionType.ACTION) is False

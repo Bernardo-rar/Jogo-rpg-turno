@@ -83,6 +83,44 @@ class TestConstitutionThresholdBonuses:
         assert bonuses["stamina_mod"] == 1
 
 
+class TestThresholdOffByOne:
+    """Confirma que bonus NAO dispara em threshold - 1."""
+
+    def test_strength_no_bonus_at_17(self, calculator: ThresholdCalculator):
+        bonuses = calculator.calculate_bonuses(AttributeType.STRENGTH, 17)
+        assert bonuses.get("atk_physical_mod", 0) == 0
+        assert bonuses.get("def_physical_mod", 0) == 0
+        assert bonuses.get("hp_mod", 0) == 0
+
+    def test_dexterity_no_bonus_at_17(self, calculator: ThresholdCalculator):
+        bonuses = calculator.calculate_bonuses(AttributeType.DEXTERITY, 17)
+        assert bonuses.get("crit_chance_pct", 0) == 0
+        assert bonuses.get("atk_physical_mod", 0) == 0
+
+    def test_constitution_no_bonus_at_17(self, calculator: ThresholdCalculator):
+        bonuses = calculator.calculate_bonuses(AttributeType.CONSTITUTION, 17)
+        assert bonuses.get("hp_mod", 0) == 0
+        assert bonuses.get("def_physical_mod", 0) == 0
+        assert bonuses.get("hp_regen_mod", 0) == 0
+
+    def test_strength_tier2_not_at_29(self, calculator: ThresholdCalculator):
+        bonuses = calculator.calculate_bonuses(AttributeType.STRENGTH, 29)
+        # Deve ter apenas 3x tier1 (valor 26 e o ultimo tier1 atingido)
+        assert bonuses["atk_physical_mod"] == 6
+        assert bonuses["def_physical_mod"] == 3
+
+    def test_intelligence_no_bonus_at_17(self, calculator: ThresholdCalculator):
+        bonuses = calculator.calculate_bonuses(AttributeType.INTELLIGENCE, 17)
+        assert bonuses.get("atk_magical_mod", 0) == 0
+        assert bonuses.get("mana_mod", 0) == 0
+        assert bonuses.get("def_magical_mod", 0) == 0
+
+    def test_wisdom_no_bonus_at_17(self, calculator: ThresholdCalculator):
+        bonuses = calculator.calculate_bonuses(AttributeType.WISDOM, 17)
+        assert bonuses.get("def_magical_mod", 0) == 0
+        assert bonuses.get("heal_mod", 0) == 0
+
+
 class TestMindThresholdBonuses:
     def test_mind_has_no_threshold_bonuses(self, calculator: ThresholdCalculator):
         bonuses = calculator.calculate_bonuses(AttributeType.MIND, 32)
