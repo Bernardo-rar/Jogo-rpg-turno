@@ -4,9 +4,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from src.ui.animations.card_shake import CardShake
-
-
 class AnimationManager:
     """Gerencia ciclo de vida de animacoes: spawn, update, draw, cleanup."""
 
@@ -42,7 +39,7 @@ class AnimationManager:
         """Soma offsets de todos os CardShakes ativos para o alvo."""
         dx, dy = 0, 0
         for anim in self._animations:
-            if isinstance(anim, CardShake) and anim.target_name == target_name:
+            if hasattr(anim, 'offset') and hasattr(anim, 'target_name') and anim.target_name == target_name:
                 ox, oy = anim.offset
                 dx, dy = dx + ox, dy + oy
         return (dx, dy)

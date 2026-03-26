@@ -200,7 +200,10 @@ class RunApp:
         )
 
 
-def _build_encounter_factory() -> EncounterFactory:
+def _load_dungeon_catalogs(
+    extra_skill_files: list[str],
+) -> tuple[dict[str, Weapon], dict[str, ElementalProfile], dict[str, Skill]]:
+    """Load weapons, profiles, and skills shared by encounter/boss factories."""
     core_weapons = load_weapons()
     raw_dw = json.loads(
         resolve_data_path("data/dungeon/enemies/weapons.json")
@@ -219,23 +222,25 @@ def _build_encounter_factory() -> EncounterFactory:
         for name, r in raw_dp.items()
     }
     core_skills = load_skills()
-    raw_ds = json.loads(
-        resolve_data_path("data/dungeon/enemies/skills/tier1_skills.json")
-        .read_text(encoding="utf-8"),
-    )
-    dungeon_skills = {
-        sid: Skill.from_dict(sid, data) for sid, data in raw_ds.items()
-    }
-    raw_es = json.loads(
-        resolve_data_path("data/dungeon/enemies/skills/elite_skills.json")
-        .read_text(encoding="utf-8"),
-    )
-    elite_skills = {
-        sid: Skill.from_dict(sid, data) for sid, data in raw_es.items()
-    }
+    extra: dict[str, Skill] = {}
+    for path in extra_skill_files:
+        raw = json.loads(
+            resolve_data_path(path).read_text(encoding="utf-8"),
+        )
+        extra.update(
+            {sid: Skill.from_dict(sid, data) for sid, data in raw.items()},
+        )
     weapons = {**core_weapons, **dungeon_weapons}
     profiles = {**core_profiles, **dungeon_profiles}
-    skills = {**core_skills, **dungeon_skills, **elite_skills}
+    skills = {**core_skills, **extra}
+    return weapons, profiles, skills
+
+
+def _build_encounter_factory() -> EncounterFactory:
+    weapons, profiles, skills = _load_dungeon_catalogs([
+        "data/dungeon/enemies/skills/tier1_skills.json",
+        "data/dungeon/enemies/skills/elite_skills.json",
+    ])
     enemy_factory = EnemyFactory(weapons, profiles, skills)
     elite_bonuses = load_elite_bonuses()
     return EncounterFactory(
@@ -245,32 +250,7 @@ def _build_encounter_factory() -> EncounterFactory:
 
 
 def _build_boss_factory() -> BossFactory:
-    core_weapons = load_weapons()
-    raw_dw = json.loads(
-        resolve_data_path("data/dungeon/enemies/weapons.json")
-        .read_text(encoding="utf-8"),
-    )
-    dungeon_weapons = {k: Weapon.from_dict(v) for k, v in raw_dw.items()}
-    core_profiles = load_profiles()
-    raw_dp = json.loads(
-        resolve_data_path("data/dungeon/enemies/elemental_profiles.json")
-        .read_text(encoding="utf-8"),
-    )
-    dungeon_profiles = {
-        name: ElementalProfile(
-            resistances={ElementType[k]: v for k, v in r.items()},
-        )
-        for name, r in raw_dp.items()
-    }
-    core_skills = load_skills()
-    raw_bs = json.loads(
-        resolve_data_path("data/dungeon/enemies/skills/boss_skills.json")
-        .read_text(encoding="utf-8"),
-    )
-    boss_skills = {
-        sid: Skill.from_dict(sid, data) for sid, data in raw_bs.items()
-    }
-    weapons = {**core_weapons, **dungeon_weapons}
-    profiles = {**core_profiles, **dungeon_profiles}
-    skills = {**core_skills, **boss_skills}
+    weapons, profiles, skills = _load_dungeon_catalogs([
+        "data/dungeon/enemies/skills/boss_skills.json",
+    ])
     return BossFactory(weapons, profiles, skills)

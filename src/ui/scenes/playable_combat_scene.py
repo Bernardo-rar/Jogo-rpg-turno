@@ -122,7 +122,7 @@ class PlayableCombatScene:
         """Sinaliza fim do combate via callback ou fecha a cena."""
         if self._on_complete is not None:
             from src.core.combat.combat_engine import CombatResult
-            result = self._scene._engine.result
+            result = self._scene.result
             self._on_complete({
                 "victory": result == CombatResult.PARTY_VICTORY,
             })
@@ -130,7 +130,7 @@ class PlayableCombatScene:
             self._running = False
 
     def _refresh_battlefield(self) -> None:
-        rnd = max(1, self._scene._engine.round_number)
+        rnd = max(1, self._scene.round_number)
         snap = create_live_snapshot(self._party, self._enemies, rnd)
         self._battlefield.update(snap)
 
@@ -153,7 +153,7 @@ class PlayableCombatScene:
 
     def _flush_new_events(self) -> None:
         """Loga eventos novos e spawna animacoes."""
-        all_events = self._scene._engine.events
+        all_events = self._scene.events
         while self._event_index < len(all_events):
             event = all_events[self._event_index]
             self._log_event(event)
@@ -197,7 +197,7 @@ class PlayableCombatScene:
             draw_turn_indicator(surface, rect, self._elapsed_ms)
 
     def _draw_round(self, surface: pygame.Surface) -> None:
-        rnd = self._scene._engine.round_number
+        rnd = self._scene.round_number
         text = f"Round {rnd}"
         rendered = self._fonts.large.render(text, True, colors.TEXT_YELLOW)
         surface.blit(
@@ -206,7 +206,7 @@ class PlayableCombatScene:
         )
 
     def _draw_result(self, surface: pygame.Surface) -> None:
-        result = self._scene._engine.result
+        result = self._scene.result
         if result is None:
             return
         text = result.name.replace("_", " ")

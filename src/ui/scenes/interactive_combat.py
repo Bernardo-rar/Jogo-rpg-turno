@@ -57,6 +57,18 @@ class InteractiveCombatScene:
     def current_context(self) -> TurnContext | None:
         return self._current_context
 
+    @property
+    def round_number(self) -> int:
+        return self._engine.round_number
+
+    @property
+    def result(self) -> CombatResult | None:
+        return self._engine.result
+
+    @property
+    def events(self) -> list:
+        return self._engine.events
+
     def update(self, dt_ms: int) -> bool:
         """Avanca state machine ate fase bloqueante."""
         while self._phase not in _BLOCKING_PHASES:
