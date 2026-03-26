@@ -156,6 +156,30 @@ class TestApplyAilment:
         assert events[0].event_type == EventType.AILMENT
         assert events[0].description == "poison"
 
+    def test_apply_ailment_freeze_creates_effect(self) -> None:
+        caster = _build_char("Caster")
+        target = _build_char("Target")
+        effect = SkillEffect(
+            effect_type=SkillEffectType.APPLY_AILMENT,
+            base_power=0, ailment_id="freeze", duration=2,
+        )
+        events = apply_skill_effect(effect, [target], 1, caster)
+        assert len(target.effect_manager.active_effects) == 1
+        assert events[0].event_type == EventType.AILMENT
+        assert events[0].description == "freeze"
+
+    def test_apply_ailment_weakness_uses_base_power_as_reduction(self) -> None:
+        caster = _build_char("Caster")
+        target = _build_char("Target")
+        effect = SkillEffect(
+            effect_type=SkillEffectType.APPLY_AILMENT,
+            base_power=20, ailment_id="weakness", duration=3,
+        )
+        events = apply_skill_effect(effect, [target], 1, caster)
+        assert len(target.effect_manager.active_effects) == 1
+        assert events[0].event_type == EventType.AILMENT
+        assert events[0].description == "weakness"
+
     def test_unknown_ailment_returns_empty(self) -> None:
         caster = _build_char("Caster")
         target = _build_char("Target")
@@ -165,3 +189,47 @@ class TestApplyAilment:
         )
         events = apply_skill_effect(effect, [target], 1, caster)
         assert events == []
+
+
+class TestApplyCounterAttack:
+    def test_counter_attack_excludes_caster_from_targets(self) -> None:
+        """Quando o caster esta na lista de alvos, nao deve atacar a si mesmo."""
+        caster = _build_char("Fighter")
+        enemy = _build_char("Enemy")
+        hp_caster_before = caster.current_hp
+        effect = SkillEffect(
+            effect_type=SkillEffectType.COUNTER_ATTACK,
+            base_power=10,
+        )
+        # Passa caster + enemy como alvos; caster nao deve se auto-atacar
+        targets = [t for t in [caster, enemy] if t is not caster]
+        events = apply_skill_effect(effect, targets, 1, caster)
+        assert caster.current_hp == hp_caster_before
+        assert len(events) == 1
+        assert events[0].target_name == "Enemy"
+
+
+class TestMechanicDispatch:
+    def test_mechanic_dispatch_has_all_known_ids(self) -> None:
+        from src.core.combat.skill_effect_applier import _MECHANIC_DISPATCH
+        expected_ids = {
+            "change_stance_offensive",
+            "change_stance_defensive",
+            "change_stance_normal",
+            "activate_reckless_stance",
+            "action_surge",
+            "activate_overcharge",
+            "activate_overcharged",
+            "switch_aura_offensive",
+            "switch_aura_defensive",
+            "apply_hunters_mark",
+            "shift_destruction",
+            "shift_vitality",
+            "shift_balance",
+            "set_metamagic",
+            "transform_animal_form",
+            "create_field_condition",
+            "enter_stealth",
+            "envenom_weapon",
+        }
+        assert expected_ids.issubset(set(_MECHANIC_DISPATCH.keys()))

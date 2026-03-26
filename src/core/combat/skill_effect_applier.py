@@ -7,9 +7,20 @@ from typing import TYPE_CHECKING, Callable
 from src.core.combat.combat_engine import CombatEvent, EventType
 from src.core.combat.damage import resolve_damage
 from src.core.effects.ailments.ailment_factory import (
+    create_amnesia,
     create_bleed,
     create_burn,
+    create_cold,
+    create_confusion,
+    create_curse,
+    create_freeze,
+    create_injury,
+    create_paralysis,
     create_poison,
+    create_scorch,
+    create_sickness,
+    create_virus,
+    create_weakness,
 )
 from src.core.effects.buff_factory import create_flat_buff, create_flat_debuff
 from src.core.skills.skill_effect import SkillEffect
@@ -213,10 +224,15 @@ def _apply_counter_attack(
     effect: SkillEffect, targets: list[Character],
     rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
-    """Contra-ataque reativo (dano baseado no ATK do reator)."""
+    """Contra-ataque reativo (dano baseado no ATK do reator).
+
+    Filtra o proprio combatant dos alvos — skills SELF com
+    COUNTER_ATTACK nao devem causar dano a si mesmo.
+    """
     events: list[CombatEvent] = []
     attack = effect.base_power + combatant.attack_power
-    for target in targets:
+    valid_targets = [t for t in targets if t is not combatant]
+    for target in valid_targets:
         defense = target.defense_for(combatant.preferred_attack_type)
         result = resolve_damage(attack_power=attack, defense=defense)
         target.take_damage(result.final_damage)
@@ -228,7 +244,142 @@ def _apply_counter_attack(
     return events
 
 
-_MECHANIC_DISPATCH: dict[str, Callable[..., None]] = {}
+def _mechanic_stance_offensive(target: Character) -> None:
+    change = getattr(target, "change_stance", None)
+    if change is not None:
+        from src.core.classes.fighter.stance import Stance
+        change(Stance.OFFENSIVE)
+
+
+def _mechanic_stance_defensive(target: Character) -> None:
+    change = getattr(target, "change_stance", None)
+    if change is not None:
+        from src.core.classes.fighter.stance import Stance
+        change(Stance.DEFENSIVE)
+
+
+def _mechanic_stance_normal(target: Character) -> None:
+    change = getattr(target, "change_stance", None)
+    if change is not None:
+        from src.core.classes.fighter.stance import Stance
+        change(Stance.NORMAL)
+
+
+def _mechanic_reckless_stance(target: Character) -> None:
+    toggle = getattr(target, "toggle_reckless", None)
+    if toggle is not None:
+        toggle()
+
+
+def _mechanic_action_surge(target: Character) -> None:
+    fn = getattr(target, "action_surge", None)
+    if fn is not None:
+        fn()
+
+
+def _mechanic_activate_overcharge(target: Character) -> None:
+    fn = getattr(target, "activate_overcharge", None)
+    if fn is not None:
+        fn()
+
+
+def _mechanic_activate_overcharged(target: Character) -> None:
+    fn = getattr(target, "activate_overcharged", None)
+    if fn is not None:
+        fn()
+
+
+def _mechanic_switch_aura_offensive(target: Character) -> None:
+    fn = getattr(target, "change_aura", None)
+    if fn is not None:
+        from src.core.classes.paladin.aura import Aura
+        fn(Aura.ATTACK)
+
+
+def _mechanic_switch_aura_defensive(target: Character) -> None:
+    fn = getattr(target, "change_aura", None)
+    if fn is not None:
+        from src.core.classes.paladin.aura import Aura
+        fn(Aura.PROTECTION)
+
+
+def _mechanic_apply_hunters_mark(target: Character) -> None:
+    fn = getattr(target, "mark_target", None)
+    if fn is not None:
+        fn("")
+
+
+def _mechanic_shift_destruction(target: Character) -> None:
+    fn = getattr(target, "attack_action", None)
+    if fn is not None:
+        fn()
+
+
+def _mechanic_shift_vitality(target: Character) -> None:
+    fn = getattr(target, "defensive_action", None)
+    if fn is not None:
+        fn()
+
+
+def _mechanic_shift_balance(target: Character) -> None:
+    fn = getattr(target, "end_of_turn_decay", None)
+    if fn is not None:
+        fn()
+
+
+def _mechanic_set_metamagic(target: Character) -> None:
+    fn = getattr(target, "set_metamagic", None)
+    if fn is not None:
+        from src.core.elements.element_type import ElementType
+        fn(ElementType.FIRE)
+
+
+def _mechanic_transform_animal_form(target: Character) -> None:
+    fn = getattr(target, "transform", None)
+    if fn is not None:
+        from src.core.classes.druid.animal_form import AnimalForm
+        fn(AnimalForm.BEAR)
+
+
+def _mechanic_create_field_condition(target: Character) -> None:
+    fn = getattr(target, "create_field_condition", None)
+    if fn is not None:
+        from src.core.classes.druid.field_condition import FieldConditionType
+        fn(FieldConditionType.SNOW)
+
+
+def _mechanic_enter_stealth(target: Character) -> None:
+    fn = getattr(target, "enter_stealth", None)
+    if fn is not None:
+        fn()
+
+
+def _mechanic_envenom_weapon(target: Character) -> None:
+    fn = getattr(target, "envenom_weapon", None)
+    if fn is not None:
+        fn()
+
+
+_MECHANIC_DISPATCH: dict[str, Callable[..., None]] = {
+    "change_stance_offensive": _mechanic_stance_offensive,
+    "change_stance_defensive": _mechanic_stance_defensive,
+    "change_stance_normal": _mechanic_stance_normal,
+    "activate_reckless_stance": _mechanic_reckless_stance,
+    "action_surge": _mechanic_action_surge,
+    "activate_overcharge": _mechanic_activate_overcharge,
+    "activate_overcharged": _mechanic_activate_overcharged,
+    "switch_aura_offensive": _mechanic_switch_aura_offensive,
+    "switch_aura_defensive": _mechanic_switch_aura_defensive,
+    "apply_hunters_mark": _mechanic_apply_hunters_mark,
+    "shift_destruction": _mechanic_shift_destruction,
+    "shift_vitality": _mechanic_shift_vitality,
+    "shift_balance": _mechanic_shift_balance,
+    "set_metamagic": _mechanic_set_metamagic,
+    "transform_animal_form": _mechanic_transform_animal_form,
+    "create_field_condition": _mechanic_create_field_condition,
+    "enter_stealth": _mechanic_enter_stealth,
+    "envenom_weapon": _mechanic_envenom_weapon,
+}
 
 
 _APPLIERS: dict[SkillEffectType, Callable[..., list[CombatEvent]]] = {
@@ -244,7 +395,22 @@ _APPLIERS: dict[SkillEffectType, Callable[..., list[CombatEvent]]] = {
 }
 
 _AILMENT_FACTORIES: dict[str, Callable[..., object]] = {
+    # DoTs: (base_power=damage_per_tick, duration)
     "poison": create_poison,
-    "burn": create_burn,
+    "virus": create_virus,
     "bleed": create_bleed,
+    "burn": create_burn,
+    "scorch": create_scorch,
+    # CCs: ignore base_power, use only duration
+    "freeze": lambda bp, dur: create_freeze(dur),
+    "paralysis": lambda bp, dur: create_paralysis(dur),
+    "confusion": lambda bp, dur: create_confusion(dur),
+    # Debuff ailments: base_power = reduction_percent
+    "cold": lambda bp, dur: create_cold(dur, float(bp)),
+    "weakness": lambda bp, dur: create_weakness(dur, float(bp)),
+    "injury": lambda bp, dur: create_injury(dur, float(bp)),
+    "sickness": lambda bp, dur: create_sickness(dur, float(bp)),
+    # Resource locks: ignore base_power
+    "amnesia": lambda bp, dur: create_amnesia(dur),
+    "curse": lambda bp, dur: create_curse(dur),
 }
