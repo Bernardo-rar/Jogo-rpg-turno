@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from src.core.combat.action_economy import ActionEconomy, ActionType
 from src.core.combat.combat_engine import CombatEvent, EventType, TurnContext
 from src.core.combat.skill_effect_applier import apply_skill_effect
 from src.core.combat.target_resolver import resolve_targets
 from src.core.skills.class_resource_resolver import can_afford_all, spend_all
 from src.core.skills.skill import Skill
+from src.core.skills.skill_effect import SkillEffect
 from src.core.skills.skill_effect_type import SkillEffectType
 from src.core.skills.target_type import TargetType
 
@@ -53,7 +55,7 @@ def _is_pure_heal(skill: Skill) -> bool:
     return all(e.effect_type == SkillEffectType.HEAL for e in skill.effects)
 
 
-def _heal_targets(target_type: TargetType, context: TurnContext):
+def _heal_targets(target_type: TargetType, context: TurnContext) -> list:
     if target_type == TargetType.SELF:
         return [context.combatant]
     if target_type == TargetType.SINGLE_ALLY:
@@ -75,8 +77,33 @@ def execute_skill(skill: Skill, context: TurnContext) -> list[CombatEvent]:
             effect, targets, context.round_number,
             context.combatant,
         ))
+    _grant_actions(skill, context.action_economy)
     _start_cooldown(context, skill)
     return events
+
+
+def _grant_actions(skill: Skill, economy: ActionEconomy) -> None:
+    """Aplica GRANT_ACTION effects da skill na economy."""
+    for effect in skill.effects:
+        if effect.effect_type == SkillEffectType.GRANT_ACTION:
+            _grant_single(effect, economy)
+
+
+def _grant_single(effect: SkillEffect, economy: ActionEconomy) -> None:
+    """Concede uma acao baseado no resource_type do effect."""
+    action_type = _parse_grant_type(effect)
+    if action_type is not None:
+        economy.grant(action_type)
+
+
+def _parse_grant_type(effect: SkillEffect) -> ActionType | None:
+    """Converte resource_type string em ActionType enum."""
+    if effect.resource_type is None:
+        return None
+    try:
+        return ActionType[effect.resource_type.upper()]
+    except KeyError:
+        return None
 
 
 def _start_cooldown(context: TurnContext, skill: Skill) -> None:

@@ -6,6 +6,10 @@ from typing import TYPE_CHECKING, Callable
 
 from src.core.combat.combat_engine import CombatEvent, EventType
 from src.core.combat.damage import resolve_damage
+from src.core.elements.combo.combo_detector import ComboDetector
+from src.core.elements.combo.combo_resolver import ComboOutcome, resolve_combo
+from src.core.elements.combo.element_marker import ElementMarker
+from src.core.elements.element_type import ElementType
 from src.core.effects.ailments.ailment_factory import (
     create_amnesia,
     create_bleed,
@@ -30,6 +34,19 @@ if TYPE_CHECKING:
     from src.core.characters.character import Character
 
 _DEFAULT_AILMENT_DURATION = 3
+
+_combo_detector: ComboDetector | None = None
+
+
+def set_combo_detector(detector: ComboDetector | None) -> None:
+    """Configura o ComboDetector usado pelo fluxo de dano."""
+    global _combo_detector  # noqa: PLW0603
+    _combo_detector = detector
+
+
+def get_combo_detector() -> ComboDetector | None:
+    """Retorna o ComboDetector atual (ou None se nao configurado)."""
+    return _combo_detector
 
 
 def apply_skill_effect(
@@ -58,7 +75,41 @@ def _apply_damage(
             target_name=target.name, damage=result,
             element=effect.element,
         ))
+        if effect.element is not None:
+            events.extend(_handle_elemental_combo(
+                effect.element, target, rnd, combatant,
+            ))
     return events
+
+
+def _handle_elemental_combo(
+    element: ElementType, target: Character,
+    rnd: int, combatant: Character,
+) -> list[CombatEvent]:
+    """Adiciona marker elemental e resolve combo se houver."""
+    target.effect_manager.add_effect(ElementMarker(element))
+    outcome = resolve_combo(
+        element, target.effect_manager, _combo_detector,
+    )
+    if outcome is None:
+        return []
+    return _apply_combo_bonus(outcome, target, rnd, combatant)
+
+
+def _apply_combo_bonus(
+    outcome: ComboOutcome, target: Character,
+    rnd: int, combatant: Character,
+) -> list[CombatEvent]:
+    """Aplica dano bonus do combo e retorna evento."""
+    if outcome.bonus_damage > 0:
+        target.take_damage(outcome.bonus_damage)
+    return [CombatEvent(
+        round_number=rnd, actor_name=combatant.name,
+        target_name=target.name,
+        event_type=EventType.DAMAGE,
+        value=outcome.bonus_damage,
+        description=outcome.combo_name,
+    )]
 
 
 def _pick_attack(effect: SkillEffect, combatant: Character) -> int:
@@ -161,8 +212,9 @@ def _apply_trigger_mechanic(
     if handler is None:
         return []
     events: list[CombatEvent] = []
+    param = effect.mechanic_param
     for target in targets:
-        handler(target)
+        handler(target, param)
         events.append(CombatEvent(
             round_number=rnd, actor_name=combatant.name,
             target_name=target.name,
@@ -205,11 +257,7 @@ def _apply_shield(
     """Cria barreira/temp HP no alvo."""
     events: list[CombatEvent] = []
     for target in targets:
-        barrier = getattr(target, "barrier", None)
-        if barrier is not None:
-            add_fn = getattr(barrier, "add", None)
-            if add_fn is not None:
-                add_fn(effect.base_power)
+        target.barrier.add(effect.base_power)
         events.append(CombatEvent(
             round_number=rnd, actor_name=combatant.name,
             target_name=target.name,
@@ -244,117 +292,114 @@ def _apply_counter_attack(
     return events
 
 
-def _mechanic_stance_offensive(target: Character) -> None:
+def _mechanic_stance_offensive(target: Character, param: str | None) -> None:
     change = getattr(target, "change_stance", None)
     if change is not None:
         from src.core.classes.fighter.stance import Stance
         change(Stance.OFFENSIVE)
 
 
-def _mechanic_stance_defensive(target: Character) -> None:
+def _mechanic_stance_defensive(target: Character, param: str | None) -> None:
     change = getattr(target, "change_stance", None)
     if change is not None:
         from src.core.classes.fighter.stance import Stance
         change(Stance.DEFENSIVE)
 
 
-def _mechanic_stance_normal(target: Character) -> None:
+def _mechanic_stance_normal(target: Character, param: str | None) -> None:
     change = getattr(target, "change_stance", None)
     if change is not None:
         from src.core.classes.fighter.stance import Stance
         change(Stance.NORMAL)
 
 
-def _mechanic_reckless_stance(target: Character) -> None:
+def _mechanic_reckless_stance(target: Character, param: str | None) -> None:
     toggle = getattr(target, "toggle_reckless", None)
     if toggle is not None:
         toggle()
 
 
-def _mechanic_action_surge(target: Character) -> None:
-    fn = getattr(target, "action_surge", None)
-    if fn is not None:
-        fn()
-
-
-def _mechanic_activate_overcharge(target: Character) -> None:
+def _mechanic_activate_overcharge(target: Character, param: str | None) -> None:
     fn = getattr(target, "activate_overcharge", None)
     if fn is not None:
         fn()
 
 
-def _mechanic_activate_overcharged(target: Character) -> None:
+def _mechanic_activate_overcharged(target: Character, param: str | None) -> None:
     fn = getattr(target, "activate_overcharged", None)
     if fn is not None:
         fn()
 
 
-def _mechanic_switch_aura_offensive(target: Character) -> None:
+def _mechanic_switch_aura_offensive(target: Character, param: str | None) -> None:
     fn = getattr(target, "change_aura", None)
     if fn is not None:
         from src.core.classes.paladin.aura import Aura
         fn(Aura.ATTACK)
 
 
-def _mechanic_switch_aura_defensive(target: Character) -> None:
+def _mechanic_switch_aura_defensive(target: Character, param: str | None) -> None:
     fn = getattr(target, "change_aura", None)
     if fn is not None:
         from src.core.classes.paladin.aura import Aura
         fn(Aura.PROTECTION)
 
 
-def _mechanic_apply_hunters_mark(target: Character) -> None:
+def _mechanic_apply_hunters_mark(target: Character, param: str | None) -> None:
     fn = getattr(target, "mark_target", None)
     if fn is not None:
-        fn("")
+        fn(param or "")
 
 
-def _mechanic_shift_destruction(target: Character) -> None:
+def _mechanic_shift_destruction(target: Character, param: str | None) -> None:
     fn = getattr(target, "attack_action", None)
     if fn is not None:
         fn()
 
 
-def _mechanic_shift_vitality(target: Character) -> None:
+def _mechanic_shift_vitality(target: Character, param: str | None) -> None:
     fn = getattr(target, "defensive_action", None)
     if fn is not None:
         fn()
 
 
-def _mechanic_shift_balance(target: Character) -> None:
+def _mechanic_shift_balance(target: Character, param: str | None) -> None:
     fn = getattr(target, "end_of_turn_decay", None)
     if fn is not None:
         fn()
 
 
-def _mechanic_set_metamagic(target: Character) -> None:
+def _mechanic_set_metamagic(target: Character, param: str | None) -> None:
     fn = getattr(target, "set_metamagic", None)
     if fn is not None:
         from src.core.elements.element_type import ElementType
-        fn(ElementType.FIRE)
+        element = ElementType[param] if param else ElementType.FIRE
+        fn(element)
 
 
-def _mechanic_transform_animal_form(target: Character) -> None:
+def _mechanic_transform_animal_form(target: Character, param: str | None) -> None:
     fn = getattr(target, "transform", None)
     if fn is not None:
         from src.core.classes.druid.animal_form import AnimalForm
-        fn(AnimalForm.BEAR)
+        form = AnimalForm[param] if param else AnimalForm.BEAR
+        fn(form)
 
 
-def _mechanic_create_field_condition(target: Character) -> None:
+def _mechanic_create_field_condition(target: Character, param: str | None) -> None:
     fn = getattr(target, "create_field_condition", None)
     if fn is not None:
         from src.core.classes.druid.field_condition import FieldConditionType
-        fn(FieldConditionType.SNOW)
+        condition = FieldConditionType[param] if param else FieldConditionType.SNOW
+        fn(condition)
 
 
-def _mechanic_enter_stealth(target: Character) -> None:
+def _mechanic_enter_stealth(target: Character, param: str | None) -> None:
     fn = getattr(target, "enter_stealth", None)
     if fn is not None:
         fn()
 
 
-def _mechanic_envenom_weapon(target: Character) -> None:
+def _mechanic_envenom_weapon(target: Character, param: str | None) -> None:
     fn = getattr(target, "envenom_weapon", None)
     if fn is not None:
         fn()
@@ -365,7 +410,6 @@ _MECHANIC_DISPATCH: dict[str, Callable[..., None]] = {
     "change_stance_defensive": _mechanic_stance_defensive,
     "change_stance_normal": _mechanic_stance_normal,
     "activate_reckless_stance": _mechanic_reckless_stance,
-    "action_surge": _mechanic_action_surge,
     "activate_overcharge": _mechanic_activate_overcharge,
     "activate_overcharged": _mechanic_activate_overcharged,
     "switch_aura_offensive": _mechanic_switch_aura_offensive,

@@ -4,8 +4,8 @@ from src.core.combat.action_economy import ActionEconomy, ActionType
 
 
 class TestActionType:
-    def test_has_three_action_types(self):
-        assert len(list(ActionType)) == 3
+    def test_has_four_action_types(self):
+        assert len(list(ActionType)) == 4
 
     def test_action_exists(self):
         assert ActionType.ACTION is not None

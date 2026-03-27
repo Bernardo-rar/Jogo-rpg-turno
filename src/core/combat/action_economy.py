@@ -7,6 +7,7 @@ class ActionType(Enum):
     ACTION = auto()
     BONUS_ACTION = auto()
     REACTION = auto()
+    PASSIVE = auto()
 
 
 PROACTIVE_ACTIONS = frozenset({ActionType.ACTION, ActionType.BONUS_ACTION})
@@ -28,6 +29,10 @@ class ActionEconomy:
             return False
         self._available[action] = False
         return True
+
+    def grant(self, action: ActionType) -> None:
+        """Concede uma acao extra deste tipo no turno atual."""
+        self._available[action] = True
 
     def reset(self) -> None:
         for action in ActionType:

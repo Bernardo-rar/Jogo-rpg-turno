@@ -15,3 +15,4 @@ class SkillEffectType(Enum):
     RESOURCE_GAIN = auto()
     SHIELD = auto()
     COUNTER_ATTACK = auto()
+    GRANT_ACTION = auto()

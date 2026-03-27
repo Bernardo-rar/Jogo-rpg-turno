@@ -23,6 +23,7 @@ class SkillEffect:
     ailment_id: str | None = None
     duration: int = _DEFAULT_DURATION
     mechanic_id: str | None = None
+    mechanic_param: str | None = None
     resource_type: str | None = None
 
     @classmethod
@@ -38,6 +39,7 @@ class SkillEffect:
             ailment_id=data.get("ailment_id"),  # type: ignore[arg-type]
             duration=int(data.get("duration", _DEFAULT_DURATION)),  # type: ignore[arg-type]
             mechanic_id=data.get("mechanic_id"),  # type: ignore[arg-type]
+            mechanic_param=data.get("mechanic_param"),  # type: ignore[arg-type]
             resource_type=data.get("resource_type"),  # type: ignore[arg-type]
         )
 

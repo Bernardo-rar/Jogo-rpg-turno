@@ -29,7 +29,7 @@ class _FakeResource:
 class TestTriggerClassMechanic:
     def test_fires_mechanic_from_dispatch(self) -> None:
         called = []
-        _MECHANIC_DISPATCH["test_mechanic"] = lambda c: called.append(c.name)
+        _MECHANIC_DISPATCH["test_mechanic"] = lambda c, p: called.append(c.name)
 
         caster = _build_char("Caster")
         target = _build_char("Target")

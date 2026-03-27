@@ -37,7 +37,8 @@
     "action_type": "BONUS_ACTION",
     "target_type": "SELF",
     "effects": [
-      {"effect_type": "TRIGGER_CLASS_MECHANIC", "mechanic_id": "action_surge"}
+      {"effect_type": "GRANT_ACTION", "resource_type": "ACTION"},
+      {"effect_type": "GRANT_ACTION", "resource_type": "BONUS_ACTION"}
     ],
     "slot_cost": 5,
     "class_id": "fighter",
@@ -96,5 +97,20 @@
     "reaction_mode": "passive",
     "required_level": 1,
     "description": "Bloqueia parte do dano e contra-ataca"
+  },
+  "iron_will": {
+    "name": "Iron Will",
+    "mana_cost": 0,
+    "action_type": "PASSIVE",
+    "target_type": "SELF",
+    "slot_cost": 0,
+    "reaction_trigger": "on_low_hp",
+    "reaction_mode": "passive",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 15, "stat": "PHYSICAL_DEFENSE", "duration": 2}
+    ],
+    "class_id": "fighter",
+    "required_level": 1,
+    "description": "When below 50% HP, gain +15 DEF for 2 turns"
   }
 }

@@ -50,9 +50,9 @@ class TestLoadSkills:
 
 class TestLoadClassSkills:
     @pytest.mark.parametrize("class_id", [c.value for c in ClassId])
-    def test_loads_six_skills_per_class(self, class_id: str) -> None:
+    def test_loads_at_least_six_skills_per_class(self, class_id: str) -> None:
         skills = load_class_skills(class_id)
-        assert len(skills) == 6
+        assert len(skills) >= 6
 
     @pytest.mark.parametrize("class_id", [c.value for c in ClassId])
     def test_all_skills_have_class_id(self, class_id: str) -> None:

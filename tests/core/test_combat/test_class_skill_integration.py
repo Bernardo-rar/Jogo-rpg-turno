@@ -142,7 +142,7 @@ class TestClericSkillsIntegration:
 class TestAllClassSkillsLoad:
     def test_all_skills_parseable(self, class_id: str) -> None:
         skills = load_class_skills(class_id)
-        assert len(skills) == 6
+        assert len(skills) >= 6
 
     def test_at_least_one_reaction_per_class(self, class_id: str) -> None:
         skills = load_class_skills(class_id)

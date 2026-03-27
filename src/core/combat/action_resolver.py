@@ -6,7 +6,7 @@ from typing import Callable
 
 from src.core.characters.character import Character
 from src.core.characters.position import Position
-from src.core.combat.action_economy import ActionType
+from src.core.combat.action_economy import ActionEconomy, ActionType
 from src.core.combat.combat_engine import CombatEvent, EventType, TurnContext
 from src.core.combat.consumable_effect_applier import apply_consumable_effect
 from src.core.combat.damage import resolve_damage
@@ -17,6 +17,8 @@ from src.core.skills.class_resource_resolver import can_afford_all, spend_all
 from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.items.consumable import Consumable
 from src.core.skills.skill import Skill
+from src.core.skills.skill_effect import SkillEffect
+from src.core.skills.skill_effect_type import SkillEffectType
 from src.core.skills.target_type import TargetType
 
 DEFEND_BUFF_PERCENT = 50.0
@@ -139,12 +141,7 @@ def _resolve_skill(
     skill = _find_skill(action.skill_id, context.combatant)
     if skill is None:
         return []
-    if skill.mana_cost > context.combatant.current_mana:
-        return []
-    if not can_afford_all(context.combatant, skill.resource_costs):
-        return []
-    bar = context.combatant.skill_bar
-    if not bar.cooldown_tracker.is_ready(skill.skill_id):
+    if not _can_use_skill(skill, context):
         return []
     if not context.action_economy.use(skill.action_type):
         return []
@@ -156,8 +153,19 @@ def _resolve_skill(
         events.extend(apply_skill_effect(
             effect, targets, context.round_number, context.combatant,
         ))
+    _grant_player_actions(skill, context.action_economy)
     _start_skill_cooldown(context.combatant, skill)
     return events
+
+
+def _can_use_skill(skill: Skill, context: TurnContext) -> bool:
+    """Verifica se o jogador pode usar a skill."""
+    if skill.mana_cost > context.combatant.current_mana:
+        return False
+    if not can_afford_all(context.combatant, skill.resource_costs):
+        return False
+    bar = context.combatant.skill_bar
+    return bar.cooldown_tracker.is_ready(skill.skill_id)
 
 
 def _find_skill(skill_id: str, combatant: Character) -> Skill | None:
@@ -167,6 +175,30 @@ def _find_skill(skill_id: str, combatant: Character) -> Skill | None:
     return next(
         (s for s in bar.all_skills if s.skill_id == skill_id), None,
     )
+
+
+def _grant_player_actions(skill: Skill, economy: ActionEconomy) -> None:
+    """Aplica GRANT_ACTION effects da skill na economy do jogador."""
+    for effect in skill.effects:
+        if effect.effect_type == SkillEffectType.GRANT_ACTION:
+            _grant_single_player(effect, economy)
+
+
+def _grant_single_player(effect: SkillEffect, economy: ActionEconomy) -> None:
+    """Concede uma acao baseado no resource_type do effect."""
+    action_type = _parse_grant_action_type(effect)
+    if action_type is not None:
+        economy.grant(action_type)
+
+
+def _parse_grant_action_type(effect: SkillEffect) -> ActionType | None:
+    """Converte resource_type string em ActionType enum."""
+    if effect.resource_type is None:
+        return None
+    try:
+        return ActionType[effect.resource_type.upper()]
+    except KeyError:
+        return None
 
 
 def _start_skill_cooldown(combatant: Character, skill: Skill) -> None:

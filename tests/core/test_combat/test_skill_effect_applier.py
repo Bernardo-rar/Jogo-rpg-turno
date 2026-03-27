@@ -217,7 +217,6 @@ class TestMechanicDispatch:
             "change_stance_defensive",
             "change_stance_normal",
             "activate_reckless_stance",
-            "action_surge",
             "activate_overcharge",
             "activate_overcharged",
             "switch_aura_offensive",

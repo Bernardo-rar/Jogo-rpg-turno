@@ -16,6 +16,21 @@ class PlayerActionType(Enum):
     DEFEND = auto()
     END_TURN = auto()
 
+    @property
+    def label(self) -> str:
+        """Display label for UI."""
+        return _ACTION_LABELS[self]
+
+
+_ACTION_LABELS: dict[PlayerActionType, str] = {
+    PlayerActionType.BASIC_ATTACK: "Basic Attack",
+    PlayerActionType.SKILL: "Skill",
+    PlayerActionType.ITEM: "Item",
+    PlayerActionType.MOVE: "Move",
+    PlayerActionType.DEFEND: "Defend",
+    PlayerActionType.END_TURN: "End Turn",
+}
+
 
 @dataclass(frozen=True)
 class PlayerAction:

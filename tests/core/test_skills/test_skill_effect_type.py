@@ -33,5 +33,8 @@ class TestSkillEffectType:
     def test_has_counter_attack(self) -> None:
         assert SkillEffectType.COUNTER_ATTACK is not None
 
-    def test_has_nine_members(self) -> None:
-        assert len(SkillEffectType) == 9
+    def test_has_grant_action(self) -> None:
+        assert SkillEffectType.GRANT_ACTION is not None
+
+    def test_has_ten_members(self) -> None:
+        assert len(SkillEffectType) == 10
