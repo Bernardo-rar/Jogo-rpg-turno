@@ -133,8 +133,12 @@ class TestMageBarrier:
         assert mage.current_mana == mage.max_mana - 100
 
     def test_create_barrier_adds_shield(self, mage: Mage):
+        mage.create_barrier(30)
+        assert mage.barrier.current == 30 * BARRIER_EFFICIENCY
+
+    def test_create_barrier_clamps_at_max_hp(self, mage: Mage):
         mage.create_barrier(100)
-        assert mage.barrier.current == 100 * BARRIER_EFFICIENCY
+        assert mage.barrier.current == mage.max_hp
 
     def test_create_barrier_fails_insufficient_mana(self, mage: Mage):
         result = mage.create_barrier(9999)
@@ -142,16 +146,16 @@ class TestMageBarrier:
         assert mage.barrier.current == 0
 
     def test_take_damage_uses_barrier_first(self, mage: Mage):
-        mage.create_barrier(100)  # 200 barrier points
-        mage.take_damage(150)
-        assert mage.barrier.current == 50
+        mage.create_barrier(30)  # 60 barrier points
+        mage.take_damage(40)
+        assert mage.barrier.current == 20
         assert mage.current_hp == mage.max_hp
 
     def test_take_damage_overflow_hits_hp(self, mage: Mage):
-        mage.create_barrier(50)  # 100 barrier points
-        mage.take_damage(150)
+        mage.create_barrier(25)  # 50 barrier points
+        mage.take_damage(80)
         assert mage.barrier.current == 0
-        assert mage.current_hp == mage.max_hp - 50
+        assert mage.current_hp == mage.max_hp - 30
 
     def test_take_damage_no_barrier_hits_hp_directly(self, mage: Mage):
         mage.take_damage(30)

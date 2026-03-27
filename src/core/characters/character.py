@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from src.core.attributes.attribute_types import AttributeType
 from src.core.attributes.attributes import Attributes
+from src.core.characters.barrier import Barrier
 from src.core.characters.character_config import CharacterConfig
 from src.core.characters.combat_stats_mixin import CombatStatsMixin
 from src.core.characters.equipment_mixin import EquipmentMixin
@@ -47,6 +48,7 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
         self._inventory: Inventory | None = config.inventory
         self._current_hp = self.max_hp
         self._current_mana = self.max_mana
+        self._barrier = Barrier(max_value=self.max_hp)
 
     @property
     def name(self) -> str:
@@ -81,6 +83,10 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
         return self._inventory
 
     @property
+    def barrier(self) -> Barrier:
+        return self._barrier
+
+    @property
     def current_hp(self) -> int:
         return self._current_hp
 
@@ -89,11 +95,13 @@ class Character(ThresholdBonusMixin, CombatStatsMixin, EquipmentMixin):
         return self._current_mana
 
     def take_damage(self, amount: int) -> int:
-        actual = min(amount, self._current_hp)
+        remaining = self._barrier.absorb(amount)
+        barrier_absorbed = amount - remaining
+        actual = min(remaining, self._current_hp)
         self._current_hp -= actual
         if self._current_hp == 0:
             self._alive = False
-        return actual
+        return barrier_absorbed + actual
 
     def revive(self, hp_fraction: float = 0.5) -> None:
         """Revive personagem morto com fracao do HP maximo."""

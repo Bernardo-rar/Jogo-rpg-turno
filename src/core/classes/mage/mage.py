@@ -8,7 +8,7 @@ from src.core.characters.class_resource_snapshot import (
     ClassResourceSnapshot,
     ResourceDisplayType,
 )
-from src.core.classes.mage.barrier import BARRIER_EFFICIENCY, Barrier
+from src.core.classes.mage.barrier import BARRIER_EFFICIENCY
 from src.core.classes.mage.overcharge import OverchargeConfig, load_overcharge_config
 
 _OVERCHARGE_CONFIG = load_overcharge_config()
@@ -26,12 +26,7 @@ class Mage(Character):
         config: CharacterConfig,
     ) -> None:
         super().__init__(name, attributes, config)
-        self._barrier = Barrier()
         self._overcharged = False
-
-    @property
-    def barrier(self) -> Barrier:
-        return self._barrier
 
     def create_barrier(self, mana_cost: int) -> bool:
         """Gasta mana para criar barreira. Retorna False se mana insuficiente."""
@@ -39,13 +34,6 @@ class Mage(Character):
             return False
         self._barrier.add(mana_cost * BARRIER_EFFICIENCY)
         return True
-
-    def take_damage(self, amount: int) -> int:
-        """Dano passa pela barreira antes de atingir HP."""
-        remaining = self._barrier.absorb(amount)
-        barrier_absorbed = amount - remaining
-        hp_damage = super().take_damage(remaining)
-        return barrier_absorbed + hp_damage
 
     @property
     def is_overcharged(self) -> bool:
@@ -89,7 +77,7 @@ class Mage(Character):
                 name="Barrier",
                 display_type=ResourceDisplayType.BAR,
                 current=self.barrier.current,
-                maximum=self.barrier.current,
+                maximum=self.barrier.max_value,
                 color=(150, 200, 255),
             ),
             ClassResourceSnapshot(
