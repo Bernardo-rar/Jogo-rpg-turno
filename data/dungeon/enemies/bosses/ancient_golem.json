@@ -39,7 +39,14 @@
       "phase_number": 2,
       "hp_threshold": 0.0,
       "handler_key": "ancient_golem_p2",
-      "skill_ids": ["golem_rage", "golem_stomp"]
+      "skill_ids": ["golem_rage", "golem_stomp"],
+      "transition": {
+        "battle_cry": "The Golem's core overheats!",
+        "self_buffs": [
+          {"stat": "PHYSICAL_DEFENSE", "percent": 20.0, "duration": 999},
+          {"stat": "MAGICAL_DEFENSE", "percent": 20.0, "duration": 999}
+        ]
+      }
     }
   ],
   "special_traits": ["boss"]

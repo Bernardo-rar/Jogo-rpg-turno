@@ -39,7 +39,13 @@
       "phase_number": 2,
       "hp_threshold": 0.0,
       "handler_key": "lich_lord_p2",
-      "skill_ids": ["lich_death_wave", "lich_plague"]
+      "skill_ids": ["lich_death_wave", "lich_plague"],
+      "transition": {
+        "battle_cry": "The Lich channels dark energy!",
+        "self_buffs": [
+          {"stat": "MAGICAL_ATTACK", "percent": 40.0, "duration": 999}
+        ]
+      }
     }
   ],
   "special_traits": ["boss", "undead"]
