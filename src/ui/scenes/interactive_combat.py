@@ -69,6 +69,15 @@ class InteractiveCombatScene:
     def events(self) -> list:
         return self._engine.events
 
+    @property
+    def turn_order_names(self) -> list[str]:
+        """Nomes dos combatentes vivos na ordem de turno do round atual."""
+        return self._engine.turn_order_names
+
+    @property
+    def party_names(self) -> frozenset[str]:
+        return self._party_names
+
     def update(self, dt_ms: int) -> bool:
         """Avanca state machine ate fase bloqueante."""
         while self._phase not in _BLOCKING_PHASES:
@@ -150,8 +159,8 @@ class InteractiveCombatScene:
             if self._engine.result is not None:
                 self._phase = TurnPhase.COMBAT_OVER
                 return
-            self._engine.start_round()
-            name = self._engine.get_next_combatant()
+            self._phase = TurnPhase.STARTING_ROUND
+            return
         self._active_name = name
         self._current_context = None
         self._current_step = None

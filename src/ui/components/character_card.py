@@ -5,6 +5,7 @@ from __future__ import annotations
 import pygame
 
 from src.ui import colors, layout
+from src.ui.components.effect_icons import draw_effect_icons
 from src.ui.components.health_bar import draw_hp_bar, draw_mana_bar
 from src.ui.components.resource_display import draw_class_resource
 from src.ui.font_manager import FontManager
@@ -74,7 +75,5 @@ def _draw_effects(
     x: int, y: int,
     font: pygame.font.Font,
 ) -> None:
-    for i, name in enumerate(effects[:3]):
-        short = name[:10]
-        rendered = font.render(short, True, colors.TEXT_EFFECT)
-        surface.blit(rendered, (x, y + i * _EFFECT_SPACING))
+    if effects:
+        draw_effect_icons(surface, effects, x, y, font)
