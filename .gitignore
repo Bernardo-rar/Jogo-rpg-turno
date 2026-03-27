@@ -33,5 +33,8 @@ htmlcov/
 # Debug
 debug/screenshots/
 
+# Claude Code (config local)
+.claude/
+
 # Executaveis antigos
 *.exe
