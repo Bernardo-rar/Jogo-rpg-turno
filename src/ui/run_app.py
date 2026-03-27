@@ -10,7 +10,10 @@ import pygame
 from src.core._paths import resolve_data_path
 from src.core.combat.basic_attack_handler import BasicAttackHandler
 from src.core.combat.composite_handler import CompositeHandler
+from src.core.combat.skill_effect_applier import set_combo_detector
 from src.core.combat.skill_handler import SkillHandler
+from src.core.elements.combo.combo_config import load_combo_configs
+from src.core.elements.combo.combo_detector import ComboDetector
 from src.core.elements.element_type import ElementType
 from src.core.elements.elemental_profile import ElementalProfile, load_profiles
 from src.core.items.weapon import Weapon
@@ -24,7 +27,12 @@ from src.dungeon.enemies.enemy_factory import EnemyFactory
 from src.dungeon.enemies.enemy_template_loader import load_tier_templates
 from src.dungeon.map.map_generator import MapGenerator
 from src.dungeon.map.room_type import RoomType
-from src.dungeon.run.combat_bridge import after_combat, prepare_for_combat
+from src.dungeon.economy.gold_reward import CombatInfo
+from src.dungeon.run.combat_bridge import (
+    CombatRewardContext,
+    after_combat,
+    prepare_for_combat,
+)
 from src.dungeon.run.encounter_builder import EncounterBuilder
 from src.dungeon.run.run_orchestrator import RunOrchestrator, SceneRequest
 from src.dungeon.run.run_state import RunState
@@ -38,6 +46,7 @@ from src.ui.scenes.main_menu_scene import MainMenuScene
 from src.ui.scenes.party_select_scene import PartySelectScene
 from src.ui.scenes.playable_combat_scene import PlayableCombatScene
 from src.ui.scenes.rest_room_scene import RestRoomScene
+from src.ui.scenes.fade_transition import FadeTransition
 from src.ui.scenes.victory_scene import VictoryScene
 
 _DEFAULT_SEED = 42
@@ -55,6 +64,8 @@ class RunApp:
         self._party_factory: PartyFactory | None = None
         self._combat_node_id: str | None = None
         self._combat_is_boss: bool = False
+        self._combat_is_elite: bool = False
+        self._combat_enemy_count: int = 0
 
     def start(self) -> None:
         """Inicializa Pygame e inicia o game loop."""
@@ -71,6 +82,7 @@ class RunApp:
         enc_factory = _build_encounter_factory()
         boss_factory = _build_boss_factory()
         self._encounter_builder = EncounterBuilder(enc_factory, boss_factory)
+        _init_combo_detector()
 
     def _on_scene_complete(
         self,
@@ -85,7 +97,7 @@ class RunApp:
         transition = self._orchestrator.on_scene_complete(scene_id, result)
         next_scene = self._build_scene(transition.target, transition.data)
         if next_scene is not None and self._game is not None:
-            self._game.set_scene(next_scene)
+            self._transition_to(next_scene)
 
     def _handle_post_combat(self, result: dict) -> None:
         if self._state is None:
@@ -93,12 +105,34 @@ class RunApp:
         result["is_boss"] = self._combat_is_boss
         result["party_alive"] = self._state.is_party_alive
         if self._combat_node_id:
-            after_combat(self._state, self._combat_node_id)
+            ctx = self._build_reward_context()
+            after_combat(self._state, self._combat_node_id, ctx)
+
+    def _build_reward_context(self) -> CombatRewardContext:
+        """Cria contexto de recompensa para o combate atual."""
+        info = CombatInfo(
+            enemy_count=self._combat_enemy_count,
+            tier=1,
+            is_elite=self._combat_is_elite,
+            is_boss=self._combat_is_boss,
+        )
+        rng = Random(self._state.seed + hash(self._combat_node_id))
+        return CombatRewardContext(info=info, rng=rng)
 
     def _handle_post_rest(self, result: dict) -> None:
         if self._state is None or self._combat_node_id is None:
             return
         after_combat(self._state, self._combat_node_id)
+
+    def _transition_to(self, next_scene: object) -> None:
+        """Troca de cena com fade out/in."""
+        old_scene = self._game.current_scene
+        fade = FadeTransition(
+            old_scene=old_scene,
+            new_scene=next_scene,
+            on_done=lambda: self._game.set_scene(next_scene),
+        )
+        self._game.set_scene(fade)
 
     def _build_scene(self, target: SceneRequest, data: dict) -> object:
         builders = {
@@ -144,6 +178,7 @@ class RunApp:
             self._combat_node_id = result.get("node_id")
             room_type = result.get("room_type")
             self._combat_is_boss = room_type == RoomType.BOSS
+            self._combat_is_elite = room_type == RoomType.ELITE
             self._on_scene_complete(SceneRequest.DUNGEON_MAP, result)
 
         return DungeonMapScene(
@@ -158,6 +193,7 @@ class RunApp:
         node = self._state.floor_map.get_node(node_id)
         rng = Random(self._state.seed + hash(node_id))
         setup = self._encounter_builder.build(node, rng)
+        self._combat_enemy_count = len(setup.enemies)
         alive_party = self._state.alive_members
         prepare_for_combat(alive_party)
         ai_handler = setup.handler
@@ -254,3 +290,10 @@ def _build_boss_factory() -> BossFactory:
         "data/dungeon/enemies/skills/boss_skills.json",
     ])
     return BossFactory(weapons, profiles, skills)
+
+
+def _init_combo_detector() -> None:
+    """Carrega combos elementais e configura o detector global."""
+    combos = load_combo_configs()
+    detector = ComboDetector(combos=combos)
+    set_combo_detector(detector)

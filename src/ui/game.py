@@ -37,6 +37,11 @@ class Game:
             pygame.display.flip()
         pygame.quit()
 
+    @property
+    def current_scene(self) -> Scene:
+        """Cena ativa atual."""
+        return self._scene
+
     def set_scene(self, scene: Scene) -> None:
         """Troca a cena ativa."""
         self._scene = scene

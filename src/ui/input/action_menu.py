@@ -32,6 +32,14 @@ class _Category(Enum):
     ITEM = auto()
 
 
+_CATEGORY_LABELS: dict[_Category, str] = {
+    _Category.ACTION: "Action",
+    _Category.BONUS: "Bonus Action",
+    _Category.REACTION: "Reaction",
+    _Category.ITEM: "Item",
+}
+
+
 class ActionMenu:
     """Menu hierarquico de 3 niveis que produz PlayerAction."""
 
@@ -43,8 +51,10 @@ class ActionMenu:
         self._pending_skill_id: str = ""
         self._pending_consumable_id: str = ""
         self._pending_target_type: TargetType = TargetType.SINGLE_ENEMY
+        self._pending_action_label: str = ""
         self._options: list[MenuOption] = []
         self._tags: dict[int, str] = {}
+        self._highlight_index: int = 0
         self._rebuild()
 
     @property
@@ -54,6 +64,58 @@ class ActionMenu:
     @property
     def options(self) -> list[MenuOption]:
         return list(self._options)
+
+    @property
+    def pending_action_type(self) -> PlayerActionType | None:
+        """Tipo de acao pendente no nivel 3 (target select)."""
+        if self._level != MenuLevel.TARGET_SELECT:
+            return None
+        return self._pending_type
+
+    @property
+    def pending_skill(self) -> Skill | None:
+        """Skill pendente no nivel 3 (target select)."""
+        if not self._pending_skill_id:
+            return None
+        return _find_skill(self._pending_skill_id, self._context)
+
+    @property
+    def breadcrumb(self) -> str:
+        """Returns navigation path like 'Action > Fireball'."""
+        if self._level == MenuLevel.ACTION_TYPE:
+            return ""
+        cat_label = _CATEGORY_LABELS.get(self._category, "")
+        if self._level == MenuLevel.SPECIFIC_ACTION:
+            return cat_label
+        return f"{cat_label} > {self._pending_action_label}"
+
+    @property
+    def highlight_index(self) -> int:
+        return self._highlight_index
+
+    @property
+    def highlighted_skill(self) -> Skill | None:
+        """Skill destacada no nivel SPECIFIC_ACTION (se houver)."""
+        if self._level != MenuLevel.SPECIFIC_ACTION:
+            return None
+        return self._skill_at_highlight()
+
+    def move_highlight(self, delta: int) -> None:
+        """Move o highlight index para cima (-1) ou para baixo (+1)."""
+        if not self._options:
+            return
+        total = len(self._options)
+        self._highlight_index = (self._highlight_index + delta) % total
+
+    def _skill_at_highlight(self) -> Skill | None:
+        """Retorna a skill correspondente ao highlight_index atual."""
+        if self._highlight_index >= len(self._options):
+            return None
+        key = self._options[self._highlight_index].key
+        tag = self._tags.get(key, "")
+        if not tag.startswith("skill:"):
+            return None
+        return _find_skill(tag[6:], self._context)
 
     def select(self, key: int) -> PlayerAction | None:
         """Processa tecla. Retorna PlayerAction se completo, None se nao."""
@@ -97,6 +159,7 @@ class ActionMenu:
 
     def _handle_level2(self, tag: str) -> PlayerAction | None:
         if tag == "basic_attack":
+            self._pending_action_label = PlayerActionType.BASIC_ATTACK.label
             return self._prepare_target_select(
                 PlayerActionType.BASIC_ATTACK,
                 TargetType.SINGLE_ENEMY,
@@ -123,6 +186,7 @@ class ActionMenu:
         skill = _find_skill(skill_id, self._context)
         if skill is None:
             return None
+        self._pending_action_label = skill.name
         return self._prepare_target_select(
             PlayerActionType.SKILL, skill.target_type,
             skill_id=skill_id,
@@ -135,6 +199,7 @@ class ActionMenu:
         slot = inv.get_slot(cid)
         if slot is None:
             return None
+        self._pending_action_label = slot.consumable.name
         return self._prepare_target_select(
             PlayerActionType.ITEM, slot.consumable.target_type,
             consumable_id=cid,
@@ -163,6 +228,7 @@ class ActionMenu:
         """Reconstroi opcoes e tags para o nivel atual."""
         self._options = []
         self._tags = {}
+        self._highlight_index = 0
         if self._level == MenuLevel.ACTION_TYPE:
             _build_level1(self._context, self._options, self._tags)
         elif self._level == MenuLevel.SPECIFIC_ACTION:
@@ -209,7 +275,7 @@ def _build_action_options(
     ctx: TurnContext,
     options: list[MenuOption], tags: dict[int, str],
 ) -> None:
-    _add(options, tags, 1, "Basic Attack", "basic_attack")
+    _add(options, tags, 1, PlayerActionType.BASIC_ATTACK.label, "basic_attack")
     key = 2
     for skill in _skills_for_type(ctx, ActionType.ACTION):
         label = _skill_label(skill)
