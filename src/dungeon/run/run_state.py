@@ -5,8 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from src.dungeon.modifiers.modifier_effects import aggregate_modifiers
+from src.dungeon.modifiers.run_modifier import ModifierEffect, RunModifier
+
 if TYPE_CHECKING:
     from src.core.characters.character import Character
+    from src.dungeon.loot.drop_table import LootDrop
     from src.dungeon.map.floor_map import FloorMap
 
 
@@ -19,6 +23,9 @@ class RunState:
     floor_map: FloorMap
     current_node_id: str | None = None
     rooms_cleared: int = 0
+    gold: int = 0
+    pending_loot: list[LootDrop] = field(default_factory=list)
+    active_modifiers: list[RunModifier] = field(default_factory=list)
 
     @property
     def is_party_alive(self) -> bool:
@@ -29,3 +36,8 @@ class RunState:
     def alive_members(self) -> list[Character]:
         """Retorna membros vivos da party."""
         return [c for c in self.party if c.is_alive]
+
+    @property
+    def aggregated_effects(self) -> ModifierEffect:
+        """Agrega efeitos de todos os modifiers ativos."""
+        return aggregate_modifiers(self.active_modifiers)

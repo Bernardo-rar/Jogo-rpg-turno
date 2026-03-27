@@ -1,0 +1,9 @@
+{
+  "gold_per_enemy": {
+    "1": {"min": 3, "max": 8},
+    "2": {"min": 6, "max": 15},
+    "3": {"min": 12, "max": 25}
+  },
+  "elite_multiplier": 1.5,
+  "boss_gold": {"1": 100, "2": 200, "3": 300}
+}

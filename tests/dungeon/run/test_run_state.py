@@ -1,5 +1,13 @@
 """Testes para RunState."""
 
+import pytest
+
+from src.dungeon.loot.drop_table import LootDrop
+from src.dungeon.modifiers.run_modifier import (
+    ModifierCategory,
+    ModifierEffect,
+    RunModifier,
+)
 from src.dungeon.map.floor_map import FloorMap
 from src.dungeon.map.map_generator import MapGenerator
 from src.dungeon.map.map_node import MapNode
@@ -41,3 +49,42 @@ class TestRunState:
         state = _make_state()
         assert state.current_node_id is None
         assert state.rooms_cleared == 0
+
+    def test_gold_starts_at_zero(self) -> None:
+        state = _make_state()
+        assert state.gold == 0
+
+    def test_gold_is_mutable(self) -> None:
+        state = _make_state()
+        state.gold += 50
+        assert state.gold == 50
+
+    def test_pending_loot_starts_empty(self) -> None:
+        state = _make_state()
+        assert state.pending_loot == []
+
+    def test_pending_loot_accepts_drops(self) -> None:
+        state = _make_state()
+        drop = LootDrop(
+            item_type="consumable", item_id="health_potion",
+        )
+        state.pending_loot.append(drop)
+        assert len(state.pending_loot) == 1
+        assert state.pending_loot[0].item_id == "health_potion"
+
+    def test_run_state_with_modifiers_aggregates(self) -> None:
+        mod_a = RunModifier(
+            modifier_id="frail", name="Frail", description="test",
+            category=ModifierCategory.DIFFICULTY,
+            effect=ModifierEffect(gold_mult=1.15, score_mult=1.1),
+        )
+        mod_b = RunModifier(
+            modifier_id="inflation", name="Inflation", description="test",
+            category=ModifierCategory.ECONOMY,
+            effect=ModifierEffect(gold_mult=1.25, score_mult=1.05),
+        )
+        state = _make_state()
+        state.active_modifiers = [mod_a, mod_b]
+        agg = state.aggregated_effects
+        assert agg.gold_mult == pytest.approx(1.4375)
+        assert agg.score_mult == pytest.approx(1.155)

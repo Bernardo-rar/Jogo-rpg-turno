@@ -1,0 +1,62 @@
+{
+  "frail": {
+    "name": "Frail",
+    "description": "+15% damage taken, +15% gold",
+    "category": "DIFFICULTY",
+    "effect": {"damage_taken_mult": 1.15, "gold_mult": 1.15, "score_mult": 1.1}
+  },
+  "enfeebled": {
+    "name": "Enfeebled",
+    "description": "-15% damage dealt, +15% gold",
+    "category": "DIFFICULTY",
+    "effect": {"damage_dealt_mult": 0.85, "gold_mult": 1.15, "score_mult": 1.1}
+  },
+  "cursed_healing": {
+    "name": "Cursed Healing",
+    "description": "-30% healing, +20% gold",
+    "category": "DIFFICULTY",
+    "effect": {"healing_mult": 0.7, "gold_mult": 1.2, "score_mult": 1.2}
+  },
+  "elite_surge": {
+    "name": "Elite Surge",
+    "description": "+50% elite spawn rate, +10% gold",
+    "category": "DIFFICULTY",
+    "effect": {"elite_spawn_mult": 1.5, "gold_mult": 1.1, "score_mult": 1.15}
+  },
+  "boss_rush": {
+    "name": "Boss Rush",
+    "description": "Boss +20% stats, loot +1 tier",
+    "category": "DIFFICULTY",
+    "effect": {"boss_stat_mult": 1.2, "score_mult": 1.2}
+  },
+  "fragile_start": {
+    "name": "Fragile Start",
+    "description": "Start at 70% HP, +10% gold",
+    "category": "DIFFICULTY",
+    "effect": {"start_hp_pct": 0.7, "gold_mult": 1.1, "score_mult": 1.1}
+  },
+  "poverty": {
+    "name": "Poverty",
+    "description": "-30% gold gain, -20% shop prices",
+    "category": "ECONOMY",
+    "effect": {"gold_mult": 0.7, "score_mult": 1.1}
+  },
+  "inflation": {
+    "name": "Inflation",
+    "description": "+40% shop prices, +25% gold gain",
+    "category": "ECONOMY",
+    "effect": {"gold_mult": 1.25, "score_mult": 1.05}
+  },
+  "elemental_storm": {
+    "name": "Elemental Storm",
+    "description": "Random element added to all enemy attacks",
+    "category": "CHAOS",
+    "effect": {"score_mult": 1.15}
+  },
+  "fortune_wheel": {
+    "name": "Fortune's Wheel",
+    "description": "Random buffs and debuffs each combat",
+    "category": "CHAOS",
+    "effect": {"score_mult": 1.1}
+  }
+}
