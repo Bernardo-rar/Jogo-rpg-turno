@@ -21,6 +21,12 @@ class ReactionTrigger(Enum):
     ON_ALLY_DAMAGED = "on_ally_damaged"
     ON_ENEMY_ATTACK = "on_enemy_attack"
     ON_ENEMY_CAST = "on_enemy_cast"
+    ON_COMBAT_START = "on_combat_start"
+    ON_CRITICAL_HIT = "on_critical_hit"
+    ON_ALLY_DEATH = "on_ally_death"
+    ON_KILL = "on_kill"
+    ON_LOW_HP = "on_low_hp"
+    ON_ROUND_START = "on_round_start"
 
 
 class ReactionMode(Enum):

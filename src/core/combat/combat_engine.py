@@ -5,6 +5,7 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
+    from src.core.combat.passive_manager import PassiveManager
     from src.core.elements.element_type import ElementType
 
 from src.core.characters.character import Character
@@ -98,11 +99,13 @@ class CombatEngine:
         enemies: list[Character],
         turn_handler: TurnHandler,
         reaction_manager: ReactionHandler | None = None,
+        passive_manager: PassiveManager | None = None,
     ) -> None:
         self._party = party
         self._enemies = enemies
         self._handler = turn_handler
         self._reaction_manager = reaction_manager
+        self._passive_manager = passive_manager
         all_combatants = party + enemies
         names = [c.name for c in all_combatants]
         if len(names) != len(set(names)):
@@ -119,6 +122,7 @@ class CombatEngine:
         """Incrementa round e reseta turn order."""
         self._round += 1
         self._turn_order.reset()
+        self._fire_round_start_passives()
 
     def get_next_combatant(self) -> str | None:
         """Retorna nome do proximo combatente ou None se round acabou."""
@@ -151,8 +155,9 @@ class CombatEngine:
         )
 
     def resolve_turn(self, events: list[CombatEvent]) -> CombatResult | None:
-        """Fase 2: registra eventos e checa vitoria/derrota."""
+        """Fase 2: registra eventos, dispara passivas e checa vitoria/derrota."""
         self._events.extend(events)
+        self._fire_passive_triggers(events)
         self._result = self._check_result()
         return self._result
 
@@ -203,6 +208,91 @@ class CombatEngine:
             create_skip_entry(combatant.name, self._round, msg),
         )
 
+    def _fire_round_start_passives(self) -> None:
+        """Dispara passivas on_round_start para todos os vivos."""
+        if self._passive_manager is None:
+            return
+        all_alive = [c for c in self._participants.values() if c.is_alive]
+        events = self._passive_manager.fire_on_round_start(
+            all_alive, self._round,
+        )
+        self._events.extend(events)
+
+    def _fire_passive_triggers(
+        self, events: list[CombatEvent],
+    ) -> None:
+        """Dispara passivas de kill, low_hp e critical apos eventos."""
+        if self._passive_manager is None:
+            return
+        self._fire_kill_passives(events)
+        self._fire_damage_passives(events)
+
+    def _fire_kill_passives(
+        self, events: list[CombatEvent],
+    ) -> None:
+        """Detecta mortes nos eventos e dispara on_kill e on_ally_death."""
+        assert self._passive_manager is not None
+        fired: set[str] = set()
+        for event in events:
+            target = self._participants.get(event.target_name)
+            if target is None or target.is_alive:
+                continue
+            if event.target_name in fired:
+                continue
+            fired.add(event.target_name)
+            self._fire_single_kill(event)
+
+    def _fire_single_kill(self, event: CombatEvent) -> None:
+        """Dispara on_kill para o ator e on_ally_death para o time."""
+        assert self._passive_manager is not None
+        actor = self._participants.get(event.actor_name)
+        if actor is not None and actor.is_alive:
+            self._events.extend(
+                self._passive_manager.fire_on_kill(actor, self._round),
+            )
+        dead_char = self._participants.get(event.target_name)
+        if dead_char is not None:
+            self._fire_ally_death(dead_char)
+
+    def _fire_ally_death(self, dead_char: Character) -> None:
+        """Dispara on_ally_death para o time do morto."""
+        assert self._passive_manager is not None
+        _, allies = self._get_teams(dead_char)
+        team = [dead_char] + allies
+        survivors = [c for c in team if c.is_alive]
+        self._events.extend(
+            self._passive_manager.fire_on_ally_death(
+                dead_char.name, survivors, self._round,
+            ),
+        )
+
+    def _fire_damage_passives(self, events: list[CombatEvent]) -> None:
+        """Dispara on_low_hp e on_critical para eventos de dano."""
+        assert self._passive_manager is not None
+        for event in events:
+            if event.damage is None:
+                continue
+            self._fire_low_hp_and_crit(event)
+
+    def _fire_low_hp_and_crit(self, event: CombatEvent) -> None:
+        """Dispara on_low_hp para o alvo e on_critical para o ator."""
+        assert self._passive_manager is not None
+        target = self._participants.get(event.target_name)
+        if target is not None and target.is_alive:
+            self._events.extend(
+                self._passive_manager.fire_on_low_hp(
+                    target, self._round,
+                ),
+            )
+        if event.damage and event.damage.is_critical:
+            actor = self._participants.get(event.actor_name)
+            if actor is not None and actor.is_alive:
+                self._events.extend(
+                    self._passive_manager.fire_on_critical(
+                        actor, self._round,
+                    ),
+                )
+
     def run_combat(self) -> CombatResult:
         """Executa combate completo ate vitoria, derrota ou empate."""
         while self._round < MAX_ROUNDS:
@@ -227,6 +317,11 @@ class CombatEngine:
     @property
     def effect_log(self) -> list[EffectLogEntry]:
         return list(self._effect_log)
+
+    @property
+    def turn_order_names(self) -> list[str]:
+        """Nomes dos combatentes vivos na ordem de turno do round atual."""
+        return [c.name for c in self._turn_order.get_order()]
 
     def process_damage_reactions(
         self, events: list[CombatEvent],

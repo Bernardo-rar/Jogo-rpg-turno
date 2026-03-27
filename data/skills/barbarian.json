@@ -92,5 +92,20 @@
     "reaction_mode": "passive",
     "required_level": 1,
     "description": "Aguenta o golpe e contra-ataca com furia"
+  },
+  "blood_frenzy_passive": {
+    "name": "Blood Frenzy",
+    "mana_cost": 0,
+    "action_type": "PASSIVE",
+    "target_type": "SELF",
+    "slot_cost": 0,
+    "reaction_trigger": "on_low_hp",
+    "reaction_mode": "passive",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 20, "stat": "PHYSICAL_ATTACK", "duration": 2}
+    ],
+    "class_id": "barbarian",
+    "required_level": 1,
+    "description": "When below 50% HP, gain +20 ATK for 2 turns"
   }
 }

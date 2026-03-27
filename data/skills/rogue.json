@@ -80,5 +80,20 @@
     "reaction_mode": "passive",
     "required_level": 1,
     "description": "Esquiva agil que aumenta a defesa fisica contra o ataque"
+  },
+  "shadow_speed": {
+    "name": "Shadow Speed",
+    "mana_cost": 0,
+    "action_type": "PASSIVE",
+    "target_type": "SELF",
+    "slot_cost": 0,
+    "reaction_trigger": "on_critical_hit",
+    "reaction_mode": "passive",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 5, "stat": "SPEED", "duration": 2}
+    ],
+    "class_id": "rogue",
+    "required_level": 1,
+    "description": "On crit, gain +5 Speed for 2 turns"
   }
 }
