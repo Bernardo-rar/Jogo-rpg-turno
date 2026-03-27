@@ -1,0 +1,64 @@
+[
+  {
+    "combo_name": "Freeze Burst",
+    "element_a": "FIRE",
+    "element_b": "ICE",
+    "effect": {
+      "ailment_id": "freeze",
+      "ailment_duration": 3,
+      "bonus_damage": 15
+    }
+  },
+  {
+    "combo_name": "Magma Surge",
+    "element_a": "FIRE",
+    "element_b": "EARTH",
+    "effect": {
+      "ailment_id": "burn",
+      "ailment_power": 12,
+      "ailment_duration": 4,
+      "bonus_damage": 10
+    }
+  },
+  {
+    "combo_name": "Chain Lightning",
+    "element_a": "LIGHTNING",
+    "element_b": "WATER",
+    "effect": {
+      "ailment_id": "paralysis",
+      "ailment_duration": 2,
+      "bonus_damage": 20
+    }
+  },
+  {
+    "combo_name": "Blizzard",
+    "element_a": "WATER",
+    "element_b": "ICE",
+    "effect": {
+      "ailment_id": "cold",
+      "ailment_power": 25,
+      "ailment_duration": 4
+    }
+  },
+  {
+    "combo_name": "Soul Scorch",
+    "element_a": "FIRE",
+    "element_b": "DARKNESS",
+    "effect": {
+      "ailment_id": "scorch",
+      "ailment_power": 10,
+      "ailment_duration": 3,
+      "bonus_damage": 10
+    }
+  },
+  {
+    "combo_name": "Tremor Shock",
+    "element_a": "LIGHTNING",
+    "element_b": "EARTH",
+    "effect": {
+      "ailment_id": "confusion",
+      "ailment_duration": 2,
+      "bonus_damage": 15
+    }
+  }
+]
