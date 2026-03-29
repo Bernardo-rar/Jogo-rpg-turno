@@ -9,8 +9,18 @@ from src.core.combat.player_action import PlayerAction, PlayerActionType
 from src.ui import colors, layout
 from src.ui.animations.animation_factory import AnimationFactory
 from src.ui.animations.animation_manager import AnimationManager
+from src.ui.animations.combat_intro import CombatIntroAnimation
+from src.ui.animations.defeat_overlay import DefeatOverlay
+from src.ui.animations.victory_overlay import VictoryOverlay
 from src.ui.components.action_economy_bar import draw_economy_bar
 from src.ui.components.action_panel import draw_action_panel
+from src.ui.components.boss_indicators import (
+    draw_charge_indicator,
+    draw_empower_bar,
+    draw_field_overlay,
+)
+from src.ui.components.qte_overlay import QteOverlay
+from src.ui.components.synergy_indicator import draw_synergy_links
 from src.ui.components.help_hint import draw_help_hint
 from src.ui.components.help_overlay import draw_help_overlay
 from src.ui.components.pause_menu import (
@@ -31,6 +41,7 @@ from src.ui.components.speed_indicator import (
     draw_speed_indicator,
     next_speed_index,
 )
+from src.ui.components.target_indicator import draw_target_indicator
 from src.ui.components.turn_indicator import draw_turn_indicator
 from src.ui.components.turn_timeline import TurnTimeline
 from src.ui.font_manager import FontManager
@@ -45,6 +56,11 @@ _KEY_MAP = {
     pygame.K_7: 7, pygame.K_8: 8, pygame.K_9: 9,
 }
 
+_NAV_UP = frozenset({pygame.K_UP, pygame.K_w})
+_NAV_DOWN = frozenset({pygame.K_DOWN, pygame.K_s})
+
+_ITEM_KEY = 4  # corresponds to _LEVEL1_KEY_ITEM in action_menu
+
 _LOG_COMPACT_VISIBLE = 4
 
 _EVENT_COLORS: dict[EventType, tuple] = {
@@ -55,6 +71,11 @@ _EVENT_COLORS: dict[EventType, tuple] = {
     EventType.AILMENT: colors.TEXT_EFFECT,
     EventType.CLEANSE: colors.TEXT_HEAL,
     EventType.MANA_RESTORE: colors.MANA_BLUE,
+    EventType.SUMMON: colors.TEXT_YELLOW,
+    EventType.FIELD_EFFECT: colors.TEXT_EFFECT,
+    EventType.CHARGE: colors.TEXT_YELLOW,
+    EventType.TRANSFORM: colors.TEXT_YELLOW,
+    EventType.EMPOWER: colors.TEXT_DAMAGE,
 }
 
 
@@ -94,6 +115,15 @@ class PlayableCombatScene:
             turn_order=[c.name for c in party + enemies],
             party_names=scene.party_names,
         )
+        self._synergy_names: list[str] = []
+        self._intro = CombatIntroAnimation(
+            party_names=[c.name for c in party],
+            enemy_names=[c.name for c in enemies],
+        )
+        self._anim_manager.spawn(self._intro)
+        self._qte_overlay: QteOverlay | None = None
+        self._qte_pending_action: PlayerAction | None = None
+        self._result_overlay_spawned: bool = False
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.KEYDOWN:
@@ -104,6 +134,7 @@ class PlayableCombatScene:
             return False
         scaled_dt = int(dt_ms * self._speed_mult)
         self._elapsed_ms += scaled_dt
+        self._update_qte(scaled_dt)
         self._anim_manager.update(scaled_dt)
         if self._anim_manager.has_blocking:
             return self._running
@@ -111,6 +142,7 @@ class PlayableCombatScene:
         self._refresh_battlefield()
         self._refresh_menu()
         self._flush_new_events()
+        self._maybe_spawn_result_overlay()
         return self._running
 
     def draw(self, surface: pygame.Surface) -> None:
@@ -118,14 +150,24 @@ class PlayableCombatScene:
         self._timeline.draw(surface, self._fonts, self._scene.round_number)
         draw_speed_indicator(surface, self._speed_mult, self._fonts)
         offsets = _build_shake_offsets(self._anim_manager, self._all_names)
+        if not self._intro.is_done:
+            intro_offsets = self._intro.get_offsets()
+            for name, (dx, dy) in intro_offsets.items():
+                ox, oy = offsets.get(name, (0, 0))
+                offsets[name] = (ox + dx, oy + dy)
         self._battlefield.draw(surface, self._fonts, offsets=offsets)
         self._anim_manager.draw(surface)
         self._draw_turn_highlight(surface)
+        self._draw_target_highlight(surface)
+        self._draw_boss_indicators(surface)
+        self._draw_synergy_indicators(surface)
         self._log.draw(surface, self._fonts.small)
         if self._scene.phase == TurnPhase.WAITING_INPUT:
             self._draw_interactive_ui(surface)
         if self._scene.phase == TurnPhase.COMBAT_OVER:
             self._draw_result(surface)
+        if self._qte_overlay is not None:
+            self._qte_overlay.draw(surface, self._fonts.large)
         draw_help_hint(surface, self._fonts)
         if self._show_help:
             draw_help_overlay(surface, self._fonts)
@@ -140,11 +182,11 @@ class PlayableCombatScene:
         if self._show_pause:
             self._handle_pause_key(key)
             return
-        if key == pygame.K_s:
-            self._cycle_speed()
-            return
         if key == pygame.K_h:
             self._show_help = True
+            return
+        if self._qte_overlay is not None:
+            self._qte_overlay.handle_key(key)
             return
         if self._anim_manager.has_blocking:
             return
@@ -164,16 +206,46 @@ class PlayableCombatScene:
         if key in (pygame.K_TAB, pygame.K_SPACE):
             self._scene.shortcut_end_turn()
             return
-        if key in (pygame.K_UP, pygame.K_DOWN) and self._menu is not None:
-            delta = -1 if key == pygame.K_UP else 1
-            self._menu.move_highlight(delta)
+        if key == pygame.K_PAGEUP:
+            self._log.scroll_up()
+            return
+        if key == pygame.K_PAGEDOWN:
+            self._log.scroll_down()
+            return
+        if key == pygame.K_c and self._menu is not None:
+            if self._menu.current_level == MenuLevel.ACTION_TYPE:
+                self._menu.select(_ITEM_KEY)
+            return
+        if self._handle_menu_nav(key):
+            return
+        if key == pygame.K_s:
+            self._cycle_speed()
+            return
+        if key == pygame.K_RETURN and self._menu is not None:
+            result = self._menu.select_highlighted()
+            if result is not None:
+                self._try_submit_action(result)
             return
         num = _KEY_MAP.get(key)
         if num is not None and self._menu is not None:
             result = self._menu.select(num)
             if result is not None:
-                self._scene.submit_player_action(result)
-                self._force_menu_rebuild()
+                self._try_submit_action(result)
+
+    def _handle_menu_nav(self, key: int) -> bool:
+        """Processa W/S e UP/DOWN para navegacao de menu.
+
+        Returns True se o key foi consumido.
+        """
+        if self._menu is None:
+            return False
+        if key in _NAV_UP:
+            self._menu.move_highlight(-1)
+            return True
+        if key in _NAV_DOWN:
+            self._menu.move_highlight(1)
+            return True
+        return False
 
     def _cycle_speed(self) -> None:
         """Cicla velocidade de animacao: 1x -> 2x -> 3x -> 1x."""
@@ -185,8 +257,11 @@ class PlayableCombatScene:
         if self._on_complete is not None:
             from src.core.combat.combat_engine import CombatResult
             result = self._scene.result
+            deaths = sum(1 for c in self._party if not c.is_alive)
             self._on_complete({
                 "victory": result == CombatResult.PARTY_VICTORY,
+                "rounds": self._scene.round_number,
+                "deaths": deaths,
             })
         else:
             self._running = False
@@ -237,6 +312,20 @@ class PlayableCombatScene:
             self._menu = None
             self._menu_combatant = None
 
+    def _maybe_spawn_result_overlay(self) -> None:
+        """Spawns victory/defeat overlay once when combat ends."""
+        if self._result_overlay_spawned:
+            return
+        if self._scene.phase != TurnPhase.COMBAT_OVER:
+            return
+        self._result_overlay_spawned = True
+        from src.core.combat.combat_engine import CombatResult
+        w, h = layout.WINDOW_WIDTH, layout.WINDOW_HEIGHT
+        if self._scene.result == CombatResult.PARTY_VICTORY:
+            self._anim_manager.spawn(VictoryOverlay(w, h))
+        elif self._scene.result == CombatResult.PARTY_DEFEAT:
+            self._anim_manager.spawn(DefeatOverlay(w, h))
+
     def _flush_new_events(self) -> None:
         """Loga eventos novos e spawna animacoes."""
         all_events = self._scene.events
@@ -258,21 +347,27 @@ class PlayableCombatScene:
         self._prev_alive = current
 
     def _log_event(self, event: CombatEvent) -> None:
-        text = _format_event(event)
+        from src.ui.components.combat_log_panel import LogEntry
+        tag, msg = _format_event_tagged(event)
         color = _EVENT_COLORS.get(event.event_type, colors.TEXT_WHITE)
-        self._log.add_line(text, color)
+        self._log.add_entry(LogEntry(
+            tag=tag, tag_color=color, message=msg,
+        ))
 
     def _draw_interactive_ui(self, surface: pygame.Surface) -> None:
         if self._menu is not None:
             name = self._scene.active_combatant or ""
             level = self._menu.current_level
             can_back = level != MenuLevel.ACTION_TYPE
+            desc = self._menu.highlighted_description
             draw_action_panel(
                 surface, self._menu.options,
                 level, self._fonts.medium,
                 combatant_name=name,
                 breadcrumb=self._menu.breadcrumb,
                 can_go_back=can_back,
+                highlight_index=self._menu.highlight_index,
+                description=desc,
             )
             self._draw_skill_tooltip(surface)
             self._draw_damage_preview(surface)
@@ -302,17 +397,30 @@ class PlayableCombatScene:
         if rect is not None:
             draw_turn_indicator(surface, rect, self._elapsed_ms)
 
+    def _draw_target_highlight(self, surface: pygame.Surface) -> None:
+        """Desenha borda pulsante ao redor do alvo destacado."""
+        if self._menu is None:
+            return
+        target_name = self._menu.highlighted_target
+        if target_name is None:
+            return
+        rect = self._battlefield.get_card_rect(target_name)
+        if rect is not None:
+            draw_target_indicator(surface, rect, self._elapsed_ms)
+
     def _draw_damage_preview(self, surface: pygame.Surface) -> None:
         """Desenha tooltip de preview quando no nivel de selecao de alvo."""
         if self._menu is None:
             return
-        from src.ui.input.menu_state import MenuLevel
         if self._menu.current_level != MenuLevel.TARGET_SELECT:
             return
-        target = self._find_first_target()
+        target_name = self._menu.highlighted_target
+        if target_name is None:
+            return
+        target = self._find_target_by_name(target_name)
         if target is None:
             return
-        card_rect = self._battlefield.get_card_rect(target.name)
+        card_rect = self._battlefield.get_card_rect(target_name)
         if card_rect is None:
             return
         combatant = self._scene.current_context.combatant
@@ -324,27 +432,123 @@ class PlayableCombatScene:
             card_rect, self._fonts.small,
         )
 
-    def _find_first_target(self) -> object | None:
-        """Encontra o primeiro alvo vivo listado no menu."""
-        if self._menu is None:
-            return None
-        from src.core.combat.player_action import PlayerActionType
-        pending = self._menu.pending_action_type
+    def _find_target_by_name(self, name: str) -> object | None:
+        """Encontra um alvo vivo pelo nome."""
         ctx = self._scene.current_context
         if ctx is None:
             return None
-        if pending == PlayerActionType.BASIC_ATTACK:
-            pool = ctx.enemies
-        elif self._menu.pending_skill is not None:
-            from src.core.skills.target_type import TargetType
-            if self._menu.pending_skill.target_type == TargetType.SINGLE_ALLY:
-                pool = ctx.allies
-            else:
-                pool = ctx.enemies
-        else:
-            pool = ctx.enemies
-        alive = [c for c in pool if c.is_alive]
-        return alive[0] if alive else None
+        for char in ctx.allies + ctx.enemies:
+            if char.name == name and char.is_alive:
+                return char
+        return None
+
+    def _draw_boss_indicators(self, surface: pygame.Surface) -> None:
+        """Draws boss empower bar, charge indicator, and field overlay."""
+        handler = getattr(self._scene, "_engine", None)
+        if handler is not None:
+            handler = getattr(handler, "_handler", None)
+        if handler is None:
+            handler = self._get_boss_handler()
+        if handler is None:
+            return
+        empower = getattr(handler, "empower_bar", None)
+        field = getattr(handler, "field_effect", None)
+        charge = getattr(handler, "_charge_pending", None)
+        boss = self._enemies[0] if self._enemies else None
+        if boss is None:
+            return
+        rect = self._battlefield.get_card_rect(boss.name)
+        if rect is None:
+            return
+        if empower is not None:
+            draw_empower_bar(
+                surface, rect, empower.current,
+                empower._config.max_value, empower.is_empowered,
+                self._fonts.small,
+            )
+        if charge is not None:
+            draw_charge_indicator(
+                surface, rect, "CHARGING!",
+                self._fonts.small,
+            )
+        if field is not None and not field.is_expired:
+            draw_field_overlay(
+                surface, field.config.name,
+                self._fonts.small, layout.WINDOW_WIDTH,
+            )
+
+    def _try_submit_action(self, action: PlayerAction) -> None:
+        """Submits action, or starts QTE if skill has one."""
+        if action.action_type == PlayerActionType.SKILL:
+            skill = self._find_skill_for_action(action)
+            if skill is not None and skill.qte is not None:
+                self._qte_overlay = QteOverlay(skill.qte)
+                self._qte_pending_action = action
+                return
+        self._scene.submit_player_action(action)
+        self._force_menu_rebuild()
+
+    def _find_skill_for_action(self, action: PlayerAction):
+        """Finds the Skill object for a skill action."""
+        ctx = self._scene.current_context
+        if ctx is None or action.skill_id is None:
+            return None
+        bar = ctx.combatant.skill_bar
+        if bar is None:
+            return None
+        for s in bar.all_skills:
+            if s.skill_id == action.skill_id:
+                return s
+        return None
+
+    def _update_qte(self, dt_ms: int) -> None:
+        """Updates QTE overlay and submits result when done."""
+        if self._qte_overlay is None:
+            return
+        self._qte_overlay.update(dt_ms)
+        if self._qte_overlay.is_done:
+            from src.core.combat.action_resolver import set_qte_result
+            qte_result = self._qte_overlay.get_result()
+            set_qte_result(qte_result)
+            if self._qte_pending_action is not None:
+                self._scene.submit_player_action(
+                    self._qte_pending_action,
+                )
+                self._force_menu_rebuild()
+            self._qte_overlay = None
+            self._qte_pending_action = None
+
+    def set_synergy_names(self, names: list[str]) -> None:
+        """Set which enemy names are in a synergy group."""
+        self._synergy_names = names
+
+    def _draw_synergy_indicators(self, surface: pygame.Surface) -> None:
+        """Draws links between synergy-bound enemies."""
+        if not self._synergy_names:
+            return
+        rects = []
+        for name in self._synergy_names:
+            rect = self._battlefield.get_card_rect(name)
+            if rect is not None:
+                rects.append(rect)
+        draw_synergy_links(surface, rects)
+
+    def _get_boss_handler(self):
+        """Tries to find BossTurnHandler from the scene's engine."""
+        engine = getattr(self._scene, "_engine", None)
+        if engine is None:
+            return None
+        handler = getattr(engine, "_handler", None)
+        if handler is None:
+            return None
+        from src.core.combat.boss.boss_turn_handler import BossTurnHandler
+        if isinstance(handler, BossTurnHandler):
+            return handler
+        handlers = getattr(handler, "_handlers", {})
+        for h in handlers.values():
+            if isinstance(h, BossTurnHandler):
+                return h
+        return None
 
     def _draw_result(self, surface: pygame.Surface) -> None:
         result = self._scene.result
@@ -437,18 +641,37 @@ def _render_preview(
 
 def _format_event(event: CombatEvent) -> str:
     """Formata CombatEvent como texto legivel para o log."""
+    _, msg = _format_event_tagged(event)
+    return msg
+
+
+def _format_event_tagged(event: CombatEvent) -> tuple[str, str]:
+    """Returns (tag, message) for a CombatEvent."""
     if event.event_type == EventType.DAMAGE and event.damage:
         dmg = event.damage.final_damage
-        crit = " CRIT!" if event.damage.is_critical else ""
-        return f"{event.actor_name} hits {event.target_name} for {dmg}{crit}"
+        is_crit = event.damage.is_critical
+        tag = "[CRIT]" if is_crit else "[ATK]"
+        crit = " CRIT!" if is_crit else ""
+        msg = f"{event.actor_name} hits {event.target_name} for {dmg}{crit}"
+        return tag, msg
     if event.event_type == EventType.HEAL:
-        return f"{event.actor_name} heals {event.target_name} for {event.value}"
+        return "[HEAL]", f"{event.actor_name} heals {event.target_name} for {event.value}"
     if event.event_type == EventType.BUFF:
-        return f"{event.actor_name} buffs {event.target_name}: {event.description}"
+        return "[BUFF]", f"{event.actor_name} buffs {event.target_name}: {event.description}"
     if event.event_type == EventType.DEBUFF:
-        return f"{event.actor_name} debuffs {event.target_name}: {event.description}"
+        return "[DBF]", f"{event.actor_name} debuffs {event.target_name}: {event.description}"
     if event.event_type == EventType.AILMENT:
-        return f"{event.target_name} afflicted: {event.description}"
+        return "[DOT]", f"{event.target_name} afflicted: {event.description}"
     if event.event_type == EventType.MANA_RESTORE:
-        return f"{event.target_name} restores {event.value} mana"
-    return f"{event.actor_name} -> {event.target_name}: {event.description}"
+        return "[MP]", f"{event.target_name} restores {event.value} mana"
+    if event.event_type == EventType.CHARGE:
+        return "[CHG]", f"{event.actor_name}: {event.description}"
+    if event.event_type == EventType.SUMMON:
+        return "[SUM]", f"{event.description}"
+    if event.event_type == EventType.TRANSFORM:
+        return "[TFM]", f"{event.description}"
+    if event.event_type == EventType.EMPOWER:
+        return "[EMP]", f"{event.description}"
+    if event.event_type == EventType.FIELD_EFFECT:
+        return "[FLD]", f"{event.description}: {event.value} dmg to {event.target_name}"
+    return "", f"{event.actor_name} -> {event.target_name}: {event.description}"

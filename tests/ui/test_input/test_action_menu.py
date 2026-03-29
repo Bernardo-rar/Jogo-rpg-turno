@@ -243,6 +243,42 @@ class TestOptionBuilding:
         assert result is None
         assert menu.current_level == MenuLevel.SPECIFIC_ACTION
 
+    def test_item_always_visible_even_without_items(self):
+        hero = _build_char("Hero")
+        menu = ActionMenu(_ctx(hero))
+        keys = [o.key for o in menu.options]
+        assert 4 in keys
+        item_opt = next(o for o in menu.options if o.key == 4)
+        assert item_opt.available is False
+        assert item_opt.reason == "No items"
+
+    def test_item_unavailable_when_no_bonus_action(self):
+        inv = Inventory()
+        inv.add_item(_health_potion(), quantity=1)
+        hero = _char_with_inventory("Hero", inv)
+        economy = ActionEconomy()
+        economy.use(ActionType.BONUS_ACTION)
+        menu = ActionMenu(_ctx(hero, economy=economy))
+        item_opt = next(o for o in menu.options if o.key == 4)
+        assert item_opt.available is False
+        assert item_opt.reason == "No bonus action"
+
+    def test_item_available_with_items_and_bonus(self):
+        inv = Inventory()
+        inv.add_item(_health_potion(), quantity=1)
+        hero = _char_with_inventory("Hero", inv)
+        menu = ActionMenu(_ctx(hero))
+        item_opt = next(o for o in menu.options if o.key == 4)
+        assert item_opt.available is True
+        assert item_opt.reason == ""
+
+    def test_item_dimmed_cannot_be_selected(self):
+        hero = _build_char("Hero")
+        menu = ActionMenu(_ctx(hero))
+        result = menu.select(4)
+        assert result is None
+        assert menu.current_level == MenuLevel.ACTION_TYPE
+
     def test_invalid_key_ignored(self):
         hero = _build_char("Hero")
         menu = ActionMenu(_ctx(hero))

@@ -17,6 +17,10 @@ _ROOM_COLORS: dict[RoomType, tuple[int, int, int]] = {
     RoomType.ELITE: (220, 160, 40),
     RoomType.REST: (60, 180, 80),
     RoomType.BOSS: (160, 60, 200),
+    RoomType.TREASURE: (200, 180, 50),
+    RoomType.EVENT: (120, 160, 220),
+    RoomType.CAMPFIRE: (220, 140, 40),
+    RoomType.SHOP: (80, 180, 200),
 }
 _VISITED_COLOR = (60, 60, 70)
 _AVAILABLE_BORDER = colors.TEXT_YELLOW
@@ -46,6 +50,15 @@ class DungeonMapScene:
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
+            return
+        if event.key == pygame.K_e:
+            self._on_complete({"equipment": True})
+            return
+        if event.key == pygame.K_i:
+            self._on_complete({"item_use": True})
+            return
+        if event.key == pygame.K_l:
+            self._on_complete({"loadout": True})
             return
         idx = _key_to_index(event.key)
         if idx is not None and idx < len(self._available):
@@ -120,6 +133,21 @@ class DungeonMapScene:
             color = _ROOM_COLORS.get(node.room_type, colors.TEXT_WHITE)
             text = self._fonts.small.render(label, True, color)
             surface.blit(text, (40 + i * 300, y + 30))
+        loadout_hint = self._fonts.small.render(
+            "[L] Skills", True, colors.TEXT_MUTED,
+        )
+        items_hint = self._fonts.small.render(
+            "[I] Items", True, colors.TEXT_MUTED,
+        )
+        equip_hint = self._fonts.small.render(
+            "[E] Equipment", True, colors.TEXT_MUTED,
+        )
+        ex = layout.WINDOW_WIDTH - equip_hint.get_width() - 40
+        surface.blit(equip_hint, (ex, y + 30))
+        ix = ex - items_hint.get_width() - 20
+        surface.blit(items_hint, (ix, y + 30))
+        lx = ix - loadout_hint.get_width() - 20
+        surface.blit(loadout_hint, (lx, y + 30))
 
 
 def _draw_header(surface: pygame.Surface, fonts: FontManager) -> None:

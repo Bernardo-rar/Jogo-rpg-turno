@@ -39,6 +39,17 @@ _CATEGORY_LABELS: dict[_Category, str] = {
     _Category.ITEM: "Item",
 }
 
+_OPTION_DESCRIPTIONS: dict[str, str] = {
+    "action": "Ataque basico ou skills ofensivas",
+    "bonus": "Acoes rapidas: Mover, skills bonus",
+    "reaction": "Acoes defensivas: Defender, contra-ataques",
+    "item": "Usar consumiveis do inventario",
+    "end_turn": "Finaliza seu turno",
+    "basic_attack": "Ataque fisico com arma equipada",
+    "move": "Troca posicao (Front/Back)",
+    "defend": "Postura defensiva ate o proximo turno",
+}
+
 
 class ActionMenu:
     """Menu hierarquico de 3 niveis que produz PlayerAction."""
@@ -94,11 +105,33 @@ class ActionMenu:
         return self._highlight_index
 
     @property
+    def highlighted_target(self) -> str | None:
+        """Nome do alvo destacado no nivel TARGET_SELECT."""
+        if self._level != MenuLevel.TARGET_SELECT:
+            return None
+        if self._highlight_index >= len(self._options):
+            return None
+        key = self._options[self._highlight_index].key
+        return self._tags.get(key)
+
+    @property
     def highlighted_skill(self) -> Skill | None:
         """Skill destacada no nivel SPECIFIC_ACTION (se houver)."""
         if self._level != MenuLevel.SPECIFIC_ACTION:
             return None
         return self._skill_at_highlight()
+
+    @property
+    def highlighted_description(self) -> str:
+        """Descricao da opcao destacada (qualquer nivel)."""
+        if not self._options or self._highlight_index >= len(self._options):
+            return ""
+        skill = self._skill_at_highlight() if self._level == MenuLevel.SPECIFIC_ACTION else None
+        if skill is not None and skill.description:
+            return skill.description
+        key = self._options[self._highlight_index].key
+        tag = self._tags.get(key, "")
+        return _OPTION_DESCRIPTIONS.get(tag, "")
 
     def move_highlight(self, delta: int) -> None:
         """Move o highlight index para cima (-1) ou para baixo (+1)."""
@@ -106,6 +139,15 @@ class ActionMenu:
             return
         total = len(self._options)
         self._highlight_index = (self._highlight_index + delta) % total
+
+    def select_highlighted(self) -> PlayerAction | None:
+        """Seleciona a opcao atualmente destacada pelo highlight."""
+        if not self._options:
+            return None
+        if self._highlight_index >= len(self._options):
+            return None
+        key = self._options[self._highlight_index].key
+        return self.select(key)
 
     def _skill_at_highlight(self) -> Skill | None:
         """Retorna a skill correspondente ao highlight_index atual."""
@@ -256,8 +298,12 @@ def _build_level1(
     if economy.is_available(ActionType.REACTION):
         _add(options, tags, _LEVEL1_KEY_REACTION, "Reaction", "reaction")
     inv = ctx.combatant.inventory
-    if inv is not None and len(inv.slots) > 0:
-        _add(options, tags, _LEVEL1_KEY_ITEM, "Item", "item")
+    has_items = inv is not None and len(inv.slots) > 0
+    has_bonus = economy.is_available(ActionType.BONUS_ACTION)
+    item_available = has_items and has_bonus
+    item_reason = _item_unavailable_reason(has_items, has_bonus)
+    _add(options, tags, _LEVEL1_KEY_ITEM, "Item", "item",
+         available=item_available, reason=item_reason)
     _add(options, tags, _LEVEL1_KEY_END_TURN, "End Turn", "end_turn")
 
 
@@ -430,6 +476,15 @@ def _skill_unavailable_reason(skill: Skill, ctx: TurnContext) -> str:
         if not can_afford_resource(ctx.combatant, cost):
             name = _resource_display(cost.resource_type)
             return f"No {name} ({cost.amount})"
+    return ""
+
+
+def _item_unavailable_reason(has_items: bool, has_bonus: bool) -> str:
+    """Motivo pelo qual a opcao Item esta indisponivel."""
+    if not has_items:
+        return "No items"
+    if not has_bonus:
+        return "No bonus action"
     return ""
 
 

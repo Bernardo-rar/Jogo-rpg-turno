@@ -20,10 +20,12 @@ class RestRoomScene:
         fonts: FontManager,
         party: list[Character],
         on_complete: Callable[[dict], None],
+        healing_mult: float = 1.0,
     ) -> None:
         self._fonts = fonts
         self._party = party
         self._on_complete = on_complete
+        self._healing_mult = healing_mult
         self._result: dict[str, int] | None = None
         self._result_label: str = ""
         self._wait_ms: int = 0
@@ -36,7 +38,7 @@ class RestRoomScene:
                 self._on_complete({})
             return
         if event.key == pygame.K_1:
-            self._result = apply_rest_heal(self._party)
+            self._result = apply_rest_heal(self._party, self._healing_mult)
             self._result_label = "HP Recuperado"
         elif event.key == pygame.K_2:
             self._result = apply_rest_meditate(self._party)
