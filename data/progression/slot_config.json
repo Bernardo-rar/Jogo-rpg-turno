@@ -1,0 +1,9 @@
+{
+  "base_slot_budget": 8,
+  "budget_per_level": 1,
+  "level_10_bonus": 1,
+  "base_slot_count": 3,
+  "max_slot_count": 6,
+  "reaction_slots": 1,
+  "passive_limit": 2
+}

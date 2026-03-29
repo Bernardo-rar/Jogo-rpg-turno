@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from src.core.combat.action_economy import ActionType
+from src.core.combat.qte.qte_config import QteSequence
 from src.core.skills.resource_cost import ResourceCost
 from src.core.skills.skill_effect import SkillEffect
 from src.core.skills.target_type import TargetType
@@ -33,6 +34,7 @@ class Skill:
     resource_costs: tuple[ResourceCost, ...] = ()
     reaction_trigger: str = ""
     reaction_mode: str = ""
+    qte: QteSequence | None = None
 
     @classmethod
     def from_dict(cls, skill_id: str, data: dict[str, object]) -> Skill:
@@ -58,7 +60,14 @@ class Skill:
             resource_costs=resource_costs,
             reaction_trigger=str(data.get("reaction_trigger", "")),
             reaction_mode=str(data.get("reaction_mode", "")),
+            qte=_parse_qte(data.get("qte")),
         )
+
+
+def _parse_qte(raw: object) -> QteSequence | None:
+    if not raw or not isinstance(raw, dict):
+        return None
+    return QteSequence.from_dict(raw)
 
 
 def _parse_resource_costs(
