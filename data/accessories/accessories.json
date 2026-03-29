@@ -3,33 +3,313 @@
     "name": "Iron Ring",
     "accessory_type": "RING",
     "stat_bonuses": [
-      {"stat": "PHYSICAL_DEFENSE", "flat": 3}
-    ]
-  },
-  "amulet_of_wisdom": {
-    "name": "Amulet of Wisdom",
-    "accessory_type": "AMULET",
-    "stat_bonuses": [
-      {"stat": "MAGICAL_DEFENSE", "flat": 5},
-      {"stat": "MANA_REGEN", "flat": 2}
+      {"stat": "PHYSICAL_ATTACK", "flat": 3}
     ],
-    "rarity": "UNCOMMON",
-    "cha_requirement": 12
+    "rarity": "COMMON",
+    "cha_requirement": 0
+  },
+  "copper_ring": {
+    "name": "Copper Ring",
+    "accessory_type": "RING",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_ATTACK", "flat": 3}
+    ],
+    "rarity": "COMMON",
+    "cha_requirement": 0
+  },
+  "leather_cloak": {
+    "name": "Leather Cloak",
+    "accessory_type": "CLOAK",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_DEFENSE", "flat": 3}
+    ],
+    "rarity": "COMMON",
+    "cha_requirement": 0
   },
   "cloak_of_speed": {
     "name": "Cloak of Speed",
     "accessory_type": "CLOAK",
     "stat_bonuses": [
       {"stat": "SPEED", "flat": 2}
-    ]
+    ],
+    "rarity": "COMMON",
+    "cha_requirement": 0
+  },
+  "bone_amulet": {
+    "name": "Bone Amulet",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_DEFENSE", "flat": 3}
+    ],
+    "rarity": "COMMON",
+    "cha_requirement": 0
+  },
+  "amber_amulet": {
+    "name": "Amber Amulet",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MANA_REGEN", "flat": 3}
+    ],
+    "rarity": "COMMON",
+    "cha_requirement": 0
+  },
+  "wooden_bracelet": {
+    "name": "Wooden Bracelet",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "MAX_HP", "flat": 5}
+    ],
+    "rarity": "COMMON",
+    "cha_requirement": 0
+  },
+  "hide_bracelet": {
+    "name": "Hide Bracelet",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "HP_REGEN", "flat": 2}
+    ],
+    "rarity": "COMMON",
+    "cha_requirement": 0
+  },
+
+  "bloodstone_ring": {
+    "name": "Bloodstone Ring",
+    "accessory_type": "RING",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_ATTACK", "flat": 8}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12,
+    "_design_note": "Should be PHYSICAL_ATTACK +6, CRIT_CHANCE +5 once CRIT_CHANCE is added to ModifiableStat"
+  },
+  "arcane_signet": {
+    "name": "Arcane Signet",
+    "accessory_type": "RING",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_ATTACK", "flat": 8}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "amulet_of_wisdom": {
+    "name": "Amulet of Wisdom",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_DEFENSE", "flat": 5},
+      {"stat": "MANA_REGEN", "flat": 4}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "starweave_amulet": {
+    "name": "Starweave Amulet",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAX_MANA", "flat": 8},
+      {"stat": "MANA_REGEN", "flat": 4}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "lifeward_amulet": {
+    "name": "Lifeward Amulet",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_DEFENSE", "flat": 5},
+      {"stat": "HEALING_RECEIVED", "flat": 5}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "sapphire_pendant": {
+    "name": "Sapphire Pendant",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_DEFENSE", "flat": 8},
+      {"stat": "MAX_MANA", "flat": 5}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "swift_cloak": {
+    "name": "Swift Cloak",
+    "accessory_type": "CLOAK",
+    "stat_bonuses": [
+      {"stat": "SPEED", "flat": 4},
+      {"stat": "PHYSICAL_DEFENSE", "flat": 3}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "sentinels_cloak": {
+    "name": "Sentinel's Cloak",
+    "accessory_type": "CLOAK",
+    "stat_bonuses": [
+      {"stat": "ARMOR_CLASS", "flat": 5},
+      {"stat": "PHYSICAL_DEFENSE", "flat": 5}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "ironhide_bracelet": {
+    "name": "Ironhide Bracelet",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "MAX_HP", "flat": 10},
+      {"stat": "PHYSICAL_DEFENSE", "flat": 4}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
+  },
+  "oakheart_bracelet": {
+    "name": "Oakheart Bracelet",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "HP_REGEN", "flat": 5},
+      {"stat": "MAX_HP", "flat": 8}
+    ],
+    "rarity": "UNCOMMON",
+    "cha_requirement": 12
   },
   "bracelet_of_might": {
     "name": "Bracelet of Might",
     "accessory_type": "BRACELET",
     "stat_bonuses": [
-      {"stat": "PHYSICAL_ATTACK", "flat": 4}
+      {"stat": "PHYSICAL_ATTACK", "flat": 6},
+      {"stat": "MAX_HP", "flat": 5}
     ],
     "rarity": "UNCOMMON",
     "cha_requirement": 12
+  },
+
+  "shadowfang_ring": {
+    "name": "Shadowfang Ring",
+    "accessory_type": "RING",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_ATTACK", "flat": 12},
+      {"stat": "SPEED", "flat": 4}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18,
+    "_design_note": "Should be CRIT_CHANCE +10, CRIT_DAMAGE +25 once crit stats are added to ModifiableStat"
+  },
+  "voidstone_ring": {
+    "name": "Voidstone Ring",
+    "accessory_type": "RING",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_ATTACK", "flat": 12},
+      {"stat": "MAX_MANA", "flat": 10}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18
+  },
+  "aegis_amulet": {
+    "name": "Aegis Amulet",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_DEFENSE", "flat": 12},
+      {"stat": "PHYSICAL_DEFENSE", "flat": 8},
+      {"stat": "HEALING_RECEIVED", "flat": 8}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18
+  },
+  "spiritcaller_amulet": {
+    "name": "Spiritcaller Amulet",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MANA_REGEN", "flat": 8},
+      {"stat": "MAGICAL_ATTACK", "flat": 10}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18
+  },
+  "windrunner_cloak": {
+    "name": "Windrunner Cloak",
+    "accessory_type": "CLOAK",
+    "stat_bonuses": [
+      {"stat": "SPEED", "flat": 6},
+      {"stat": "ARMOR_CLASS", "flat": 6}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18
+  },
+  "ironwall_cloak": {
+    "name": "Ironwall Cloak",
+    "accessory_type": "CLOAK",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_DEFENSE", "flat": 12},
+      {"stat": "ARMOR_CLASS", "flat": 8},
+      {"stat": "MAX_HP", "flat": 8}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18
+  },
+  "guardian_bracelet": {
+    "name": "Guardian Bracelet",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "MAX_HP", "flat": 15},
+      {"stat": "PHYSICAL_DEFENSE", "flat": 8},
+      {"stat": "HP_REGEN", "flat": 5}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18
+  },
+  "berserker_bracelet": {
+    "name": "Berserker Bracelet",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_ATTACK", "flat": 10},
+      {"stat": "MAX_HP", "flat": 10}
+    ],
+    "rarity": "RARE",
+    "cha_requirement": 18,
+    "_design_note": "Should also have CRIT_DAMAGE +20 once crit stats are added to ModifiableStat"
+  },
+
+  "crown_of_the_undying": {
+    "name": "Crown of the Undying",
+    "accessory_type": "RING",
+    "stat_bonuses": [
+      {"stat": "PHYSICAL_ATTACK", "flat": 18},
+      {"stat": "SPEED", "flat": 6}
+    ],
+    "rarity": "LEGENDARY",
+    "cha_requirement": 22,
+    "_design_note": "Should be CRIT_CHANCE +15, CRIT_DAMAGE +40, PHYSICAL_ATTACK +12 once crit stats are in ModifiableStat"
+  },
+  "eye_of_the_storm": {
+    "name": "Eye of the Storm",
+    "accessory_type": "AMULET",
+    "stat_bonuses": [
+      {"stat": "MAGICAL_ATTACK", "flat": 18},
+      {"stat": "MAX_MANA", "flat": 20},
+      {"stat": "MANA_REGEN", "flat": 10}
+    ],
+    "rarity": "LEGENDARY",
+    "cha_requirement": 22
+  },
+  "veil_of_the_pale_moon": {
+    "name": "Veil of the Pale Moon",
+    "accessory_type": "CLOAK",
+    "stat_bonuses": [
+      {"stat": "SPEED", "flat": 8},
+      {"stat": "ARMOR_CLASS", "flat": 10},
+      {"stat": "MAGICAL_DEFENSE", "flat": 12}
+    ],
+    "rarity": "LEGENDARY",
+    "cha_requirement": 22
+  },
+  "heart_of_the_mountain": {
+    "name": "Heart of the Mountain",
+    "accessory_type": "BRACELET",
+    "stat_bonuses": [
+      {"stat": "MAX_HP", "flat": 25},
+      {"stat": "PHYSICAL_DEFENSE", "flat": 15},
+      {"stat": "HP_REGEN", "flat": 10}
+    ],
+    "rarity": "LEGENDARY",
+    "cha_requirement": 22
   }
 }

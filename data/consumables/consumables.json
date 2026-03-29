@@ -8,7 +8,8 @@
       {"effect_type": "HEAL_HP", "base_power": 50}
     ],
     "max_stack": 10,
-    "description": "Restaura 50 HP"
+    "description": "Restaura 50 HP",
+    "usable_outside_combat": true
   },
   "mana_potion_small": {
     "name": "Small Mana Potion",
@@ -19,7 +20,8 @@
       {"effect_type": "HEAL_MANA", "base_power": 30}
     ],
     "max_stack": 10,
-    "description": "Restaura 30 Mana"
+    "description": "Restaura 30 Mana",
+    "usable_outside_combat": true
   },
   "molotov": {
     "name": "Molotov",
@@ -30,7 +32,8 @@
       {"effect_type": "DAMAGE", "base_power": 40, "element": "FIRE"}
     ],
     "max_stack": 5,
-    "description": "Joga fogo em todos os inimigos"
+    "description": "Joga fogo em todos os inimigos",
+    "usable_outside_combat": false
   },
   "magic_turtle_shell": {
     "name": "Magic Turtle Shell",
@@ -41,7 +44,8 @@
       {"effect_type": "BUFF", "base_power": 15, "stat": "PHYSICAL_DEFENSE", "duration": 3}
     ],
     "max_stack": 5,
-    "description": "Aumenta defesa fisica por 3 turnos"
+    "description": "Aumenta defesa fisica por 3 turnos",
+    "usable_outside_combat": false
   },
   "antidote": {
     "name": "Antidote",
@@ -52,7 +56,8 @@
       {"effect_type": "CLEANSE"}
     ],
     "max_stack": 10,
-    "description": "Remove status ailments de um aliado"
+    "description": "Remove status ailments de um aliado",
+    "usable_outside_combat": true
   },
   "smoke_bomb": {
     "name": "Smoke Bomb",
@@ -63,6 +68,127 @@
       {"effect_type": "FLEE"}
     ],
     "max_stack": 3,
-    "description": "Permite fugir do combate"
+    "description": "Permite fugir do combate",
+    "usable_outside_combat": false
+  },
+  "health_potion_medium": {
+    "name": "Medium Health Potion",
+    "category": "HEALING",
+    "mana_cost": 0,
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "HEAL_HP", "base_power": 120}
+    ],
+    "max_stack": 5,
+    "description": "Restaura 120 HP",
+    "usable_outside_combat": true
+  },
+  "mana_potion_medium": {
+    "name": "Medium Mana Potion",
+    "category": "HEALING",
+    "mana_cost": 0,
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "HEAL_MANA", "base_power": 80}
+    ],
+    "max_stack": 5,
+    "description": "Restaura 80 Mana",
+    "usable_outside_combat": true
+  },
+  "health_potion_large": {
+    "name": "Large Health Potion",
+    "category": "HEALING",
+    "mana_cost": 0,
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "HEAL_HP", "base_power": 250}
+    ],
+    "max_stack": 3,
+    "description": "Restaura 250 HP",
+    "usable_outside_combat": true
+  },
+  "mana_potion_large": {
+    "name": "Large Mana Potion",
+    "category": "HEALING",
+    "mana_cost": 0,
+    "target_type": "SELF",
+    "effects": [
+      {"effect_type": "HEAL_MANA", "base_power": 150}
+    ],
+    "max_stack": 3,
+    "description": "Restaura 150 Mana",
+    "usable_outside_combat": true
+  },
+  "elixir_of_vigor": {
+    "name": "Elixir of Vigor",
+    "category": "HEALING",
+    "mana_cost": 0,
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "HEAL_HP", "base_power": 80}
+    ],
+    "max_stack": 3,
+    "description": "Cura 80 HP de toda a party",
+    "usable_outside_combat": true
+  },
+  "fire_bomb": {
+    "name": "Fire Bomb",
+    "category": "OFFENSIVE",
+    "mana_cost": 0,
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 80, "element": "FIRE"}
+    ],
+    "max_stack": 3,
+    "description": "Explode em fogo causando 80 de dano a todos",
+    "usable_outside_combat": false
+  },
+  "ice_shard": {
+    "name": "Ice Shard",
+    "category": "OFFENSIVE",
+    "mana_cost": 0,
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {"effect_type": "DAMAGE", "base_power": 100, "element": "ICE"}
+    ],
+    "max_stack": 3,
+    "description": "Estilhaco de gelo: 100 de dano ICE em um alvo",
+    "usable_outside_combat": false
+  },
+  "phoenix_down": {
+    "name": "Phoenix Down",
+    "category": "HEALING",
+    "mana_cost": 0,
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {"effect_type": "HEAL_HP", "base_power": 1}
+    ],
+    "max_stack": 1,
+    "description": "Revive um aliado morto com 25% HP",
+    "usable_outside_combat": false
+  },
+  "war_drum": {
+    "name": "War Drum",
+    "category": "DEFENSE",
+    "mana_cost": 0,
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 20, "stat": "PHYSICAL_ATTACK", "duration": 3}
+    ],
+    "max_stack": 3,
+    "description": "+20 ATK pra toda a party por 3 turnos",
+    "usable_outside_combat": false
+  },
+  "arcane_scroll": {
+    "name": "Arcane Scroll",
+    "category": "DEFENSE",
+    "mana_cost": 0,
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {"effect_type": "BUFF", "base_power": 15, "stat": "MAGICAL_DEFENSE", "duration": 3}
+    ],
+    "max_stack": 3,
+    "description": "+15 DEF magica pra toda a party por 3 turnos",
+    "usable_outside_combat": false
   }
 }

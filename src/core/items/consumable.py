@@ -23,6 +23,7 @@ class Consumable:
     effects: tuple[ConsumableEffect, ...]
     max_stack: int = _DEFAULT_MAX_STACK
     description: str = ""
+    usable_outside_combat: bool = False
 
     @classmethod
     def from_dict(
@@ -42,4 +43,5 @@ class Consumable:
             effects=effects,
             max_stack=int(data.get("max_stack", _DEFAULT_MAX_STACK)),  # type: ignore[arg-type]
             description=str(data.get("description", "")),
+            usable_outside_combat=bool(data.get("usable_outside_combat", False)),
         )

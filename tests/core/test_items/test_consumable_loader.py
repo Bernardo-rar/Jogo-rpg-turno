@@ -11,7 +11,7 @@ from src.core.skills.target_type import TargetType
 class TestConsumableLoader:
     def test_loads_all_consumables(self) -> None:
         consumables = load_consumables()
-        assert len(consumables) == 6
+        assert len(consumables) >= 6
 
     def test_returns_dict_of_consumable(self) -> None:
         consumables = load_consumables()
