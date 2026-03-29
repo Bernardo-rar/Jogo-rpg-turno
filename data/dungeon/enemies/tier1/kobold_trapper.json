@@ -1,0 +1,33 @@
+{
+  "enemy_id": "kobold_trapper",
+  "name": "Kobold Trapper",
+  "tier": 1,
+  "archetype": "CONTROLLER",
+  "class_modifiers": {
+    "hit_dice": 5,
+    "mod_hp_flat": 0,
+    "mod_hp_mult": 3,
+    "mana_multiplier": 2,
+    "mod_atk_physical": 3,
+    "mod_atk_magical": 2,
+    "mod_def_physical": 2,
+    "mod_def_magical": 2,
+    "regen_hp_mod": 1,
+    "regen_mana_mod": 1,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 6,
+    "DEXTERITY": 12,
+    "CONSTITUTION": 6,
+    "INTELLIGENCE": 8,
+    "WISDOM": 6,
+    "CHARISMA": 3,
+    "MIND": 4
+  },
+  "position": "BACK",
+  "elemental_profile_id": "kobold",
+  "weapon_id": "dagger",
+  "skill_ids": ["trap_net"],
+  "special_traits": ["trap_setter"]
+}

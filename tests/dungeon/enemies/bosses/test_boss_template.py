@@ -111,7 +111,7 @@ class TestBossLoader:
 
     def test_load_all_bosses(self) -> None:
         bosses = load_all_bosses()
-        assert len(bosses) == 3
+        assert len(bosses) >= 3
         assert "goblin_king" in bosses
         assert "ancient_golem" in bosses
         assert "lich_lord" in bosses

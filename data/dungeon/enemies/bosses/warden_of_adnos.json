@@ -1,0 +1,68 @@
+{
+  "enemy_id": "warden_of_adnos",
+  "name": "The Warden of Adnos",
+  "tier": 3,
+  "archetype": "TANK",
+  "class_modifiers": {
+    "hit_dice": 18,
+    "mod_hp_flat": 10,
+    "mod_hp_mult": 6,
+    "mana_multiplier": 4,
+    "mod_atk_physical": 9,
+    "mod_atk_magical": 9,
+    "mod_def_physical": 8,
+    "mod_def_magical": 8,
+    "regen_hp_mod": 3,
+    "regen_mana_mod": 2,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 18,
+    "DEXTERITY": 12,
+    "CONSTITUTION": 20,
+    "INTELLIGENCE": 16,
+    "WISDOM": 16,
+    "CHARISMA": 14,
+    "MIND": 14
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "neutral",
+  "weapon_id": "slam",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.65,
+      "handler_key": "warden_p1",
+      "skill_ids": ["warden_slash", "guardian_stance"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.35,
+      "handler_key": "warden_p2",
+      "skill_ids": ["elemental_judgment"],
+      "transition": {
+        "battle_cry": "The Warden channels the elements of Adnos!",
+        "self_buffs": [
+          {"stat": "MAGICAL_ATTACK", "percent": 30.0, "duration": 999}
+        ]
+      }
+    },
+    {
+      "phase_number": 3,
+      "hp_threshold": 0.0,
+      "handler_key": "warden_p3",
+      "skill_ids": ["convergence_blast", "reality_tear"],
+      "transition": {
+        "battle_cry": "The Warden transcends! All elements converge!",
+        "self_buffs": [
+          {"stat": "PHYSICAL_ATTACK", "percent": 30.0, "duration": 999},
+          {"stat": "MAGICAL_ATTACK", "percent": 30.0, "duration": 999},
+          {"stat": "SPEED", "percent": 30.0, "duration": 999},
+          {"stat": "PHYSICAL_DEFENSE", "percent": -20.0, "duration": 999},
+          {"stat": "MAGICAL_DEFENSE", "percent": -20.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss", "warden"]
+}

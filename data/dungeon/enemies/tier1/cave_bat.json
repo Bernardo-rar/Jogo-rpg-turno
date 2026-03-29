@@ -1,0 +1,33 @@
+{
+  "enemy_id": "cave_bat",
+  "name": "Cave Bat",
+  "tier": 1,
+  "archetype": "DPS",
+  "class_modifiers": {
+    "hit_dice": 4,
+    "mod_hp_flat": 0,
+    "mod_hp_mult": 2,
+    "mana_multiplier": 0,
+    "mod_atk_physical": 4,
+    "mod_atk_magical": 1,
+    "mod_def_physical": 1,
+    "mod_def_magical": 1,
+    "regen_hp_mod": 0,
+    "regen_mana_mod": 0,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 6,
+    "DEXTERITY": 18,
+    "CONSTITUTION": 4,
+    "INTELLIGENCE": 2,
+    "WISDOM": 6,
+    "CHARISMA": 2,
+    "MIND": 1
+  },
+  "position": "BACK",
+  "elemental_profile_id": "cave_bat",
+  "weapon_id": "bite",
+  "skill_ids": ["sonic_screech"],
+  "special_traits": ["evasive"]
+}

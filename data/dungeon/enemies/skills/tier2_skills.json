@@ -1,0 +1,308 @@
+{
+  "trap_net": {
+    "name": "Trap Net",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 0,
+        "ailment_id": "slow",
+        "duration": 2
+      },
+      {
+        "effect_type": "DEBUFF",
+        "base_power": 5,
+        "stat": "PHYSICAL_DEFENSE",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1
+  },
+  "sonic_screech": {
+    "name": "Sonic Screech",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 4
+      }
+    ],
+    "slot_cost": 1
+  },
+  "vine_heal": {
+    "name": "Vine Heal",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {
+        "effect_type": "HEAL",
+        "base_power": 12
+      }
+    ],
+    "slot_cost": 1
+  },
+  "root_bind": {
+    "name": "Root Bind",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 0,
+        "ailment_id": "slow",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1
+  },
+  "fireball_imp": {
+    "name": "Fireball",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 10
+      },
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 5,
+        "ailment_id": "burn",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 1
+  },
+  "orc_taunt": {
+    "name": "Orc Taunt",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 8,
+        "stat": "PHYSICAL_DEFENSE",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 3
+  },
+  "battle_rage": {
+    "name": "Battle Rage",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 10,
+        "stat": "PHYSICAL_ATTACK",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 4
+  },
+  "mana_drain": {
+    "name": "Mana Drain",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 8
+      }
+    ],
+    "slot_cost": 1
+  },
+  "silence_touch": {
+    "name": "Silence Touch",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 0,
+        "ailment_id": "silence",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 3
+  },
+  "dive_attack": {
+    "name": "Dive Attack",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 14
+      }
+    ],
+    "slot_cost": 1
+  },
+  "sonic_screech_harpy": {
+    "name": "Sonic Screech",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DEBUFF",
+        "base_power": 8,
+        "stat": "PHYSICAL_DEFENSE",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 3
+  },
+  "earth_mend": {
+    "name": "Earth Mend",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {
+        "effect_type": "HEAL",
+        "base_power": 20
+      }
+    ],
+    "slot_cost": 1
+  },
+  "rally_totem": {
+    "name": "Rally Totem",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ALLIES",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 6,
+        "stat": "PHYSICAL_ATTACK",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 3
+  },
+  "dark_bolt_mage": {
+    "name": "Dark Bolt",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 16
+      }
+    ],
+    "slot_cost": 1
+  },
+  "hex_curse": {
+    "name": "Hex Curse",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DEBUFF",
+        "base_power": 10,
+        "stat": "MAGICAL_DEFENSE",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 3
+  },
+  "stone_slam": {
+    "name": "Stone Slam",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 12
+      }
+    ],
+    "slot_cost": 1
+  },
+  "plague_bite": {
+    "name": "Plague Bite",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 8
+      },
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 6,
+        "ailment_id": "poison",
+        "duration": 4
+      }
+    ],
+    "slot_cost": 1
+  },
+  "infectious_spray": {
+    "name": "Infectious Spray",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 3,
+        "ailment_id": "poison",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 4
+  },
+  "backstab": {
+    "name": "Backstab",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 18
+      }
+    ],
+    "slot_cost": 1
+  },
+  "vanish": {
+    "name": "Vanish",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SELF",
+    "effects": [
+      {
+        "effect_type": "BUFF",
+        "base_power": 12,
+        "stat": "PHYSICAL_DEFENSE",
+        "duration": 1
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 3
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "enemy_id": "frost_warden",
+  "name": "Frost Warden",
+  "tier": 1,
+  "archetype": "TANK",
+  "class_modifiers": {
+    "hit_dice": 14,
+    "mod_hp_flat": 5,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 2,
+    "mod_atk_physical": 5,
+    "mod_atk_magical": 5,
+    "mod_def_physical": 7,
+    "mod_def_magical": 5,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 1,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 14,
+    "DEXTERITY": 6,
+    "CONSTITUTION": 16,
+    "INTELLIGENCE": 8,
+    "WISDOM": 10,
+    "CHARISMA": 4,
+    "MIND": 6
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "ice_creature",
+  "weapon_id": "slam",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.5,
+      "handler_key": "frost_warden_p1",
+      "skill_ids": ["frost_slash"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.0,
+      "handler_key": "frost_warden_p2",
+      "skill_ids": ["blizzard_breath", "ice_armor"],
+      "transition": {
+        "battle_cry": "The Frost Warden's core erupts with glacial energy!",
+        "self_buffs": [
+          {"stat": "PHYSICAL_DEFENSE", "percent": 25.0, "duration": 999},
+          {"stat": "MAGICAL_DEFENSE", "percent": 25.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss"]
+}

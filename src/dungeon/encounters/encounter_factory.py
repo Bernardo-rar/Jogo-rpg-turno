@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from src.core.combat.basic_attack_handler import BasicAttackHandler
 from src.core.combat.dispatch_handler import DispatchTurnHandler
+from src.core.combat.synergy.synergy_config import SynergyBinding
 from src.dungeon.enemies.ai.archetype_handler_factory import create_handler
 from src.dungeon.enemies.elite_modifier import EliteTierBonuses, apply_elite
 from src.dungeon.encounters.encounter_template import EncounterSlot, EncounterTemplate
@@ -25,6 +26,7 @@ class EncounterResult:
 
     enemies: tuple[Character, ...]
     handler: TurnHandler
+    synergy_bindings: tuple[SynergyBinding, ...] = ()
 
 
 class EncounterFactory:
@@ -50,6 +52,7 @@ class EncounterFactory:
             rng = Random()
         enemies: list[Character] = []
         handlers: dict[str, TurnHandler] = {}
+        bindings: list[SynergyBinding] = []
         suffix_counter: dict[str, int] = {}
         for slot in template.slots:
             chosen = self._pick_template(slot, rng)
@@ -62,10 +65,17 @@ class EncounterFactory:
             enemy = self._enemy_factory.create(chosen, suffix=str(count))
             enemies.append(enemy)
             handlers[enemy.name] = create_handler(slot.archetype)
+            if template.synergy_id:
+                bindings.append(SynergyBinding(
+                    combatant_name=enemy.name,
+                    synergy_id=template.synergy_id,
+                    role_key=slot.synergy_role,
+                ))
         handler = DispatchTurnHandler(handlers, BasicAttackHandler())
         return EncounterResult(
             enemies=tuple(enemies),
             handler=handler,
+            synergy_bindings=tuple(bindings),
         )
 
     def _pick_template(

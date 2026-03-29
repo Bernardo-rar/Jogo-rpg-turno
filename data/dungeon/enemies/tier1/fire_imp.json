@@ -1,0 +1,33 @@
+{
+  "enemy_id": "fire_imp",
+  "name": "Fire Imp",
+  "tier": 1,
+  "archetype": "DPS",
+  "class_modifiers": {
+    "hit_dice": 5,
+    "mod_hp_flat": 0,
+    "mod_hp_mult": 2,
+    "mana_multiplier": 4,
+    "mod_atk_physical": 1,
+    "mod_atk_magical": 5,
+    "mod_def_physical": 1,
+    "mod_def_magical": 3,
+    "regen_hp_mod": 0,
+    "regen_mana_mod": 2,
+    "preferred_attack_type": "MAGICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 4,
+    "DEXTERITY": 10,
+    "CONSTITUTION": 5,
+    "INTELLIGENCE": 12,
+    "WISDOM": 6,
+    "CHARISMA": 4,
+    "MIND": 6
+  },
+  "position": "BACK",
+  "elemental_profile_id": "fire_creature",
+  "weapon_id": "spore_attack",
+  "skill_ids": ["fireball_imp"],
+  "special_traits": ["fire_aura"]
+}

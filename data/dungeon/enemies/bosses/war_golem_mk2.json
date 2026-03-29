@@ -1,0 +1,53 @@
+{
+  "enemy_id": "war_golem_mk2",
+  "name": "War Golem Mk-II",
+  "tier": 2,
+  "archetype": "TANK",
+  "class_modifiers": {
+    "hit_dice": 16,
+    "mod_hp_flat": 8,
+    "mod_hp_mult": 6,
+    "mana_multiplier": 0,
+    "mod_atk_physical": 7,
+    "mod_atk_magical": 3,
+    "mod_def_physical": 10,
+    "mod_def_magical": 5,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 0,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 20,
+    "DEXTERITY": 4,
+    "CONSTITUTION": 20,
+    "INTELLIGENCE": 2,
+    "WISDOM": 4,
+    "CHARISMA": 2,
+    "MIND": 2
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "construct",
+  "weapon_id": "slam",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.4,
+      "handler_key": "war_golem_p1",
+      "skill_ids": ["tesla_punch", "charge_cannon"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.0,
+      "handler_key": "war_golem_p2",
+      "skill_ids": ["overcharge_slam", "tesla_field"],
+      "transition": {
+        "battle_cry": "Steam erupts from the Golem's core! Overcharge protocol activated!",
+        "self_buffs": [
+          {"stat": "PHYSICAL_ATTACK", "percent": 25.0, "duration": 999},
+          {"stat": "SPEED", "percent": 30.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss", "construct"]
+}

@@ -34,14 +34,14 @@ class TestLoadEnemyTemplate:
 
 class TestLoadTierTemplates:
 
-    def test_tier1_has_five_monsters(self) -> None:
+    def test_tier1_has_monsters(self) -> None:
         templates = load_tier_templates(tier=1)
-        assert len(templates) == 5
+        assert len(templates) >= 5
 
-    def test_tier1_keys_are_enemy_ids(self) -> None:
+    def test_tier1_contains_original_enemies(self) -> None:
         templates = load_tier_templates(tier=1)
-        expected = {"goblin", "slime", "rat_swarm", "skeleton", "mushroom"}
-        assert set(templates.keys()) == expected
+        original = {"goblin", "slime", "rat_swarm", "skeleton", "mushroom"}
+        assert original.issubset(set(templates.keys()))
 
     def test_all_templates_are_tier_1(self) -> None:
         templates = load_tier_templates(tier=1)

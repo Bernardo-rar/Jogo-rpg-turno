@@ -1,0 +1,33 @@
+{
+  "enemy_id": "vine_creeper",
+  "name": "Vine Creeper",
+  "tier": 1,
+  "archetype": "HEALER",
+  "class_modifiers": {
+    "hit_dice": 6,
+    "mod_hp_flat": 1,
+    "mod_hp_mult": 3,
+    "mana_multiplier": 3,
+    "mod_atk_physical": 1,
+    "mod_atk_magical": 3,
+    "mod_def_physical": 2,
+    "mod_def_magical": 3,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 2,
+    "preferred_attack_type": "MAGICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 4,
+    "DEXTERITY": 4,
+    "CONSTITUTION": 8,
+    "INTELLIGENCE": 6,
+    "WISDOM": 10,
+    "CHARISMA": 2,
+    "MIND": 5
+  },
+  "position": "BACK",
+  "elemental_profile_id": "plant",
+  "weapon_id": "spore_attack",
+  "skill_ids": ["vine_heal", "root_bind"],
+  "special_traits": ["regenerative"]
+}

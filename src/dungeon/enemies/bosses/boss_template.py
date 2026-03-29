@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from src.core.attributes.attribute_types import AttributeType
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
+from src.core.combat.boss.boss_mechanic_config import BossMechanicConfig
 from src.dungeon.enemies.bosses.boss_phase import BossPhase
 from src.dungeon.enemies.enemy_archetype import EnemyArchetype
 
@@ -40,6 +41,7 @@ class BossTemplate:
     weapon_id: str
     phases: tuple[BossPhaseConfig, ...]
     special_traits: tuple[str, ...] = ()
+    boss_mechanics: BossMechanicConfig | None = None
 
     @classmethod
     def from_dict(cls, data: dict) -> BossTemplate:
@@ -50,6 +52,11 @@ class BossTemplate:
         }
         phases = tuple(
             BossPhaseConfig.from_dict(p) for p in data["phases"]
+        )
+        raw_mechanics = data.get("boss_mechanics")
+        mechanics = (
+            BossMechanicConfig.from_dict(raw_mechanics)
+            if raw_mechanics else None
         )
         return cls(
             enemy_id=data["enemy_id"],
@@ -65,6 +72,7 @@ class BossTemplate:
             weapon_id=data.get("weapon_id", ""),
             phases=phases,
             special_traits=tuple(data.get("special_traits", [])),
+            boss_mechanics=mechanics,
         )
 
     def all_skill_ids(self) -> tuple[str, ...]:

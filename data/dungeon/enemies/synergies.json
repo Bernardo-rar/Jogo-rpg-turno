@@ -1,0 +1,75 @@
+{
+  "healer_dps_pair": {
+    "synergy_id": "healer_dps_pair",
+    "type": "PAIR",
+    "roles": {
+      "healer": {
+        "on_partner_death_buff": {
+          "stat": "HEALING_RECEIVED",
+          "percent": 30.0,
+          "duration": 999
+        }
+      },
+      "dps": {
+        "on_partner_death_buff": {
+          "stat": "PHYSICAL_ATTACK",
+          "percent": 25.0,
+          "duration": 3
+        },
+        "on_partner_death_debuff": {
+          "stat": "PHYSICAL_DEFENSE",
+          "percent": -20.0,
+          "duration": 3
+        }
+      }
+    }
+  },
+  "tank_caster_pair": {
+    "synergy_id": "tank_caster_pair",
+    "type": "PAIR",
+    "roles": {
+      "tank": {
+        "on_partner_death_buff": {
+          "stat": "PHYSICAL_DEFENSE",
+          "percent": 30.0,
+          "duration": 999
+        }
+      },
+      "caster": {
+        "on_partner_death_debuff": {
+          "stat": "MAGICAL_ATTACK",
+          "percent": -25.0,
+          "duration": 999
+        }
+      }
+    }
+  },
+  "pack_tactics": {
+    "synergy_id": "pack_tactics",
+    "type": "GROUP",
+    "same_target_bonus_pct": 15.0,
+    "last_survivor": {
+      "atk_bonus_pct": 50.0,
+      "speed_bonus_pct": 30.0,
+      "duration": 3
+    }
+  },
+  "commander_aura": {
+    "synergy_id": "commander_aura",
+    "type": "COMMANDER",
+    "aura_buffs": {
+      "atk_bonus_pct": 10.0,
+      "def_bonus_pct": 10.0
+    },
+    "on_commander_death": {
+      "stat": "PHYSICAL_ATTACK",
+      "percent": -15.0,
+      "duration": 3
+    }
+  },
+  "combo_attackers": {
+    "synergy_id": "combo_attackers",
+    "type": "COMBO",
+    "combo_damage_bonus_pct": 40.0
+  }
+}

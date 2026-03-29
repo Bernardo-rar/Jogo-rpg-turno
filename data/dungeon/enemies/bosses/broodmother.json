@@ -1,0 +1,52 @@
+{
+  "enemy_id": "broodmother",
+  "name": "Broodmother",
+  "tier": 1,
+  "archetype": "CONTROLLER",
+  "class_modifiers": {
+    "hit_dice": 10,
+    "mod_hp_flat": 4,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 2,
+    "mod_atk_physical": 6,
+    "mod_atk_magical": 5,
+    "mod_def_physical": 5,
+    "mod_def_magical": 4,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 1,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 12,
+    "DEXTERITY": 10,
+    "CONSTITUTION": 14,
+    "INTELLIGENCE": 8,
+    "WISDOM": 10,
+    "CHARISMA": 6,
+    "MIND": 6
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "shadow",
+  "weapon_id": "bite",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.5,
+      "handler_key": "broodmother_p1",
+      "skill_ids": ["web_trap"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.0,
+      "handler_key": "broodmother_p2",
+      "skill_ids": ["venom_spray"],
+      "transition": {
+        "battle_cry": "The Broodmother shrieks! Eggs hatch across the chamber!",
+        "self_buffs": [
+          {"stat": "SPEED", "percent": 20.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss"]
+}

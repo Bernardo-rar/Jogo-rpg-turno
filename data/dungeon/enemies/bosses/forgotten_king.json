@@ -1,0 +1,64 @@
+{
+  "enemy_id": "forgotten_king",
+  "name": "The Forgotten King",
+  "tier": 3,
+  "archetype": "CONTROLLER",
+  "class_modifiers": {
+    "hit_dice": 12,
+    "mod_hp_flat": 6,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 6,
+    "mod_atk_physical": 4,
+    "mod_atk_magical": 11,
+    "mod_def_physical": 6,
+    "mod_def_magical": 9,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 3,
+    "preferred_attack_type": "MAGICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 8,
+    "DEXTERITY": 6,
+    "CONSTITUTION": 14,
+    "INTELLIGENCE": 20,
+    "WISDOM": 18,
+    "CHARISMA": 16,
+    "MIND": 16
+  },
+  "position": "BACK",
+  "elemental_profile_id": "undead",
+  "weapon_id": "arcane_staff",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.6,
+      "handler_key": "forgotten_king_p1",
+      "skill_ids": ["death_decree", "raise_guard"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.25,
+      "handler_key": "forgotten_king_p2",
+      "skill_ids": ["necrotic_wave", "mass_raise"],
+      "transition": {
+        "battle_cry": "The Forgotten King raises his scepter! The dead answer his call!",
+        "self_buffs": [
+          {"stat": "MAGICAL_ATTACK", "percent": 30.0, "duration": 999}
+        ]
+      }
+    },
+    {
+      "phase_number": 3,
+      "hp_threshold": 0.0,
+      "handler_key": "forgotten_king_p3",
+      "skill_ids": ["soul_reap", "death_touch"],
+      "transition": {
+        "battle_cry": "With a scream of rage, the King sacrifices his court!",
+        "self_buffs": [
+          {"stat": "MAGICAL_ATTACK", "percent": 50.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss", "undead"]
+}

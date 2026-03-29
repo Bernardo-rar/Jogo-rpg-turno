@@ -1,0 +1,33 @@
+{
+  "enemy_id": "stone_guardian",
+  "name": "Stone Guardian",
+  "tier": 2,
+  "archetype": "TANK",
+  "class_modifiers": {
+    "hit_dice": 14,
+    "mod_hp_flat": 5,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 0,
+    "mod_atk_physical": 5,
+    "mod_atk_magical": 1,
+    "mod_def_physical": 8,
+    "mod_def_magical": 4,
+    "regen_hp_mod": 1,
+    "regen_mana_mod": 0,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 16,
+    "DEXTERITY": 4,
+    "CONSTITUTION": 16,
+    "INTELLIGENCE": 2,
+    "WISDOM": 4,
+    "CHARISMA": 2,
+    "MIND": 2
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "construct",
+  "weapon_id": "slam",
+  "skill_ids": ["stone_slam"],
+  "special_traits": ["stone_shell", "construct"]
+}

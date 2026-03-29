@@ -11,6 +11,7 @@ from src.core.attributes.threshold_calculator import ThresholdCalculator
 from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
 from src.core.combat.basic_attack_handler import BasicAttackHandler
+from src.core.combat.boss.boss_turn_handler import BossTurnHandler
 from src.core.elements.elemental_profile import ElementalProfile
 from src.core.items.weapon import Weapon
 from src.core.skills.skill import Skill
@@ -76,7 +77,7 @@ class BossFactory:
             skill_bar=skill_bar,
         )
         character = Character(template.name, attrs, config)
-        handler = self._build_phase_handler(template)
+        handler = self._build_handler(template)
         return BossResult(character=character, handler=handler)
 
     def _build_skill_bar(
@@ -94,6 +95,14 @@ class BossFactory:
             return None
         slot = SpellSlot(max_cost=_BOSS_SKILL_BUDGET, skills=skills)
         return SkillBar(slots=(slot,))
+
+    def _build_handler(
+        self, template: BossTemplate,
+    ) -> TurnHandler:
+        base = self._build_phase_handler(template)
+        if template.boss_mechanics is not None:
+            return BossTurnHandler(base, template.boss_mechanics)
+        return base
 
     def _build_phase_handler(
         self,

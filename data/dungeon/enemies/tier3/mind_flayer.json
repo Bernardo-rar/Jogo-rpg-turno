@@ -1,0 +1,33 @@
+{
+  "enemy_id": "mind_flayer",
+  "name": "Mind Flayer",
+  "tier": 3,
+  "archetype": "CONTROLLER",
+  "class_modifiers": {
+    "hit_dice": 10,
+    "mod_hp_flat": 3,
+    "mod_hp_mult": 4,
+    "mana_multiplier": 6,
+    "mod_atk_physical": 2,
+    "mod_atk_magical": 10,
+    "mod_def_physical": 4,
+    "mod_def_magical": 8,
+    "regen_hp_mod": 1,
+    "regen_mana_mod": 3,
+    "preferred_attack_type": "MAGICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 6,
+    "DEXTERITY": 8,
+    "CONSTITUTION": 10,
+    "INTELLIGENCE": 20,
+    "WISDOM": 16,
+    "CHARISMA": 10,
+    "MIND": 16
+  },
+  "position": "BACK",
+  "elemental_profile_id": "mind_flayer",
+  "weapon_id": "spore_attack",
+  "skill_ids": ["mind_blast", "dominate", "psychic_drain"],
+  "special_traits": ["telepathic_shield", "mind_reader"]
+}

@@ -14,12 +14,14 @@ class EncounterSlot:
 
     archetype: EnemyArchetype
     is_elite: bool = False
+    synergy_role: str = ""
 
     @classmethod
     def from_dict(cls, data: dict) -> EncounterSlot:
         return cls(
             archetype=EnemyArchetype(data["archetype"].lower()),
             is_elite=data.get("is_elite", False),
+            synergy_role=str(data.get("synergy_role", "")),
         )
 
 
@@ -30,6 +32,7 @@ class EncounterTemplate:
     template_id: str
     difficulty: EncounterDifficulty
     slots: tuple[EncounterSlot, ...]
+    synergy_id: str = ""
 
     @classmethod
     def from_dict(cls, data: dict) -> EncounterTemplate:
@@ -38,4 +41,5 @@ class EncounterTemplate:
             template_id=data["template_id"],
             difficulty=EncounterDifficulty[data["difficulty"].upper()],
             slots=slots,
+            synergy_id=str(data.get("synergy_id", "")),
         )

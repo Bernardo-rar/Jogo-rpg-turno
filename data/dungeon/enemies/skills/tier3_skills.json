@@ -1,0 +1,229 @@
+{
+  "chomp": {
+    "name": "Chomp",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 22
+      }
+    ],
+    "slot_cost": 1
+  },
+  "devour": {
+    "name": "Devour",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 12
+      },
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 0,
+        "ailment_id": "stun",
+        "duration": 1
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 4
+  },
+  "petrifying_gaze": {
+    "name": "Petrifying Gaze",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 0,
+        "ailment_id": "stun",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 4
+  },
+  "toxic_bite": {
+    "name": "Toxic Bite",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 14
+      },
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 8,
+        "ailment_id": "poison",
+        "duration": 4
+      }
+    ],
+    "slot_cost": 1
+  },
+  "blood_drain": {
+    "name": "Blood Drain",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 16
+      }
+    ],
+    "slot_cost": 1
+  },
+  "charm_gaze": {
+    "name": "Charm Gaze",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 0,
+        "ailment_id": "confusion",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 4
+  },
+  "necrotic_mend": {
+    "name": "Necrotic Mend",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {
+        "effect_type": "HEAL",
+        "base_power": 25
+      }
+    ],
+    "slot_cost": 1
+  },
+  "raise_undead": {
+    "name": "Raise Undead",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ALLY",
+    "effects": [
+      {
+        "effect_type": "HEAL",
+        "base_power": 30
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 5
+  },
+  "dark_bolt_acolyte": {
+    "name": "Dark Bolt",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 10
+      }
+    ],
+    "slot_cost": 1
+  },
+  "elemental_blast": {
+    "name": "Elemental Blast",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 14
+      }
+    ],
+    "slot_cost": 1
+  },
+  "hellfire_slash": {
+    "name": "Hellfire Slash",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 18
+      },
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 6,
+        "ailment_id": "burn",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 1
+  },
+  "infernal_presence": {
+    "name": "Infernal Presence",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DEBUFF",
+        "base_power": 8,
+        "stat": "PHYSICAL_DEFENSE",
+        "duration": 2
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 4
+  },
+  "mind_blast": {
+    "name": "Mind Blast",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "ALL_ENEMIES",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 12
+      }
+    ],
+    "slot_cost": 1
+  },
+  "dominate": {
+    "name": "Dominate",
+    "mana_cost": 0,
+    "action_type": "ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "APPLY_AILMENT",
+        "base_power": 0,
+        "ailment_id": "confusion",
+        "duration": 3
+      }
+    ],
+    "slot_cost": 1,
+    "cooldown_turns": 5
+  },
+  "psychic_drain": {
+    "name": "Psychic Drain",
+    "mana_cost": 0,
+    "action_type": "BONUS_ACTION",
+    "target_type": "SINGLE_ENEMY",
+    "effects": [
+      {
+        "effect_type": "DAMAGE",
+        "base_power": 8
+      }
+    ],
+    "slot_cost": 1
+  }
+}

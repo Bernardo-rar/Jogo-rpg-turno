@@ -1,0 +1,33 @@
+{
+  "enemy_id": "harpy",
+  "name": "Harpy",
+  "tier": 2,
+  "archetype": "DPS",
+  "class_modifiers": {
+    "hit_dice": 8,
+    "mod_hp_flat": 0,
+    "mod_hp_mult": 3,
+    "mana_multiplier": 2,
+    "mod_atk_physical": 6,
+    "mod_atk_magical": 4,
+    "mod_def_physical": 3,
+    "mod_def_magical": 3,
+    "regen_hp_mod": 1,
+    "regen_mana_mod": 1,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 8,
+    "DEXTERITY": 16,
+    "CONSTITUTION": 6,
+    "INTELLIGENCE": 6,
+    "WISDOM": 8,
+    "CHARISMA": 6,
+    "MIND": 4
+  },
+  "position": "BACK",
+  "elemental_profile_id": "harpy",
+  "weapon_id": "talons",
+  "skill_ids": ["dive_attack", "sonic_screech_harpy"],
+  "special_traits": ["flying"]
+}

@@ -48,5 +48,37 @@
       }
     }
   ],
-  "special_traits": ["boss", "undead"]
+  "special_traits": ["boss", "undead"],
+  "boss_mechanics": {
+    "empower_bar": {
+      "max_value": 100,
+      "gain_per_round": 25,
+      "loss_on_weakness_hit": 50,
+      "empowered_atk_mult": 1.60,
+      "empowered_def_mult": 1.10,
+      "empowered_duration": 2
+    },
+    "summons": [
+      {
+        "minion_template_id": "skeleton_warrior",
+        "count": 2,
+        "hp_scale": 0.15,
+        "atk_scale": 0.30,
+        "enrage_atk_pct": 10.0
+      }
+    ],
+    "max_minions_alive": 2,
+    "summon_cooldown_rounds": 5,
+    "field_effects": [
+      {
+        "field_id": "toxic_miasma",
+        "name": "Toxic Miasma",
+        "element": "DARK",
+        "damage_pct_max_hp": 0.05,
+        "duration": 3,
+        "cleanse_element": "HOLY",
+        "trigger_message": "A toxic miasma fills the air!"
+      }
+    ]
+  }
 }

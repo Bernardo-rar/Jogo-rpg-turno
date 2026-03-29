@@ -18,5 +18,58 @@
   "mushroom": {
     "FIRE": 1.5,
     "ICE": 1.5
+  },
+
+  "kobold": {
+    "FIRE": 1.5,
+    "HOLY": 1.5,
+    "EARTH": 0.5
+  },
+  "cave_bat": {
+    "FIRE": 1.5,
+    "LIGHTNING": 1.5,
+    "DARKNESS": 0.5
+  },
+  "plant": {
+    "FIRE": 2.0,
+    "ICE": 1.5,
+    "EARTH": 0.5,
+    "WATER": 0.5
+  },
+  "beetle": {
+    "LIGHTNING": 1.5,
+    "FIRE": 1.5,
+    "EARTH": 0.5
+  },
+
+  "harpy": {
+    "ICE": 1.5,
+    "LIGHTNING": 1.5,
+    "EARTH": 0.0
+  },
+  "dark_caster": {
+    "FORCE": 1.5,
+    "HOLY": 1.5,
+    "DARKNESS": 0.5
+  },
+  "plague": {
+    "FIRE": 1.5,
+    "HOLY": 1.5,
+    "DARKNESS": 0.5
+  },
+  "shadow": {
+    "HOLY": 1.5,
+    "FIRE": 1.5,
+    "DARKNESS": 0.5
+  },
+
+  "basilisk": {
+    "ICE": 1.5,
+    "EARTH": 0.0
+  },
+  "mind_flayer": {
+    "FORCE": 1.5,
+    "PSYCHIC": 0.0,
+    "DARKNESS": 0.5
   }
 }

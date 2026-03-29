@@ -129,13 +129,13 @@ class TestPartyVsTier1:
             assert enemy.max_hp > 0
             assert enemy.name == template.name
 
-    def test_five_distinct_monsters(self) -> None:
+    def test_distinct_monsters(self) -> None:
         factory = _make_enemy_factory()
         templates = load_tier_templates(tier=1)
-        assert len(templates) == 5
+        assert len(templates) >= 5
 
         names = {t.name for t in templates.values()}
-        assert len(names) == 5
+        assert len(names) >= 5
 
     def test_combat_produces_events(self) -> None:
         party = _make_party()

@@ -1,0 +1,53 @@
+{
+  "enemy_id": "bandit_warlord",
+  "name": "Bandit Warlord",
+  "tier": 1,
+  "archetype": "DPS",
+  "class_modifiers": {
+    "hit_dice": 12,
+    "mod_hp_flat": 3,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 0,
+    "mod_atk_physical": 7,
+    "mod_atk_magical": 2,
+    "mod_def_physical": 5,
+    "mod_def_magical": 3,
+    "regen_hp_mod": 2,
+    "regen_mana_mod": 0,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 14,
+    "DEXTERITY": 12,
+    "CONSTITUTION": 12,
+    "INTELLIGENCE": 6,
+    "WISDOM": 8,
+    "CHARISMA": 10,
+    "MIND": 4
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "neutral",
+  "weapon_id": "rusty_sword",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.4,
+      "handler_key": "bandit_warlord_p1",
+      "skill_ids": ["command_strike"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.0,
+      "handler_key": "bandit_warlord_p2",
+      "skill_ids": ["dual_strike", "intimidating_shout"],
+      "transition": {
+        "battle_cry": "The Warlord draws a second blade! 'Fine, I'll do it myself!'",
+        "self_buffs": [
+          {"stat": "PHYSICAL_ATTACK", "percent": 30.0, "duration": 999},
+          {"stat": "SPEED", "percent": 20.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss"]
+}

@@ -49,5 +49,38 @@
       }
     }
   ],
-  "special_traits": ["boss"]
+  "special_traits": ["boss"],
+  "boss_mechanics": {
+    "charged_attacks": [
+      {
+        "attack_id": "golem_earthquake",
+        "name": "Earthquake",
+        "charge_message": "The Ancient Golem raises its fists!",
+        "release_message": "The earth shatters!",
+        "damage_mult": 2.5,
+        "target_type": "ALL_ENEMIES",
+        "element": "EARTH",
+        "aoe_falloff": 0.7
+      }
+    ],
+    "charge_every_n_rounds": 4,
+    "empower_bar": {
+      "max_value": 100,
+      "gain_per_round": 20,
+      "loss_on_weakness_hit": 40,
+      "empowered_atk_mult": 1.50,
+      "empowered_def_mult": 1.20,
+      "empowered_duration": 3
+    },
+    "field_effects": [
+      {
+        "field_id": "tremor_zone",
+        "name": "Tremor Zone",
+        "element": "EARTH",
+        "damage_pct_max_hp": 0.06,
+        "duration": 3,
+        "trigger_message": "The ground shakes violently!"
+      }
+    ]
+  }
 }

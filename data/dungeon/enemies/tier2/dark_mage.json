@@ -1,0 +1,33 @@
+{
+  "enemy_id": "dark_mage",
+  "name": "Dark Mage",
+  "tier": 2,
+  "archetype": "DPS",
+  "class_modifiers": {
+    "hit_dice": 6,
+    "mod_hp_flat": 0,
+    "mod_hp_mult": 3,
+    "mana_multiplier": 5,
+    "mod_atk_physical": 1,
+    "mod_atk_magical": 8,
+    "mod_def_physical": 2,
+    "mod_def_magical": 5,
+    "regen_hp_mod": 0,
+    "regen_mana_mod": 2,
+    "preferred_attack_type": "MAGICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 4,
+    "DEXTERITY": 6,
+    "CONSTITUTION": 6,
+    "INTELLIGENCE": 16,
+    "WISDOM": 10,
+    "CHARISMA": 4,
+    "MIND": 10
+  },
+  "position": "BACK",
+  "elemental_profile_id": "dark_caster",
+  "weapon_id": "arcane_staff",
+  "skill_ids": ["dark_bolt_mage", "hex_curse"],
+  "special_traits": ["desperation_aoe"]
+}

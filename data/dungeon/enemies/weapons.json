@@ -34,5 +34,23 @@
     "weapon_die": 6,
     "attack_range": "MELEE",
     "category": "SIMPLE"
+  },
+  "war_axe": {
+    "name": "War Axe",
+    "weapon_type": "SWORD",
+    "damage_kind": "SLASHING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 8,
+    "attack_range": "MELEE",
+    "category": "MARTIAL"
+  },
+  "talons": {
+    "name": "Talons",
+    "weapon_type": "NATURAL",
+    "damage_kind": "PIERCING",
+    "damage_type": "PHYSICAL",
+    "weapon_die": 6,
+    "attack_range": "MELEE",
+    "category": "SIMPLE"
   }
 }

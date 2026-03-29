@@ -1,0 +1,99 @@
+{
+  "enemy_id": "inferno_wyrm",
+  "name": "Inferno Wyrm",
+  "tier": 3,
+  "archetype": "DPS",
+  "class_modifiers": {
+    "hit_dice": 18,
+    "mod_hp_flat": 10,
+    "mod_hp_mult": 6,
+    "mana_multiplier": 3,
+    "mod_atk_physical": 10,
+    "mod_atk_magical": 8,
+    "mod_def_physical": 8,
+    "mod_def_magical": 6,
+    "regen_hp_mod": 3,
+    "regen_mana_mod": 1,
+    "preferred_attack_type": "PHYSICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 20,
+    "DEXTERITY": 10,
+    "CONSTITUTION": 20,
+    "INTELLIGENCE": 12,
+    "WISDOM": 10,
+    "CHARISMA": 14,
+    "MIND": 8
+  },
+  "position": "FRONT",
+  "elemental_profile_id": "fire_creature",
+  "weapon_id": "slam",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.6,
+      "handler_key": "inferno_wyrm_p1",
+      "skill_ids": ["claw_rend", "fire_breath"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.3,
+      "handler_key": "inferno_wyrm_p2",
+      "skill_ids": ["aerial_flame_rain", "dive_bomb"],
+      "transition": {
+        "battle_cry": "The Wyrm takes flight! Its scales glow with molten fury!",
+        "self_buffs": [
+          {"stat": "PHYSICAL_DEFENSE", "percent": 30.0, "duration": 999}
+        ]
+      }
+    },
+    {
+      "phase_number": 3,
+      "hp_threshold": 0.0,
+      "handler_key": "inferno_wyrm_p3",
+      "skill_ids": ["inferno_nova", "tail_sweep"],
+      "transition": {
+        "battle_cry": "The Wyrm crashes down, wounded and enraged!",
+        "self_buffs": [
+          {"stat": "PHYSICAL_ATTACK", "percent": 40.0, "duration": 999},
+          {"stat": "PHYSICAL_DEFENSE", "percent": -30.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss", "dragon"],
+  "boss_mechanics": {
+    "charged_attacks": [
+      {
+        "attack_id": "wyrm_inferno_breath",
+        "name": "Inferno Breath",
+        "charge_message": "The Wyrm inhales deeply, flames building!",
+        "release_message": "A torrent of fire engulfs everything!",
+        "damage_mult": 3.0,
+        "target_type": "ALL_ENEMIES",
+        "element": "FIRE",
+        "aoe_falloff": 0.8
+      }
+    ],
+    "charge_every_n_rounds": 3,
+    "empower_bar": {
+      "max_value": 100,
+      "gain_per_round": 25,
+      "loss_on_weakness_hit": 50,
+      "empowered_atk_mult": 1.40,
+      "empowered_def_mult": 1.15,
+      "empowered_duration": 2
+    },
+    "field_effects": [
+      {
+        "field_id": "lava_floor",
+        "name": "Lava Floor",
+        "element": "FIRE",
+        "damage_pct_max_hp": 0.08,
+        "duration": 3,
+        "cleanse_element": "WATER",
+        "trigger_message": "The ground erupts in molten lava!"
+      }
+    ]
+  }
+}

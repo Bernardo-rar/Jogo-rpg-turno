@@ -1,0 +1,52 @@
+{
+  "enemy_id": "shadow_matriarch",
+  "name": "Shadow Matriarch",
+  "tier": 2,
+  "archetype": "CONTROLLER",
+  "class_modifiers": {
+    "hit_dice": 10,
+    "mod_hp_flat": 4,
+    "mod_hp_mult": 5,
+    "mana_multiplier": 5,
+    "mod_atk_physical": 3,
+    "mod_atk_magical": 9,
+    "mod_def_physical": 4,
+    "mod_def_magical": 7,
+    "regen_hp_mod": 1,
+    "regen_mana_mod": 3,
+    "preferred_attack_type": "MAGICAL"
+  },
+  "base_attributes": {
+    "STRENGTH": 4,
+    "DEXTERITY": 12,
+    "CONSTITUTION": 10,
+    "INTELLIGENCE": 18,
+    "WISDOM": 14,
+    "CHARISMA": 12,
+    "MIND": 14
+  },
+  "position": "BACK",
+  "elemental_profile_id": "undead",
+  "weapon_id": "arcane_staff",
+  "phases": [
+    {
+      "phase_number": 1,
+      "hp_threshold": 0.5,
+      "handler_key": "shadow_matriarch_p1",
+      "skill_ids": ["shadow_bolt", "nightmare"]
+    },
+    {
+      "phase_number": 2,
+      "hp_threshold": 0.0,
+      "handler_key": "shadow_matriarch_p2",
+      "skill_ids": ["shadow_storm"],
+      "transition": {
+        "battle_cry": "The Matriarch dissolves into shadow! Three figures appear!",
+        "self_buffs": [
+          {"stat": "MAGICAL_ATTACK", "percent": 20.0, "duration": 999}
+        ]
+      }
+    }
+  ],
+  "special_traits": ["boss"]
+}
