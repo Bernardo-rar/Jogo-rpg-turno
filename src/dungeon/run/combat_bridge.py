@@ -12,6 +12,7 @@ from src.dungeon.economy.gold_reward import (
     calculate_combat_gold,
 )
 from src.dungeon.loot.loot_resolver import (
+    DropTableConfig,
     LootResult,
     resolve_combat_loot,
 )
@@ -20,6 +21,8 @@ if TYPE_CHECKING:
     from src.core.characters.character import Character
     from src.dungeon.loot.drop_table import LootDrop
     from src.dungeon.run.run_state import RunState
+
+EQUIPMENT_ITEM_TYPES = frozenset({"weapon", "armor", "accessory"})
 
 
 @dataclass(frozen=True)
@@ -36,6 +39,9 @@ class CombatRewardResult:
 
     gold_earned: int
     drops: tuple[LootDrop, ...]
+    xp_earned: int = 0
+    leveled_up: bool = False
+    new_level: int = 0
 
 
 def prepare_for_combat(party: list[Character]) -> None:
@@ -49,15 +55,17 @@ def after_combat(
     run_state: RunState,
     node_id: str,
     reward_ctx: CombatRewardContext | None = None,
+    *,
+    tables: dict[str, DropTableConfig] | None = None,
 ) -> CombatRewardResult | None:
     """Marca no visitado, atualiza progresso e resolve recompensas."""
-    _mark_node_visited(run_state, node_id)
+    mark_node_visited(run_state, node_id)
     if reward_ctx is None:
         return None
-    return _resolve_rewards(run_state, reward_ctx)
+    return _resolve_rewards(run_state, reward_ctx, tables)
 
 
-def _mark_node_visited(
+def mark_node_visited(
     run_state: RunState, node_id: str,
 ) -> None:
     """Marca no como visitado e incrementa progresso."""
@@ -69,11 +77,13 @@ def _mark_node_visited(
 
 
 def _resolve_rewards(
-    run_state: RunState, ctx: CombatRewardContext,
+    run_state: RunState,
+    ctx: CombatRewardContext,
+    tables: dict[str, DropTableConfig] | None = None,
 ) -> CombatRewardResult:
     """Calcula gold com multiplicador e resolve loot."""
     gold_earned = _grant_gold_with_mult(run_state, ctx)
-    drops = _resolve_and_store_loot(run_state, ctx)
+    drops = _resolve_and_store_loot(run_state, ctx, tables)
     return CombatRewardResult(
         gold_earned=gold_earned, drops=drops,
     )
@@ -91,12 +101,26 @@ def _grant_gold_with_mult(
 
 
 def _resolve_and_store_loot(
-    run_state: RunState, ctx: CombatRewardContext,
+    run_state: RunState,
+    ctx: CombatRewardContext,
+    tables: dict[str, DropTableConfig] | None = None,
 ) -> tuple[LootDrop, ...]:
-    """Resolve drops e adiciona ao pending_loot."""
-    loot = resolve_combat_loot(ctx.info, ctx.rng)
-    run_state.pending_loot.extend(loot.drops)
+    """Resolve drops e roteia por item_type."""
+    loot = resolve_combat_loot(ctx.info, ctx.rng, tables)
+    _route_drops_to_state(run_state, loot.drops)
     return loot.drops
+
+
+def _route_drops_to_state(
+    run_state: RunState,
+    drops: tuple[LootDrop, ...],
+) -> None:
+    """Roteia drops: consumables -> pending_loot, equipment -> stash."""
+    for drop in drops:
+        if drop.item_type in EQUIPMENT_ITEM_TYPES:
+            run_state.equipment_stash.append(drop)
+        else:
+            run_state.pending_loot.append(drop)
 
 
 def grant_combat_gold(

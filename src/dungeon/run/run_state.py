@@ -25,6 +25,7 @@ class RunState:
     rooms_cleared: int = 0
     gold: int = 0
     pending_loot: list[LootDrop] = field(default_factory=list)
+    equipment_stash: list[LootDrop] = field(default_factory=list)
     active_modifiers: list[RunModifier] = field(default_factory=list)
 
     @property

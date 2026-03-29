@@ -13,10 +13,30 @@ _MAX_NODES_PER_LAYER = 3
 _NUM_LAYERS = 3
 _BOSS_NODE_ID = "BOSS"
 
-_LAYER_ROOM_POOLS: tuple[tuple[RoomType, ...], ...] = (
-    (RoomType.COMBAT, RoomType.COMBAT, RoomType.COMBAT),
-    (RoomType.COMBAT, RoomType.ELITE, RoomType.COMBAT),
-    (RoomType.COMBAT, RoomType.REST, RoomType.COMBAT),
+_LAYER_WEIGHTS: tuple[dict[RoomType, int], ...] = (
+    {
+        RoomType.COMBAT: 50,
+        RoomType.EVENT: 25,
+        RoomType.TREASURE: 15,
+        RoomType.SHOP: 10,
+    },
+    {
+        RoomType.COMBAT: 35,
+        RoomType.ELITE: 20,
+        RoomType.EVENT: 20,
+        RoomType.SHOP: 15,
+        RoomType.CAMPFIRE: 5,
+        RoomType.TREASURE: 5,
+    },
+    {
+        RoomType.COMBAT: 30,
+        RoomType.REST: 20,
+        RoomType.CAMPFIRE: 15,
+        RoomType.ELITE: 15,
+        RoomType.EVENT: 10,
+        RoomType.TREASURE: 5,
+        RoomType.SHOP: 5,
+    },
 )
 
 
@@ -44,20 +64,37 @@ def _generate_layer(
     rng: Random,
     layer_idx: int,
 ) -> tuple[MapNode, ...]:
-    """Gera nós para uma camada."""
+    """Gera nós para uma camada via weighted random."""
     count = rng.randint(_MIN_NODES_PER_LAYER, _MAX_NODES_PER_LAYER)
-    pool = list(_LAYER_ROOM_POOLS[layer_idx])
-    rng.shuffle(pool)
-    nodes: list[MapNode] = []
-    for i in range(count):
-        room_type = pool[i % len(pool)]
-        node = MapNode(
+    weights_map = _LAYER_WEIGHTS[layer_idx]
+    room_types = _pick_room_types(rng, weights_map, count)
+    return _build_nodes(layer_idx, room_types)
+
+
+def _pick_room_types(
+    rng: Random,
+    weights_map: dict[RoomType, int],
+    count: int,
+) -> list[RoomType]:
+    """Seleciona N room types via weighted random."""
+    types = list(weights_map.keys())
+    weights = list(weights_map.values())
+    return rng.choices(types, weights=weights, k=count)
+
+
+def _build_nodes(
+    layer_idx: int,
+    room_types: list[RoomType],
+) -> tuple[MapNode, ...]:
+    """Constroi MapNodes a partir de room types."""
+    return tuple(
+        MapNode(
             node_id=f"L{layer_idx}_N{i}",
             layer=layer_idx,
-            room_type=room_type,
+            room_type=rt,
         )
-        nodes.append(node)
-    return tuple(nodes)
+        for i, rt in enumerate(room_types)
+    )
 
 
 def _connect_layers(
@@ -84,9 +121,18 @@ def _connect_two_layers(
         targets = rng.sample(next_ids, count)
         connected_targets.update(targets)
         node.connections = tuple(targets)
-    # Garante que todo nó da próxima camada é alcançável
+    _ensure_all_reachable(rng, current, next_layer, connected_targets)
+
+
+def _ensure_all_reachable(
+    rng: Random,
+    current: tuple[MapNode, ...],
+    next_layer: tuple[MapNode, ...],
+    connected: set[str],
+) -> None:
+    """Garante que todo nó da próxima camada é alcançável."""
     for target_node in next_layer:
-        if target_node.node_id not in connected_targets:
+        if target_node.node_id not in connected:
             source = rng.choice(current)
             conns = list(source.connections)
             conns.append(target_node.node_id)

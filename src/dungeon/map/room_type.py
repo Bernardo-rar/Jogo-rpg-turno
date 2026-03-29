@@ -10,3 +10,7 @@ class RoomType(Enum):
     ELITE = auto()
     REST = auto()
     BOSS = auto()
+    TREASURE = auto()
+    EVENT = auto()
+    CAMPFIRE = auto()
+    SHOP = auto()

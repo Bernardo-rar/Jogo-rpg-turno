@@ -13,6 +13,7 @@ from src.core.characters.character import Character
 from src.core.characters.character_config import CharacterConfig
 from src.core.characters.class_modifiers import ClassModifiers
 from src.core.characters.position import Position
+from src.core.items.inventory import Inventory
 from src.core.skills.skill_bar import SkillBar
 from src.core.skills.skill_loader import load_class_skills
 from src.core.skills.spell_slot import SpellSlot
@@ -32,6 +33,8 @@ from src.core.classes.sorcerer.sorcerer import Sorcerer
 from src.core.classes.warlock.warlock import Warlock
 
 if TYPE_CHECKING:
+    from src.core.items.accessory import Accessory
+    from src.core.items.armor import Armor
     from src.core.items.weapon import Weapon
 
 _DEFAULTS_FILE = "data/dungeon/party_defaults.json"
@@ -70,8 +73,12 @@ class PartyFactory:
     def __init__(
         self,
         weapon_catalog: dict[str, Weapon],
+        armor_catalog: dict[str, Armor] | None = None,
+        accessory_catalog: dict[str, Accessory] | None = None,
     ) -> None:
         self._weapons = weapon_catalog
+        self._armors = armor_catalog or {}
+        self._accessories = accessory_catalog or {}
         self._defaults = _load_defaults()
 
     def create(self, class_id: ClassId, name: str) -> Character:
@@ -82,17 +89,26 @@ class PartyFactory:
         mods = ClassModifiers.from_json(
             f"data/classes/{class_id.value}.json",
         )
-        weapon = self._weapons.get(defaults["weapon"])
-        position = Position[defaults["position"]]
-        skill_bar = _build_skill_bar(class_id)
-        config = CharacterConfig(
+        config = self._build_config(defaults, mods, class_id)
+        return cls(name, attrs, config)
+
+    def _build_config(
+        self,
+        defaults: dict,
+        mods: ClassModifiers,
+        class_id: ClassId,
+    ) -> CharacterConfig:
+        """Monta CharacterConfig a partir dos defaults."""
+        return CharacterConfig(
             class_modifiers=mods,
             threshold_calculator=_EMPTY_THRESHOLDS,
-            position=position,
-            weapon=weapon,
-            skill_bar=skill_bar,
+            position=Position[defaults["position"]],
+            weapon=self._weapons.get(defaults["weapon"]),
+            armor=_resolve_armor(defaults, self._armors),
+            accessories=_resolve_accessories(defaults, self._accessories),
+            skill_bar=_build_skill_bar(class_id),
+            inventory=Inventory(),
         )
-        return cls(name, attrs, config)
 
 
 def _build_skill_bar(class_id: ClassId) -> SkillBar | None:
@@ -117,3 +133,24 @@ def _build_attributes(attr_list: list[int]) -> Attributes:
     for attr_type, value in zip(AttributeType, attr_list):
         attrs.set(attr_type, value)
     return attrs
+
+
+def _resolve_armor(
+    defaults: dict,
+    catalog: dict[str, Armor],
+) -> Armor | None:
+    """Busca armor no catalogo pelo id do JSON. None se ausente."""
+    armor_id = defaults.get("armor")
+    if armor_id is None:
+        return None
+    return catalog.get(armor_id)
+
+
+def _resolve_accessories(
+    defaults: dict,
+    catalog: dict[str, Accessory],
+) -> tuple[Accessory, ...]:
+    """Busca accessories no catalogo pelos ids do JSON."""
+    ids: list[str] = defaults.get("accessories", [])
+    resolved = [catalog[a] for a in ids if a in catalog]
+    return tuple(resolved)

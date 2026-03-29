@@ -12,12 +12,15 @@ REST_MANA_PERCENT = 0.40
 REST_REVIVE_HP_PERCENT = 0.30
 
 
-def apply_rest_heal(party: list[Character]) -> dict[str, int]:
-    """Cura 30% do HP máximo de cada membro vivo."""
+def apply_rest_heal(
+    party: list[Character],
+    healing_mult: float = 1.0,
+) -> dict[str, int]:
+    """Cura 30% do HP maximo de cada membro vivo, escalado por healing_mult."""
     results: dict[str, int] = {}
     for c in party:
         if c.is_alive:
-            amount = int(c.max_hp * REST_HEAL_PERCENT)
+            amount = int(c.max_hp * REST_HEAL_PERCENT * healing_mult)
             healed = c.heal(amount)
             results[c.name] = healed
     return results
