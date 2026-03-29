@@ -1,0 +1,11 @@
+{
+  "tier1": {
+    "sell_multiplier": 0.5,
+    "items": [
+      {"item_id": "health_potion", "name": "Health Potion", "price": 15, "stock": 3},
+      {"item_id": "mana_potion", "name": "Mana Potion", "price": 12, "stock": 3},
+      {"item_id": "smoke_bomb", "name": "Smoke Bomb", "price": 35, "stock": 1},
+      {"item_id": "molotov", "name": "Molotov", "price": 25, "stock": 2}
+    ]
+  }
+}

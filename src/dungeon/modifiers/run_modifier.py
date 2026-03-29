@@ -25,6 +25,7 @@ class ModifierEffect:
     gold_mult: float = 1.0
     elite_spawn_mult: float = 1.0
     boss_stat_mult: float = 1.0
+    xp_mult: float = 1.0
     score_mult: float = 1.0
     start_hp_pct: float = 1.0
 
@@ -38,6 +39,7 @@ class ModifierEffect:
             gold_mult=data.get("gold_mult", 1.0),
             elite_spawn_mult=data.get("elite_spawn_mult", 1.0),
             boss_stat_mult=data.get("boss_stat_mult", 1.0),
+            xp_mult=data.get("xp_mult", 1.0),
             score_mult=data.get("score_mult", 1.0),
             start_hp_pct=data.get("start_hp_pct", 1.0),
         )

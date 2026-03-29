@@ -1,0 +1,26 @@
+{
+  "attack_boost": {
+    "name": "Furia",
+    "description": "+15% dano por 3 combates",
+    "heal_pct": 0,
+    "buff_stat": "attack",
+    "buff_value": 15,
+    "duration_rooms": 3
+  },
+  "defense_boost": {
+    "name": "Fortificacao",
+    "description": "+15% defesa por 3 combates",
+    "heal_pct": 0,
+    "buff_stat": "defense",
+    "buff_value": 15,
+    "duration_rooms": 3
+  },
+  "regen": {
+    "name": "Vigor",
+    "description": "Cura 25% HP de toda a party",
+    "heal_pct": 0.25,
+    "buff_stat": "",
+    "buff_value": 0,
+    "duration_rooms": 0
+  }
+}

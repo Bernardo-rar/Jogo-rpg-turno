@@ -10,6 +10,7 @@ _MULTIPLICATIVE_FIELDS = (
     "damage_dealt_mult",
     "healing_mult",
     "gold_mult",
+    "xp_mult",
     "elite_spawn_mult",
     "boss_stat_mult",
     "score_mult",

@@ -1,0 +1,25 @@
+{
+  "history_window": 5,
+  "scaling_min": 0.70,
+  "scaling_max": 1.30,
+  "scaling_step": 0.05,
+  "neutral_zone": {
+    "low": 0.40,
+    "high": 0.70
+  },
+  "drift_step_fraction": 0.5,
+  "weights": {
+    "hp_percent": 0.50,
+    "deaths": 0.30,
+    "rounds": 0.20
+  },
+  "target_rounds": 5,
+  "rounds_range": 6,
+  "elite_threshold_penalty": 0.15,
+  "scaling_effects": {
+    "hp_scale": true,
+    "damage_scale": true,
+    "extra_enemy_threshold": 1.15,
+    "extra_enemy_chance": 0.30
+  }
+}

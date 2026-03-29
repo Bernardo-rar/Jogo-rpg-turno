@@ -1,0 +1,34 @@
+{
+  "speed_trial": {
+    "name": "Speed Trial",
+    "description": "Win 3 combats in 2 rounds or fewer",
+    "condition_type": "rounds_to_win_lte",
+    "threshold": 2,
+    "required_count": 3,
+    "unlock_message": "A strange symbol pulses on your map..."
+  },
+  "perfection_trial": {
+    "name": "Perfection Trial",
+    "description": "Win a combat with no damage taken by any party member",
+    "condition_type": "zero_damage_taken",
+    "threshold": 0,
+    "required_count": 1,
+    "unlock_message": "An ethereal door shimmers into existence..."
+  },
+  "synergy_trial": {
+    "name": "Synergy Trial",
+    "description": "All 4 party members use class skills in 2 combats",
+    "condition_type": "all_class_skills_used",
+    "threshold": 4,
+    "required_count": 2,
+    "unlock_message": "The bonds between your party glow with power..."
+  },
+  "greed_trial": {
+    "name": "Greed Trial",
+    "description": "Accumulate 300+ gold at any point",
+    "condition_type": "gold_threshold",
+    "threshold": 300,
+    "required_count": 1,
+    "unlock_message": "Golden light seeps from the walls..."
+  }
+}

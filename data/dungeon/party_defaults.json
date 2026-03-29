@@ -1,15 +1,15 @@
 {
-  "fighter":    {"weapon": "longsword",    "position": "FRONT", "attrs": [8, 6, 7, 4, 4, 3, 3]},
-  "barbarian":  {"weapon": "greatsword",   "position": "FRONT", "attrs": [9, 5, 8, 3, 4, 3, 3]},
-  "mage":       {"weapon": "arcane_staff", "position": "BACK",  "attrs": [3, 5, 5, 9, 7, 4, 8]},
-  "cleric":     {"weapon": "mace",         "position": "BACK",  "attrs": [4, 5, 6, 7, 9, 5, 7]},
-  "paladin":    {"weapon": "longsword",    "position": "FRONT", "attrs": [7, 5, 7, 4, 6, 5, 4]},
-  "ranger":     {"weapon": "longbow",      "position": "BACK",  "attrs": [5, 8, 5, 5, 6, 4, 5]},
-  "monk":       {"weapon": "quarterstaff", "position": "FRONT", "attrs": [6, 8, 6, 4, 7, 3, 5]},
-  "sorcerer":   {"weapon": "arcane_staff", "position": "BACK",  "attrs": [3, 5, 5, 9, 6, 5, 9]},
-  "warlock":    {"weapon": "dagger",       "position": "BACK",  "attrs": [4, 5, 5, 8, 6, 6, 8]},
-  "druid":      {"weapon": "quarterstaff", "position": "BACK",  "attrs": [4, 5, 6, 7, 8, 4, 7]},
-  "rogue":      {"weapon": "dagger",       "position": "BACK",  "attrs": [5, 9, 5, 5, 5, 5, 4]},
-  "bard":       {"weapon": "short_sword",  "position": "BACK",  "attrs": [4, 6, 5, 6, 6, 8, 5]},
-  "artificer":  {"weapon": "dagger",       "position": "BACK",  "attrs": [4, 7, 5, 8, 5, 4, 6]}
+  "fighter":    {"weapon": "longsword",    "armor": "chain_mail",      "accessories": ["iron_ring"],          "position": "FRONT", "attrs": [8, 6, 7, 4, 4, 3, 3]},
+  "barbarian":  {"weapon": "greatsword",   "armor": "leather_armor",   "accessories": [],                    "position": "FRONT", "attrs": [9, 5, 8, 3, 4, 3, 3]},
+  "mage":       {"weapon": "arcane_staff", "armor": "mage_robes",      "accessories": ["amulet_of_wisdom"],  "position": "BACK",  "attrs": [3, 5, 5, 9, 7, 4, 8]},
+  "cleric":     {"weapon": "mace",         "armor": "scale_mail",      "accessories": ["amulet_of_wisdom"],  "position": "BACK",  "attrs": [4, 5, 6, 7, 9, 5, 7]},
+  "paladin":    {"weapon": "longsword",    "armor": "chain_mail",      "accessories": [],                    "position": "FRONT", "attrs": [7, 5, 7, 4, 6, 5, 4]},
+  "ranger":     {"weapon": "longbow",      "armor": "leather_armor",   "accessories": [],                    "position": "BACK",  "attrs": [5, 8, 5, 5, 6, 4, 5]},
+  "monk":       {"weapon": "quarterstaff", "armor": "leather_armor",   "accessories": [],                    "position": "FRONT", "attrs": [6, 8, 6, 4, 7, 3, 5]},
+  "sorcerer":   {"weapon": "arcane_staff", "armor": "mage_robes",      "accessories": [],                    "position": "BACK",  "attrs": [3, 5, 5, 9, 6, 5, 9]},
+  "warlock":    {"weapon": "dagger",       "armor": "leather_armor",   "accessories": [],                    "position": "BACK",  "attrs": [4, 5, 5, 8, 6, 6, 8]},
+  "druid":      {"weapon": "quarterstaff", "armor": "leather_armor",   "accessories": [],                    "position": "BACK",  "attrs": [4, 5, 6, 7, 8, 4, 7]},
+  "rogue":      {"weapon": "dagger",       "armor": "studded_leather", "accessories": [],                    "position": "BACK",  "attrs": [5, 9, 5, 5, 5, 5, 4]},
+  "bard":       {"weapon": "short_sword",  "armor": "leather_armor",   "accessories": [],                    "position": "BACK",  "attrs": [4, 6, 5, 6, 6, 8, 5]},
+  "artificer":  {"weapon": "dagger",       "armor": "studded_leather", "accessories": [],                    "position": "BACK",  "attrs": [4, 7, 5, 8, 5, 4, 6]}
 }

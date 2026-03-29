@@ -1,0 +1,52 @@
+{
+  "swiftblade_emblem": {
+    "name": "Swiftblade Emblem",
+    "description": "+15% speed. +10% damage when combat ends in 3 rounds or fewer.",
+    "rarity": "legendary",
+    "passive_effects": {
+      "speed_percent": 0.15,
+      "conditional_damage_percent": 0.10,
+      "condition": "combat_ends_in_3_rounds"
+    },
+    "source": "speed_trial"
+  },
+  "aegis_of_perfection": {
+    "name": "Aegis of Perfection",
+    "description": "+20% dodge chance. Barrier regenerates 5% max HP per turn.",
+    "rarity": "legendary",
+    "passive_effects": {
+      "dodge_percent": 0.20,
+      "barrier_regen_percent": 0.05
+    },
+    "source": "perfection_trial"
+  },
+  "unity_band": {
+    "name": "Unity Band",
+    "description": "+10% all stats when all 4 party members are alive.",
+    "rarity": "legendary",
+    "passive_effects": {
+      "all_stats_percent": 0.10,
+      "condition": "all_party_alive"
+    },
+    "source": "synergy_trial"
+  },
+  "midas_crown": {
+    "name": "Midas Crown",
+    "description": "+25% gold gain from all sources. Enemies drop 1-3 gold on each hit received.",
+    "rarity": "legendary",
+    "passive_effects": {
+      "gold_gain_percent": 0.25,
+      "gold_on_hit": {"min": 1, "max": 3}
+    },
+    "source": "greed_trial"
+  },
+  "arbiters_seal": {
+    "name": "Arbiter's Seal",
+    "description": "+15% all stats. Cosmetic glow on party.",
+    "rarity": "legendary",
+    "passive_effects": {
+      "all_stats_percent": 0.15
+    },
+    "source": "secret_boss"
+  }
+}

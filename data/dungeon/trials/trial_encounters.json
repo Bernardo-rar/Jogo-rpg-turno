@@ -1,0 +1,51 @@
+{
+  "speed_trial": {
+    "name": "Speed Trial: Blitz",
+    "round_limit": 3,
+    "special_rule": "round_limit",
+    "failure_on_timeout": true,
+    "enemies": [
+      {"template_id": "speed_trial_guardian", "count": 3}
+    ],
+    "reward": {
+      "relic_id": "swiftblade_emblem",
+      "gold": 50
+    }
+  },
+  "perfection_trial": {
+    "name": "Perfection Trial: Glass Canon",
+    "special_rule": "party_1hp",
+    "failure_on_timeout": false,
+    "enemies": [
+      {"template_id": "perfection_trial_guardian", "count": 2}
+    ],
+    "reward": {
+      "relic_id": "aegis_of_perfection",
+      "gold": 50
+    }
+  },
+  "synergy_trial": {
+    "name": "Synergy Trial: Unity",
+    "special_rule": "class_skills_only",
+    "failure_on_timeout": false,
+    "enemies": [
+      {"template_id": "synergy_trial_guardian", "count": 4}
+    ],
+    "reward": {
+      "relic_id": "unity_band",
+      "gold": 50
+    }
+  },
+  "greed_trial": {
+    "name": "Greed Trial: Midas",
+    "special_rule": "gold_is_hp",
+    "failure_on_timeout": false,
+    "enemies": [
+      {"template_id": "greed_trial_guardian", "count": 1}
+    ],
+    "reward": {
+      "relic_id": "midas_crown",
+      "gold": 0
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "rest_room_revive": {
+    "gold_cost": 50,
+    "hp_percent": 0.30,
+    "applies_weakened": true
+  },
+  "phoenix_down": {
+    "hp_percent": 0.25,
+    "action_cost": "BONUS",
+    "shop_price": 100,
+    "drop_weight": 3,
+    "applies_weakened": true
+  },
+  "cleric_resurrect": {
+    "hp_percent": 0.50,
+    "mana_cost": 80,
+    "cooldown_turns": 5,
+    "action_cost": "ACTION",
+    "applies_weakened": true
+  },
+  "weakened_debuff": {
+    "stat_penalty_percent": -0.10,
+    "duration_combats": 2,
+    "affected_stats": [
+      "PHYSICAL_ATTACK",
+      "MAGICAL_ATTACK",
+      "PHYSICAL_DEFENSE",
+      "MAGICAL_DEFENSE",
+      "SPEED"
+    ],
+    "stacking_key": "weakened_revive",
+    "stacking_policy": "REFRESH"
+  }
+}

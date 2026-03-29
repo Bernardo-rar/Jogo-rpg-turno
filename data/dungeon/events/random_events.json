@@ -1,0 +1,38 @@
+{
+  "mysterious_chest": {
+    "title": "Bau Misterioso",
+    "description": "Voce encontra um bau antigo coberto de runas...",
+    "choices": [
+      {"label": "Abrir com cuidado", "effects": [{"type": "GOLD", "value": 30}], "result_text": "Moedas de ouro!"},
+      {"label": "Forcar abertura", "effects": [{"type": "GOLD", "value": 60}, {"type": "HP_PERCENT", "value": -0.15}], "result_text": "Armadilha! Mas o tesouro e maior."},
+      {"label": "Ignorar", "effects": [], "result_text": "Voce segue em frente."}
+    ]
+  },
+  "wandering_merchant": {
+    "title": "Mercador Errante",
+    "description": "Um velho mercador aparece nas sombras oferecendo um trato...",
+    "choices": [
+      {"label": "Aceitar o trato", "effects": [{"type": "MANA_PERCENT", "value": 0.30}], "result_text": "Sua mana e restaurada!"},
+      {"label": "Pedir dinheiro", "effects": [{"type": "GOLD", "value": 40}], "result_text": "Ele entrega um punhado de moedas."},
+      {"label": "Recusar educadamente", "effects": [], "result_text": "O mercador desaparece nas sombras."}
+    ]
+  },
+  "ancient_fountain": {
+    "title": "Fonte Ancestral",
+    "description": "Uma fonte brilhante emana energia magica do chao...",
+    "choices": [
+      {"label": "Beber a agua", "effects": [{"type": "HP_PERCENT", "value": 0.20}], "result_text": "A agua cura suas feridas!"},
+      {"label": "Encher frascos", "effects": [{"type": "MANA_PERCENT", "value": 0.15}, {"type": "HP_PERCENT", "value": 0.10}], "result_text": "A energia magica restaura um pouco de tudo."},
+      {"label": "Jogar moeda", "effects": [{"type": "GOLD", "value": -10}, {"type": "HP_PERCENT", "value": 0.35}], "result_text": "A fonte aceita sua oferenda e brilha intensamente!"}
+    ]
+  },
+  "trapped_room": {
+    "title": "Sala Armadilhada",
+    "description": "Flechas envenenadas disparam das paredes! Aja rapido!",
+    "choices": [
+      {"label": "Esquivar rapidamente", "effects": [{"type": "HP_PERCENT", "value": -0.05}], "result_text": "Quase escapou ileso, mas levou um arranhao."},
+      {"label": "Proteger o grupo", "effects": [{"type": "HP_PERCENT", "value": -0.10}], "result_text": "Voce se sacrificou para proteger os outros."},
+      {"label": "Correr para a saida", "effects": [{"type": "HP_PERCENT", "value": -0.20}], "result_text": "Na correria, todos sofrem mais dano."}
+    ]
+  }
+}
