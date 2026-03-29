@@ -1,0 +1,12 @@
+{
+  "encounter_xp": {
+    "normal": {"1": 25, "2": 45, "3": 70},
+    "elite":  {"1": 50, "2": 90, "3": 140},
+    "boss":   {"1": 80, "2": 150, "3": 250}
+  },
+  "bonuses": {
+    "no_death_mult": 1.10,
+    "fast_clear_max_rounds": 5,
+    "fast_clear_mult": 1.15
+  }
+}

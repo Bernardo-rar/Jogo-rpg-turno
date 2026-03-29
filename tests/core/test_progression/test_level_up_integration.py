@@ -31,7 +31,7 @@ class TestFighterLevelUpIntegration:
         fighter = Fighter(name="Roland", attributes=make_attrs(con=6, intelligence=7, mind=5), config=config)
         system = _make_system()
         hp_at_1 = fighter.max_hp
-        system.gain_xp(fighter, 1000)  # level 5
+        system.gain_xp(fighter, 280)  # level 5
         assert fighter.level == 5
         assert fighter.max_hp > hp_at_1
 
@@ -40,7 +40,7 @@ class TestFighterLevelUpIntegration:
         config = CharacterConfig(class_modifiers=FIGHTER_MODS, threshold_calculator=calc)
         fighter = Fighter(name="Roland", attributes=make_attrs(con=6, intelligence=7, mind=5), config=config)
         system = _make_system()
-        system.gain_xp(fighter, 1000)
+        system.gain_xp(fighter, 280)
         assert fighter.action_points.limit == 10
 
     def test_fighter_proficiency_bonus_equals_level(self) -> None:
@@ -48,7 +48,7 @@ class TestFighterLevelUpIntegration:
         config = CharacterConfig(class_modifiers=FIGHTER_MODS, threshold_calculator=calc)
         fighter = Fighter(name="Roland", attributes=make_attrs(con=6, intelligence=7, mind=5), config=config)
         system = _make_system()
-        system.gain_xp(fighter, 300)  # level 3
+        system.gain_xp(fighter, 80)  # level 3
         assert fighter.proficiency_bonus == 3
 
     def test_fighter_regen_grows_with_level(self) -> None:
@@ -57,7 +57,7 @@ class TestFighterLevelUpIntegration:
         fighter = Fighter(name="Roland", attributes=make_attrs(con=6, intelligence=7, mind=5), config=config)
         system = _make_system()
         regen_at_1 = fighter.hp_regen
-        system.gain_xp(fighter, 100)  # level 2
+        system.gain_xp(fighter, 30)  # level 2
         assert fighter.hp_regen > regen_at_1
 
 
@@ -70,7 +70,7 @@ class TestMageLevelUpIntegration:
         mage = Mage(name="Archmage", attributes=make_attrs(con=6, intelligence=7, mind=5), config=config)
         system = _make_system()
         hp_at_1 = mage.max_hp
-        system.gain_xp(mage, 600)  # level 4
+        system.gain_xp(mage, 160)  # level 4
         assert mage.level == 4
         assert mage.max_hp > hp_at_1
 
@@ -96,7 +96,7 @@ class TestClericLevelUpIntegration:
         )
         system = _make_system()
         hp_at_1 = cleric.max_hp
-        system.gain_xp(cleric, 300)  # level 3
+        system.gain_xp(cleric, 80)  # level 3
         assert cleric.level == 3
         assert cleric.max_hp > hp_at_1
 
@@ -109,7 +109,7 @@ class TestDistributePointsIntegration:
         config = CharacterConfig(class_modifiers=FIGHTER_MODS, threshold_calculator=calc)
         fighter = Fighter(name="Roland", attributes=make_attrs(con=6, intelligence=7, mind=5), config=config)
         system = _make_system()
-        system.gain_xp(fighter, 100)  # level 2
+        system.gain_xp(fighter, 30)  # level 2
         atk_before = fighter.physical_attack
         system.distribute_physical_points(
             fighter, {AttributeType.STRENGTH: 2},

@@ -36,10 +36,30 @@ class LevelUpSystem:
         self._xp_table = xp_table
         self._attribute_config = attribute_config
         self._xp: dict[int, int] = {}
+        self._party_xp: int = 0
+
+    @property
+    def party_xp(self) -> int:
+        """Retorna XP acumulado da party."""
+        return self._party_xp
 
     def get_xp(self, character: Character) -> int:
         """Retorna XP acumulado do personagem."""
         return self._xp.get(id(character), 0)
+
+    def gain_party_xp(
+        self,
+        party: list[Character],
+        amount: int,
+    ) -> LevelUpResult | None:
+        """Adiciona XP a party toda. Retorna LevelUpResult se level up."""
+        if amount <= 0:
+            return None
+        self._party_xp += amount
+        results: list[LevelUpResult | None] = []
+        for char in party:
+            results.append(self.gain_xp(char, amount))
+        return _first_level_up(results)
 
     def gain_xp(
         self,
@@ -121,3 +141,13 @@ class LevelUpSystem:
         for attr, amount in distribution.items():
             character._attributes.increase(attr, amount)
         character.invalidate_threshold_cache()
+
+
+def _first_level_up(
+    results: list[LevelUpResult | None],
+) -> LevelUpResult | None:
+    """Retorna o primeiro LevelUpResult nao-None (todos iguais)."""
+    for r in results:
+        if r is not None:
+            return r
+    return None

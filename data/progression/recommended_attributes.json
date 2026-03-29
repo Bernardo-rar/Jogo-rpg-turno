@@ -1,0 +1,15 @@
+{
+  "fighter":   {"physical": ["STRENGTH", "CONSTITUTION", "DEXTERITY"], "mental": ["MIND", "WISDOM", "CHARISMA", "INTELLIGENCE"]},
+  "barbarian": {"physical": ["STRENGTH", "CONSTITUTION", "DEXTERITY"], "mental": ["MIND", "CHARISMA", "WISDOM", "INTELLIGENCE"]},
+  "mage":      {"physical": ["CONSTITUTION", "DEXTERITY", "STRENGTH"], "mental": ["INTELLIGENCE", "MIND", "WISDOM", "CHARISMA"]},
+  "cleric":    {"physical": ["CONSTITUTION", "STRENGTH", "DEXTERITY"], "mental": ["WISDOM", "MIND", "CHARISMA", "INTELLIGENCE"]},
+  "paladin":   {"physical": ["STRENGTH", "CONSTITUTION", "DEXTERITY"], "mental": ["CHARISMA", "WISDOM", "MIND", "INTELLIGENCE"]},
+  "rogue":     {"physical": ["DEXTERITY", "CONSTITUTION", "STRENGTH"], "mental": ["MIND", "INTELLIGENCE", "WISDOM", "CHARISMA"]},
+  "ranger":    {"physical": ["DEXTERITY", "STRENGTH", "CONSTITUTION"], "mental": ["MIND", "WISDOM", "INTELLIGENCE", "CHARISMA"]},
+  "bard":      {"physical": ["DEXTERITY", "CONSTITUTION", "STRENGTH"], "mental": ["CHARISMA", "WISDOM", "MIND", "INTELLIGENCE"]},
+  "monk":      {"physical": ["DEXTERITY", "STRENGTH", "CONSTITUTION"], "mental": ["WISDOM", "MIND", "INTELLIGENCE", "CHARISMA"]},
+  "druid":     {"physical": ["CONSTITUTION", "DEXTERITY", "STRENGTH"], "mental": ["WISDOM", "INTELLIGENCE", "MIND", "CHARISMA"]},
+  "sorcerer":  {"physical": ["CONSTITUTION", "DEXTERITY", "STRENGTH"], "mental": ["MIND", "INTELLIGENCE", "CHARISMA", "WISDOM"]},
+  "warlock":   {"physical": ["CONSTITUTION", "DEXTERITY", "STRENGTH"], "mental": ["CHARISMA", "MIND", "INTELLIGENCE", "WISDOM"]},
+  "artificer": {"physical": ["CONSTITUTION", "DEXTERITY", "STRENGTH"], "mental": ["INTELLIGENCE", "MIND", "WISDOM", "CHARISMA"]}
+}
