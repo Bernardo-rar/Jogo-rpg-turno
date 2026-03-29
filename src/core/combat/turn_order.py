@@ -44,6 +44,10 @@ class TurnOrder:
         self._order = self.get_order()
         self._index = 0
 
+    def insert(self, combatant: Combatant) -> None:
+        """Adds a combatant mid-combat. Takes effect on next reset."""
+        self._combatants.append(combatant)
+
     @property
     def is_round_complete(self) -> bool:
         return self._index >= len(self._order)

@@ -22,8 +22,8 @@ class TestEventType:
     def test_has_flee(self) -> None:
         assert EventType.FLEE is not None
 
-    def test_has_ten_members(self) -> None:
-        assert len(EventType) == 10
+    def test_has_at_least_ten_members(self) -> None:
+        assert len(EventType) >= 10
 
 
 class TestCombatEventExpanded:

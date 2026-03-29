@@ -73,7 +73,12 @@
     "class_id": "barbarian",
     "cooldown_turns": 5,
     "required_level": 5,
-    "description": "Consome toda a furia para desferir um golpe devastador"
+    "description": "Consome toda a furia para desferir um golpe devastador",
+    "qte": {
+      "keys": ["UP", "UP", "DOWN", "LEFT", "RIGHT"],
+      "time_window_ms": 3000,
+      "difficulty": "HARD"
+    }
   },
   "tough_it_out": {
     "name": "Tough It Out",

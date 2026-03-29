@@ -72,7 +72,12 @@
     "class_id": "monk",
     "cooldown_turns": 4,
     "required_level": 4,
-    "description": "Rajada de cem punhos que atinge o alvo quatro vezes"
+    "description": "Rajada de cem punhos que atinge o alvo quatro vezes",
+    "qte": {
+      "keys": ["LEFT", "RIGHT", "LEFT", "RIGHT"],
+      "time_window_ms": 2000,
+      "difficulty": "HARD"
+    }
   },
   "deflect": {
     "name": "Deflect",

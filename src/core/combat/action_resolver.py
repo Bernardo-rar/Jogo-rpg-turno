@@ -6,12 +6,17 @@ from typing import Callable
 
 from src.core.characters.character import Character
 from src.core.characters.position import Position
+from src.core.combat.position_modifiers import scale_dealt, scale_taken
 from src.core.combat.action_economy import ActionEconomy, ActionType
 from src.core.combat.combat_engine import CombatEvent, EventType, TurnContext
 from src.core.combat.consumable_effect_applier import apply_consumable_effect
-from src.core.combat.damage import resolve_damage
+from src.core.combat.damage import DamageResult, resolve_damage
 from src.core.combat.player_action import PlayerAction, PlayerActionType
-from src.core.combat.skill_effect_applier import apply_skill_effect
+from src.core.combat.qte.qte_config import QteResult
+from src.core.combat.skill_effect_applier import (
+    apply_skill_effect,
+    get_run_modifier_effect,
+)
 from src.core.combat.target_resolver import resolve_targets
 from src.core.skills.class_resource_resolver import can_afford_all, spend_all
 from src.core.effects.modifiable_stat import ModifiableStat
@@ -24,6 +29,22 @@ from src.core.skills.target_type import TargetType
 DEFEND_BUFF_PERCENT = 50.0
 DEFEND_BUFF_DURATION = 1
 DEFEND_SOURCE = "guard"
+
+_pending_qte_result: QteResult | None = None
+
+
+def set_qte_result(result: QteResult | None) -> None:
+    """Set by UI before resolving a skill with QTE."""
+    global _pending_qte_result
+    _pending_qte_result = result
+
+
+def get_qte_result() -> QteResult | None:
+    """Consumes the pending QTE result (one-shot)."""
+    global _pending_qte_result
+    result = _pending_qte_result
+    _pending_qte_result = None
+    return result
 
 
 def resolve_player_action(
@@ -48,17 +69,22 @@ def _resolve_basic_attack(
     if target is None:
         return []
     atk_type = context.combatant.preferred_attack_type
+    raw_atk = scale_dealt(context.combatant.attack_power, context.combatant.position)
+    attack = _apply_dealt_mult(raw_atk)
     result = resolve_damage(
-        attack_power=context.combatant.attack_power,
+        attack_power=attack,
         defense=target.defense_for(atk_type),
     )
-    target.take_damage(result.final_damage)
+    raw_final = scale_taken(result.final_damage, target.position)
+    final = _apply_taken_mult(raw_final)
+    target.take_damage(final)
     on_basic_attack(context.combatant)
+    scaled = _replace_final(result, final)
     return [CombatEvent(
         round_number=context.round_number,
         actor_name=context.combatant.name,
         target_name=target.name,
-        damage=result,
+        damage=scaled,
     )]
 
 
@@ -148,8 +174,9 @@ def _resolve_skill(
     context.combatant.spend_mana(skill.mana_cost)
     spend_all(context.combatant, skill.resource_costs)
     targets = _resolve_player_targets(skill.target_type, action, context)
+    effects = _maybe_apply_qte(skill)
     events: list[CombatEvent] = []
-    for effect in skill.effects:
+    for effect in effects:
         events.extend(apply_skill_effect(
             effect, targets, context.round_number, context.combatant,
         ))
@@ -225,7 +252,7 @@ _AUTO_TARGET_TYPES = frozenset({
 })
 
 
-_ITEM_ACTION_TYPE = ActionType.ACTION
+_ITEM_ACTION_TYPE = ActionType.BONUS_ACTION
 
 
 def _resolve_item(
@@ -236,7 +263,7 @@ def _resolve_item(
         return []
     if consumable.mana_cost > context.combatant.current_mana:
         return []
-    if not context.action_economy.use(_ITEM_ACTION_TYPE):
+    if not _spend_item_action(context):
         return []
     context.combatant.spend_mana(consumable.mana_cost)
     targets = _resolve_player_targets(
@@ -267,6 +294,53 @@ def _remove_from_inventory(
 ) -> None:
     if combatant.inventory is not None:
         combatant.inventory.remove_item(item.consumable_id)
+
+
+def _spend_item_action(context: TurnContext) -> bool:
+    """Gasta acao pra usar item. Rogue usa de graca (1x por turno)."""
+    has_free = getattr(context.combatant, "free_item_use", False)
+    if has_free:
+        return True
+    return context.action_economy.use(_ITEM_ACTION_TYPE)
+
+
+def _maybe_apply_qte(skill: Skill) -> tuple[SkillEffect, ...]:
+    """Applies QTE multiplier to skill effects if QTE result is pending."""
+    if skill.qte is None:
+        return skill.effects
+    qte_result = get_qte_result()
+    if qte_result is None:
+        return skill.effects
+    from src.core.combat.qte.qte_multiplier import apply_qte_multiplier
+    return apply_qte_multiplier(skill.effects, qte_result)
+
+
+def _apply_dealt_mult(attack_power: int) -> int:
+    """Aplica damage_dealt_mult do modifier de run."""
+    mod = get_run_modifier_effect()
+    if mod is None:
+        return attack_power
+    return int(attack_power * mod.damage_dealt_mult)
+
+
+def _apply_taken_mult(final: int) -> int:
+    """Aplica damage_taken_mult do modifier de run."""
+    mod = get_run_modifier_effect()
+    if mod is None:
+        return final
+    return max(1, int(final * mod.damage_taken_mult))
+
+
+def _replace_final(result: DamageResult, final: int) -> DamageResult:
+    """Cria DamageResult com final_damage atualizado."""
+    if result.final_damage == final:
+        return result
+    return DamageResult(
+        raw_damage=result.raw_damage,
+        defense_value=result.defense_value,
+        is_critical=result.is_critical,
+        final_damage=final,
+    )
 
 
 _ResolverFn = Callable[[PlayerAction, TurnContext], list[CombatEvent]]

@@ -5,11 +5,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 
 from src.core.combat.combat_engine import CombatEvent, EventType
-from src.core.combat.damage import resolve_damage
+from src.core.combat.damage import DamageResult, resolve_damage
 from src.core.elements.combo.combo_detector import ComboDetector
 from src.core.elements.combo.combo_resolver import ComboOutcome, resolve_combo
 from src.core.elements.combo.element_marker import ElementMarker
 from src.core.elements.element_type import ElementType
+from src.core.combat.position_modifiers import scale_dealt, scale_taken
+from src.dungeon.modifiers.run_modifier import ModifierEffect
 from src.core.effects.ailments.ailment_factory import (
     create_amnesia,
     create_bleed,
@@ -49,6 +51,20 @@ def get_combo_detector() -> ComboDetector | None:
     return _combo_detector
 
 
+_run_modifier_effect: ModifierEffect | None = None
+
+
+def set_run_modifier_effect(effect: ModifierEffect | None) -> None:
+    """Configura o ModifierEffect ativo da run atual."""
+    global _run_modifier_effect  # noqa: PLW0603
+    _run_modifier_effect = effect
+
+
+def get_run_modifier_effect() -> ModifierEffect | None:
+    """Retorna o ModifierEffect atual (ou None)."""
+    return _run_modifier_effect
+
+
 def apply_skill_effect(
     effect: SkillEffect, targets: list[Character], context_round: int,
     combatant: Character,
@@ -65,14 +81,16 @@ def _apply_damage(
     rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     events: list[CombatEvent] = []
-    attack = effect.base_power + _pick_attack(effect, combatant)
+    attack = _scale_attack(effect, combatant)
     for target in targets:
         defense = _pick_defense(effect, target)
         result = resolve_damage(attack_power=attack, defense=defense)
-        target.take_damage(result.final_damage)
+        final = _scale_final_damage_for(result.final_damage, target)
+        target.take_damage(final)
+        scaled = _replace_final_damage(result, final)
         events.append(CombatEvent(
             round_number=rnd, actor_name=combatant.name,
-            target_name=target.name, damage=result,
+            target_name=target.name, damage=scaled,
             element=effect.element,
         ))
         if effect.element is not None:
@@ -112,6 +130,37 @@ def _apply_combo_bonus(
     )]
 
 
+def _scale_attack(effect: SkillEffect, combatant: Character) -> int:
+    """Calcula attack_power escalado por run modifier + posicao."""
+    raw = effect.base_power + _pick_attack(effect, combatant)
+    raw = scale_dealt(raw, combatant.position)
+    mod = _run_modifier_effect
+    if mod is None:
+        return raw
+    return int(raw * mod.damage_dealt_mult)
+
+
+def _scale_final_damage_for(final: int, target: Character) -> int:
+    """Aplica damage_taken de posicao + run modifier ao dano final."""
+    result = scale_taken(final, target.position)
+    mod = _run_modifier_effect
+    if mod is not None:
+        result = max(1, int(result * mod.damage_taken_mult))
+    return result
+
+
+def _replace_final_damage(result: DamageResult, final: int) -> DamageResult:
+    """Cria DamageResult com final_damage atualizado."""
+    if result.final_damage == final:
+        return result
+    return DamageResult(
+        raw_damage=result.raw_damage,
+        defense_value=result.defense_value,
+        is_critical=result.is_critical,
+        final_damage=final,
+    )
+
+
 def _pick_attack(effect: SkillEffect, combatant: Character) -> int:
     if effect.element is not None:
         return combatant.magical_attack
@@ -129,7 +178,7 @@ def _apply_heal(
     rnd: int, combatant: Character,
 ) -> list[CombatEvent]:
     events: list[CombatEvent] = []
-    heal_power = effect.base_power + combatant.magical_attack
+    heal_power = _scale_heal(effect, combatant)
     for target in targets:
         healed = target.heal(heal_power)
         events.append(CombatEvent(
@@ -138,6 +187,15 @@ def _apply_heal(
             event_type=EventType.HEAL, value=healed,
         ))
     return events
+
+
+def _scale_heal(effect: SkillEffect, combatant: Character) -> int:
+    """Calcula heal power escalado pelo modifier de run."""
+    raw = effect.base_power + combatant.magical_attack
+    mod = _run_modifier_effect
+    if mod is None:
+        return raw
+    return max(1, int(raw * mod.healing_mult))
 
 
 def _apply_buff(

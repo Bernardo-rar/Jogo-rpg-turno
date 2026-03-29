@@ -1,0 +1,10 @@
+{
+  "FRONT": {
+    "damage_dealt_mult": 1.10,
+    "damage_taken_mult": 1.15
+  },
+  "BACK": {
+    "damage_dealt_mult": 0.90,
+    "damage_taken_mult": 0.85
+  }
+}

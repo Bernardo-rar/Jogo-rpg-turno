@@ -26,17 +26,20 @@ class TestApplyDamage:
         assert events[0].damage is not None
 
     def test_damage_scales_with_caster_physical_attack(self) -> None:
+        from src.core.combat.position_modifiers import scale_dealt
         caster = _build_char("Caster")
         target = _build_char("Target")
         effect = SkillEffect(
             effect_type=SkillEffectType.DAMAGE, base_power=20,
         )
         events = apply_skill_effect(effect, [target], 1, caster)
-        expected_attack = 20 + caster.physical_attack
-        assert events[0].damage.raw_damage == expected_attack
+        raw = 20 + caster.physical_attack
+        expected = scale_dealt(raw, caster.position)
+        assert events[0].damage.raw_damage == expected
         assert events[0].damage.defense_value == target.physical_defense
 
     def test_damage_scales_with_caster_magical_attack(self) -> None:
+        from src.core.combat.position_modifiers import scale_dealt
         caster = _build_char("Caster")
         target = _build_char("Target")
         effect = SkillEffect(
@@ -44,8 +47,9 @@ class TestApplyDamage:
             element=ElementType.FIRE,
         )
         events = apply_skill_effect(effect, [target], 1, caster)
-        expected_attack = 30 + caster.magical_attack
-        assert events[0].damage.raw_damage == expected_attack
+        raw = 30 + caster.magical_attack
+        expected = scale_dealt(raw, caster.position)
+        assert events[0].damage.raw_damage == expected
         assert events[0].damage.defense_value == target.magical_defense
 
     def test_damage_without_element_uses_physical_defense(self) -> None:

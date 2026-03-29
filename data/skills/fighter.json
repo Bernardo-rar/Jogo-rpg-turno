@@ -77,7 +77,12 @@
     ],
     "cooldown_turns": 5,
     "required_level": 5,
-    "description": "Gasta TODOS os AP para dano massivo. Debuffa ATK e DEF depois"
+    "description": "Gasta TODOS os AP para dano massivo. Debuffa ATK e DEF depois",
+    "qte": {
+      "keys": ["LEFT", "RIGHT", "UP", "DOWN"],
+      "time_window_ms": 2500,
+      "difficulty": "HARD"
+    }
   },
   "parry": {
     "name": "Parry",

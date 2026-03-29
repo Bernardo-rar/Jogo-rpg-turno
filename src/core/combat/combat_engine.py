@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
     from src.core.combat.passive_manager import PassiveManager
+    from src.core.combat.synergy.synergy_manager import SynergyManager
     from src.core.elements.element_type import ElementType
 
 from src.core.characters.character import Character
@@ -47,6 +48,11 @@ class EventType(Enum):
     FLEE = auto()
     SKILL_USE = auto()
     ITEM_USE = auto()
+    SUMMON = auto()
+    FIELD_EFFECT = auto()
+    CHARGE = auto()
+    TRANSFORM = auto()
+    EMPOWER = auto()
 
 
 @dataclass(frozen=True)
@@ -100,12 +106,14 @@ class CombatEngine:
         turn_handler: TurnHandler,
         reaction_manager: ReactionHandler | None = None,
         passive_manager: PassiveManager | None = None,
+        synergy_manager: SynergyManager | None = None,
     ) -> None:
         self._party = party
         self._enemies = enemies
         self._handler = turn_handler
         self._reaction_manager = reaction_manager
         self._passive_manager = passive_manager
+        self._synergy_manager = synergy_manager
         all_combatants = party + enemies
         names = [c.name for c in all_combatants]
         if len(names) != len(set(names)):
@@ -118,11 +126,24 @@ class CombatEngine:
         self._effect_log: list[EffectLogEntry] = []
         self._result: CombatResult | None = None
 
+    def add_combatant(
+        self, character: Character, *, is_enemy: bool,
+    ) -> None:
+        """Adds a combatant mid-combat (for boss summons)."""
+        if character.name in self._participants:
+            raise ValueError("Combatant names must be unique")
+        target_list = self._enemies if is_enemy else self._party
+        target_list.append(character)
+        self._participants[character.name] = character
+        self._economies[character.name] = ActionEconomy()
+        self._turn_order.insert(character)
+
     def start_round(self) -> None:
         """Incrementa round e reseta turn order."""
         self._round += 1
         self._turn_order.reset()
         self._fire_round_start_passives()
+        self._refresh_synergy_auras()
 
     def get_next_combatant(self) -> str | None:
         """Retorna nome do proximo combatente ou None se round acabou."""
@@ -158,6 +179,8 @@ class CombatEngine:
         """Fase 2: registra eventos, dispara passivas e checa vitoria/derrota."""
         self._events.extend(events)
         self._fire_passive_triggers(events)
+        self._fire_synergy_deaths(events)
+        self._process_pending_summons()
         self._result = self._check_result()
         return self._result
 
@@ -217,6 +240,99 @@ class CombatEngine:
             all_alive, self._round,
         )
         self._events.extend(events)
+
+    def _process_pending_summons(self) -> None:
+        """Checks handler for pending summon requests and spawns minions."""
+        handler = self._handler
+        drain = getattr(handler, "drain_pending_summons", None)
+        if drain is None:
+            return
+        for summon_cfg in drain():
+            self._spawn_minion(summon_cfg)
+
+    def _spawn_minion(self, summon_cfg) -> None:
+        """Creates a minion Character from SummonConfig and adds it."""
+        from src.core.attributes.attributes import Attributes
+        from src.core.characters.character_config import CharacterConfig
+        from src.core.characters.class_modifiers import ClassModifiers
+
+        boss_chars = [c for c in self._enemies if c.is_alive]
+        if not boss_chars:
+            return
+        boss = boss_chars[0]
+        minion_hp = max(1, int(boss.max_hp * summon_cfg.hp_scale))
+        minion_atk = max(1, int(boss.attack_power * summon_cfg.atk_scale))
+        idx = len(self._minion_names_from_handler())
+        name = f"{summon_cfg.minion_template_id}_{idx}"
+        mods = ClassModifiers(
+            hit_dice=minion_hp // 4, mod_hp_flat=0, mod_hp_mult=1,
+            mana_multiplier=0, mod_atk_physical=minion_atk // 4,
+            mod_atk_magical=0, mod_def_physical=2, mod_def_magical=2,
+            regen_hp_mod=0, regen_mana_mod=0,
+        )
+        attrs = Attributes()
+        config = CharacterConfig(class_modifiers=mods)
+        minion = Character(name, attrs, config)
+        self.add_combatant(minion, is_enemy=True)
+        boss_handler = self._handler
+        reg = getattr(boss_handler, "register_minion", None)
+        if reg is not None:
+            reg(name)
+        self._events.append(CombatEvent(
+            round_number=self._round,
+            actor_name=boss.name,
+            target_name=name,
+            event_type=EventType.SUMMON,
+            description=f"{name} appears!",
+        ))
+
+    def _minion_names_from_handler(self) -> list[str]:
+        handler = self._handler
+        names = getattr(handler, "_minion_names", [])
+        return list(names)
+
+    def _refresh_synergy_auras(self) -> None:
+        """Refreshes commander auras for alive commanders."""
+        if self._synergy_manager is None:
+            return
+        from src.core.combat.synergy.synergy_behaviors import (
+            apply_commander_aura,
+        )
+        for enemy in self._enemies:
+            if not enemy.is_alive:
+                continue
+            aura_cfg = self._synergy_manager.get_commander_aura(
+                enemy.name,
+            )
+            if aura_cfg is None:
+                continue
+            members = self._synergy_manager.get_synergy_members(
+                enemy.name,
+            )
+            followers = [
+                self._participants[n]
+                for n in members
+                if n != enemy.name and n in self._participants
+            ]
+            apply_commander_aura(followers, aura_cfg)
+
+    def _fire_synergy_deaths(self, events: list[CombatEvent]) -> None:
+        """Dispara synergy on_death para inimigos mortos."""
+        if self._synergy_manager is None:
+            return
+        fired: set[str] = set()
+        for event in events:
+            target = self._participants.get(event.target_name)
+            if target is None or target.is_alive:
+                continue
+            if event.target_name in fired:
+                continue
+            fired.add(event.target_name)
+            self._events.extend(
+                self._synergy_manager.on_death(
+                    event.target_name, self._round,
+                ),
+            )
 
     def _fire_passive_triggers(
         self, events: list[CombatEvent],

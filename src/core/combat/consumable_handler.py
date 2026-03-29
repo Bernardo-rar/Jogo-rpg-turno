@@ -91,4 +91,4 @@ def _remove_from_inventory(
         inventory.remove_item(item.consumable_id)
 
 
-_ACTION_TYPE = ActionType.ACTION
+_ACTION_TYPE = ActionType.BONUS_ACTION

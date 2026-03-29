@@ -63,7 +63,7 @@ class TestConsumableHandler:
         events = handler.execute_turn(_context(hero))
         assert events == []
 
-    def test_uses_action(self) -> None:
+    def test_uses_bonus_action(self) -> None:
         hero = _build_char("Hero")
         hero.take_damage(5)
         hero._inventory = Inventory()
@@ -75,7 +75,7 @@ class TestConsumableHandler:
             action_economy=economy, round_number=1,
         )
         ConsumableHandler().execute_turn(ctx)
-        assert not economy.is_available(ActionType.ACTION)
+        assert not economy.is_available(ActionType.BONUS_ACTION)
 
     def test_removes_from_inventory(self) -> None:
         hero = _build_char("Hero")
@@ -96,13 +96,13 @@ class TestConsumableHandler:
         assert len(events) == 1
         assert events[0].event_type == EventType.HEAL
 
-    def test_no_action_available_returns_empty(self) -> None:
+    def test_no_bonus_action_available_returns_empty(self) -> None:
         hero = _build_char("Hero")
         hero.take_damage(5)
         hero._inventory = Inventory()
         hero._inventory.add_item(_health_potion())
         economy = ActionEconomy()
-        economy.use(ActionType.ACTION)
+        economy.use(ActionType.BONUS_ACTION)
         ctx = TurnContext(
             combatant=hero, allies=[hero],
             enemies=[_build_char("E")],

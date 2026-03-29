@@ -75,7 +75,12 @@
     ],
     "cooldown_turns": 4,
     "required_level": 4,
-    "description": "Execucao letal contra alvo enfraquecido, consome muito foco"
+    "description": "Execucao letal contra alvo enfraquecido, consome muito foco",
+    "qte": {
+      "keys": ["UP", "RIGHT", "DOWN"],
+      "time_window_ms": 2000,
+      "difficulty": "MEDIUM"
+    }
   },
   "evasive_roll": {
     "name": "Evasive Roll",

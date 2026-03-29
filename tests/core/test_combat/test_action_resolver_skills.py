@@ -286,7 +286,7 @@ class TestResolveItem:
         resolve_player_action(action, ctx)
         assert inv.get_quantity("health_potion") == 2
 
-    def test_consumes_action(self):
+    def test_consumes_bonus_action(self):
         inv = Inventory()
         inv.add_item(_health_potion(), quantity=1)
         hero = _char_with_inventory("Hero", inv)
@@ -298,7 +298,7 @@ class TestResolveItem:
             consumable_id="health_potion",
         )
         resolve_player_action(action, ctx)
-        assert not economy.is_available(ActionType.ACTION)
+        assert not economy.is_available(ActionType.BONUS_ACTION)
 
     def test_no_inventory_returns_empty(self):
         hero = _build_char("Hero")
@@ -341,12 +341,12 @@ class TestResolveItem:
         events = resolve_player_action(action, ctx)
         assert events == []
 
-    def test_no_action_available_returns_empty(self):
+    def test_no_bonus_action_available_returns_empty(self):
         inv = Inventory()
         inv.add_item(_health_potion(), quantity=1)
         hero = _char_with_inventory("Hero", inv)
         economy = ActionEconomy()
-        economy.use(ActionType.ACTION)
+        economy.use(ActionType.BONUS_ACTION)
         ctx = _ctx(hero, economy=economy)
         action = PlayerAction(
             action_type=PlayerActionType.ITEM,
