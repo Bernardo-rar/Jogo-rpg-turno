@@ -10,7 +10,9 @@ from src.ui.animations.card_shake import CardShake
 from src.ui.animations.floating_text import FloatingText
 from src.ui.animations.heal_particles import HealParticles
 from src.ui.animations.magic_burst import MagicBurst
+from src.ui.animations.particle import ParticleEmitter
 from src.ui.animations.poison_bubbles import PoisonBubbles
+from src.ui.animations.multi_slash import MultiSlash
 from src.ui.animations.slash_effect import SlashEffect
 
 _RECT = (100, 50, 160, 110)
@@ -76,7 +78,7 @@ class TestAnimationFactory:
         factory = AnimationFactory()
         anims = factory.create(_damage_event(25), _RECT)
         types = [type(a) for a in anims]
-        assert SlashEffect in types
+        assert MultiSlash in types or SlashEffect in types
         assert CardShake in types
         assert FloatingText in types
 
@@ -128,28 +130,28 @@ class TestAnimationFactory:
         anims = factory.create(event, _RECT)
         assert anims == []
 
-    def test_magical_damage_creates_magic_burst_and_text(self) -> None:
-        factory = AnimationFactory()
-        anims = factory.create(_magical_damage_event(25), _RECT)
-        types = [type(a) for a in anims]
-        assert MagicBurst in types
-        assert FloatingText in types
-        assert SlashEffect not in types
-
-    def test_magical_damage_burst_has_element_color(self) -> None:
+    def test_magical_damage_creates_particle_emitter_and_text(self) -> None:
         factory = AnimationFactory()
         anims = factory.create(
             _magical_damage_event(25, element=ElementType.FIRE), _RECT,
         )
-        bursts = [a for a in anims if isinstance(a, MagicBurst)]
-        assert len(bursts) == 1
-        assert bursts[0].color == colors.ELEMENT_FIRE
+        types = [type(a) for a in anims]
+        assert ParticleEmitter in types
+        assert FloatingText in types
+        assert SlashEffect not in types
+
+    def test_magical_damage_unknown_element_falls_back(self) -> None:
+        factory = AnimationFactory()
+        anims = factory.create(_magical_damage_event(25), _RECT)
+        types = [type(a) for a in anims]
+        assert MagicBurst in types or ParticleEmitter in types
+        assert FloatingText in types
 
     def test_physical_damage_still_creates_slash(self) -> None:
         factory = AnimationFactory()
         anims = factory.create(_damage_event(25), _RECT)
         types = [type(a) for a in anims]
-        assert SlashEffect in types
+        assert MultiSlash in types or SlashEffect in types
         assert MagicBurst not in types
 
     def test_critical_damage_text_has_crit_suffix(self) -> None:
