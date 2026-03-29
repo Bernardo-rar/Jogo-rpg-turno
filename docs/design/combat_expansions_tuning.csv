@@ -1,0 +1,39 @@
+Mechanic,Variable,Base Value,Min,Max,Status,Tuning Notes
+Position Swap,front_damage_dealt_mult,1.10,1.00,1.25,PLACEHOLDER,10% bonus feels impactful without being mandatory. Test at level 5 with Fighter.
+Position Swap,front_damage_taken_mult,1.15,1.00,1.30,PLACEHOLDER,Front-liners need to FEEL exposed. 15% might be too harsh for glass cannons forced front.
+Position Swap,back_damage_dealt_mult,0.90,0.75,1.00,PLACEHOLDER,10% penalty is mild. Backliners should still contribute damage meaningfully.
+Position Swap,back_damage_taken_mult,0.85,0.70,1.00,PLACEHOLDER,15% reduction is the reward for staying back. Combined with melee immunity it may be too safe.
+Position Swap,taunt_max_duration,3,1,5,PLACEHOLDER,3 turns is 1 round cycle. Permanent taunt removes player agency.
+Boss - Charged,charge_damage_mult,2.50,1.50,4.00,PLACEHOLDER,Should feel devastating if not interrupted. 2.5x base ATK. Test vs party at 70% HP.
+Boss - Charged,charge_aoe_falloff,0.70,0.50,1.00,PLACEHOLDER,Each subsequent target takes 70% of base. At 1.0 all targets take full damage.
+Boss - Charged,interrupt_window_turns,1,1,2,PLACEHOLDER,1 turn to interrupt forces instant reaction. 2 turns is lenient.
+Boss - Minions,minion_hp_scale,0.20,0.10,0.40,PLACEHOLDER,20% of boss HP. At level 5 boss ~2000 HP = 400 HP minions. Should die in 2-3 hits.
+Boss - Minions,minion_atk_scale,0.40,0.20,0.60,PLACEHOLDER,40% of boss ATK. Annoying but not lethal individually.
+Boss - Minions,minion_enrage_buff_pct,15.0,5.0,30.0,PLACEHOLDER,+15% per dead minion. Both dead = +30%. Should be scary but survivable.
+Boss - Minions,max_minions_alive,2,1,3,PLACEHOLDER,2 minions max. 3 overwhelms action economy.
+Boss - Empower,empower_max,100,50,200,PLACEHOLDER,Arbitrary scale. What matters is gain/loss ratio.
+Boss - Empower,empower_gain_per_round,20,10,40,PLACEHOLDER,Fills in 5 rounds uncontested. Party has 5 turns to hit weakness.
+Boss - Empower,empower_loss_on_weakness,40,20,60,PLACEHOLDER,One weakness hit buys 2 rounds. Party needs 1 weakness-capable member.
+Boss - Empower,empowered_atk_mult,1.50,1.20,2.00,PLACEHOLDER,+50% ATK during empower. Should feel like a punishment for not exploiting weakness.
+Boss - Empower,empowered_def_mult,1.20,1.00,1.50,PLACEHOLDER,+20% DEF is secondary. Main threat is damage increase.
+Boss - Empower,empowered_duration,3,2,5,PLACEHOLDER,3 turns of danger. Short enough that surviving is possible with good healing.
+Boss - Field,lava_floor_damage_pct,0.08,0.03,0.15,PLACEHOLDER,8% max HP per turn. At 2000 HP = 160 dmg/turn. Meaningful but not lethal alone.
+Boss - Field,blizzard_speed_reduction,0.20,0.10,0.40,PLACEHOLDER,-20% Speed affects turn order. Too high and the party never acts first.
+Boss - Field,field_max_duration,3,2,5,PLACEHOLDER,3 turns is enough to force a response without permanently dominating.
+Boss - Transform,transform_hp_threshold,0.30,0.20,0.50,PLACEHOLDER,At 30% HP. Lower = less time in transformed state. Higher = longer fight.
+Boss - Transform,heal_on_transform_pct,0.20,0.00,0.50,PLACEHOLDER,Heals 20% of NEW max HP. Too much feels unfair. 0% makes transform fragile.
+QTE,time_window_ms,2500,1500,4000,PLACEHOLDER,2.5 seconds total. Under 2s is stressful. Over 3s is trivial.
+QTE,per_key_window_ms,700,400,1000,PLACEHOLDER,700ms per key. Skilled players can do 300ms. Casual needs 800ms+.
+QTE,success_bonus_mult,1.30,1.10,1.50,PLACEHOLDER,+30% is big enough to feel rewarding. Over +50% makes QTE mandatory.
+QTE,partial_bonus_mult,1.15,1.05,1.30,PLACEHOLDER,+15% softens the binary. Partial success should feel OK not bad.
+QTE,failure_penalty_mult,0.90,0.80,1.00,PLACEHOLDER,-10% is mild. Players should not be punished harshly for failing an optional mechanic.
+QTE,partial_threshold,0.50,0.30,0.75,PLACEHOLDER,50% of keys correct = partial. Lower threshold = more forgiving.
+Enemy Synergy,pack_same_target_bonus,0.15,0.05,0.30,PLACEHOLDER,+15% per additional attacker. 3 wolves on same target = +30% for the 3rd.
+Enemy Synergy,last_survivor_atk_bonus,0.50,0.25,1.00,PLACEHOLDER,+50% ATK for the last wolf. High enough to create urgency.
+Enemy Synergy,last_survivor_speed_bonus,0.30,0.15,0.50,PLACEHOLDER,+30% Speed means it likely goes first next round.
+Enemy Synergy,commander_aura_atk_pct,10.0,5.0,20.0,PLACEHOLDER,+10% ATK aura. Noticeable across 3-4 allies. 20% would be oppressive.
+Enemy Synergy,commander_aura_def_pct,10.0,5.0,20.0,PLACEHOLDER,+10% DEF aura. Makes killing minions slightly harder.
+Enemy Synergy,combo_damage_bonus_pct,40.0,20.0,60.0,PLACEHOLDER,+40% bonus for combo follow-up. High reward for the AI but avoidable via position.
+Rogue,free_items_per_turn,1,1,2,PLACEHOLDER,1 free item. 2 would make Rogue the best healer in the game via potions.
+Rogue,backstab_damage_mult,1.40,1.20,1.60,PLACEHOLDER,+40% from back position. Stacks with crit = burst window.
+Rogue,backstab_crit_bonus,0.15,0.05,0.25,PLACEHOLDER,+15% crit chance from back. Combines with DEX crit scaling.
