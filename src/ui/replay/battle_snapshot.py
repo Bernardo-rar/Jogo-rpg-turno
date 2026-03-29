@@ -28,6 +28,7 @@ class CharacterSnapshot:
     active_effects: tuple[str, ...]
     is_party: bool
     class_resources: tuple[ClassResourceSnapshot, ...] = ()
+    class_id: str = ""
 
 
 @dataclass(frozen=True)
@@ -64,6 +65,7 @@ def snapshot_character(char: Character, *, is_party: bool) -> CharacterSnapshot:
         active_effects=effects,
         is_party=is_party,
         class_resources=resources,
+        class_id=type(char).__name__.lower(),
     )
 
 

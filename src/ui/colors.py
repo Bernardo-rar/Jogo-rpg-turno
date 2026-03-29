@@ -42,6 +42,9 @@ ECONOMY_USED = (100, 100, 100)
 # Turn indicator
 HIGHLIGHT_ACTIVE = (255, 220, 80)
 
+# Target selection indicator
+HIGHLIGHT_TARGET = (255, 220, 50)
+
 # Timeline
 TIMELINE_BG = (25, 25, 40)
 TIMELINE_PARTY = (50, 100, 180)
@@ -64,6 +67,12 @@ DEFAULT_MAGIC_COLOR = (200, 200, 255)
 
 # Critical hit
 TEXT_CRITICAL = (255, 220, 50)
+
+# Loot item types
+LOOT_WEAPON = (255, 220, 80)
+LOOT_ARMOR = (80, 220, 220)
+LOOT_ACCESSORY = (200, 140, 255)
+LOOT_CONSUMABLE = (240, 240, 240)
 
 # Class resources
 RES_FIGHTER_AP = (255, 200, 50)

@@ -14,12 +14,13 @@ KEYBINDINGS: tuple[tuple[str, str], ...] = (
     ("[Backspace]", "Back"),
     ("[TAB]", "End turn"),
     ("[SPACE]", "End turn"),
+    ("[C]", "Items (quick access)"),
     ("[S]", "Speed (1x/2x/3x)"),
     ("[H]", "Help"),
 )
 
 _PANEL_W = 400
-_PANEL_H = 350
+_PANEL_H = 378
 _PADDING_X = 24
 _LINE_HEIGHT = 28
 _KEY_COL_WIDTH = 130
