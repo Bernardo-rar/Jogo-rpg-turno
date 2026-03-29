@@ -1,0 +1,210 @@
+{
+  "fighter": {
+    "option_a": {
+      "subclass_id": "champion",
+      "name": "Champion",
+      "description": "Crit monster: acertos criticos devastadores e resiliencia marcial.",
+      "skill_ids": ["mighty_blow", "champions_resolve"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 10}]
+    },
+    "option_b": {
+      "subclass_id": "battlemaster",
+      "name": "Battlemaster",
+      "description": "Comandante tatico: buffa aliados e debuffa inimigos com manobras.",
+      "skill_ids": ["commanding_strike", "rally"],
+      "passive_bonuses": [{"stat": "PHYSICAL_DEFENSE", "percent": 10}]
+    }
+  },
+  "barbarian": {
+    "option_a": {
+      "subclass_id": "berserker",
+      "name": "Berserker",
+      "description": "Furia incontrolavel: quanto mais dano leva, mais forte fica.",
+      "skill_ids": ["frenzy_strike", "rampage"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 15}]
+    },
+    "option_b": {
+      "subclass_id": "totem_warrior",
+      "name": "Totem Warrior",
+      "description": "Muro espiritual: protege aliados e absorve dano pela party.",
+      "skill_ids": ["bear_totem", "totemic_roar"],
+      "passive_bonuses": [{"stat": "MAX_HP", "percent": 15}]
+    }
+  },
+  "mage": {
+    "option_a": {
+      "subclass_id": "evoker",
+      "name": "Evoker",
+      "description": "Destruicao em area: explosoes elementais massivas.",
+      "skill_ids": ["meteor_shard", "frost_nova"],
+      "passive_bonuses": [{"stat": "MAGICAL_ATTACK", "percent": 15}]
+    },
+    "option_b": {
+      "subclass_id": "chronomancer",
+      "name": "Chronomancer",
+      "description": "Manipulador temporal: acelera aliados e desacelera inimigos.",
+      "skill_ids": ["temporal_shift", "slow_field"],
+      "passive_bonuses": [{"stat": "SPEED", "percent": 10}]
+    }
+  },
+  "cleric": {
+    "option_a": {
+      "subclass_id": "life_domain",
+      "name": "Life Domain",
+      "description": "Curandeiro supremo: heals mais poderosos e ressurreicao.",
+      "skill_ids": ["greater_heal", "mass_mend"],
+      "passive_bonuses": [{"stat": "HEALING_RECEIVED", "percent": 20}]
+    },
+    "option_b": {
+      "subclass_id": "war_domain",
+      "name": "War Domain",
+      "description": "Guerreiro sagrado: ataques holy devastadores.",
+      "skill_ids": ["divine_strike", "holy_smite"],
+      "passive_bonuses": [{"stat": "MAGICAL_ATTACK", "percent": 15}]
+    }
+  },
+  "paladin": {
+    "option_a": {
+      "subclass_id": "devotion",
+      "name": "Devotion",
+      "description": "Protetor devoto: auras de protecao e escudo divino.",
+      "skill_ids": ["radiant_shield", "blessed_aura"],
+      "passive_bonuses": [{"stat": "MAX_HP", "percent": 10}]
+    },
+    "option_b": {
+      "subclass_id": "vengeance",
+      "name": "Vengeance",
+      "description": "Justiceiro implacavel: marca e executa inimigos.",
+      "skill_ids": ["mark_of_vengeance", "smite_evil"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 15}]
+    }
+  },
+  "rogue": {
+    "option_a": {
+      "subclass_id": "assassin",
+      "name": "Assassin",
+      "description": "Burst letal de stealth: primeiro golpe devastador.",
+      "skill_ids": ["assassinate", "death_mark"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 20}]
+    },
+    "option_b": {
+      "subclass_id": "thief",
+      "name": "Thief",
+      "description": "Ladrao habilidoso: usa itens de graca e rouba buffs.",
+      "skill_ids": ["quick_hands", "steal_buff"],
+      "passive_bonuses": [{"stat": "SPEED", "percent": 10}]
+    }
+  },
+  "ranger": {
+    "option_a": {
+      "subclass_id": "hunter",
+      "name": "Hunter",
+      "description": "Atirador focado: dano maximo em alvo unico.",
+      "skill_ids": ["focused_shot", "kill_shot"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 15}]
+    },
+    "option_b": {
+      "subclass_id": "beastmaster",
+      "name": "Beastmaster",
+      "description": "Companheiro animal: lobo que luta ao seu lado.",
+      "skill_ids": ["wolf_companion", "pack_tactics"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 10}]
+    }
+  },
+  "bard": {
+    "option_a": {
+      "subclass_id": "college_of_valor",
+      "name": "College of Valor",
+      "description": "Cantor de guerra: buffa ataque e defesa da party.",
+      "skill_ids": ["war_song", "heroic_ballad"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 10}]
+    },
+    "option_b": {
+      "subclass_id": "college_of_lore",
+      "name": "College of Lore",
+      "description": "Mestre do debuff: enfraquece inimigos com palavras cortantes.",
+      "skill_ids": ["cutting_words", "song_of_confusion"],
+      "passive_bonuses": [{"stat": "MAGICAL_ATTACK", "percent": 10}]
+    }
+  },
+  "monk": {
+    "option_a": {
+      "subclass_id": "open_hand",
+      "name": "Open Hand",
+      "description": "Mestre do combo: golpes rapidos acumulam dano explosivo.",
+      "skill_ids": ["palm_strike", "flurry_combo"],
+      "passive_bonuses": [{"stat": "PHYSICAL_ATTACK", "percent": 10}]
+    },
+    "option_b": {
+      "subclass_id": "shadow",
+      "name": "Shadow",
+      "description": "Sombra evasiva: impossivel de acertar, contra-ataca de surpresa.",
+      "skill_ids": ["shadow_step", "smoke_vanish"],
+      "passive_bonuses": [{"stat": "SPEED", "percent": 15}, {"stat": "PHYSICAL_DEFENSE", "percent": 15}]
+    }
+  },
+  "druid": {
+    "option_a": {
+      "subclass_id": "circle_of_moon",
+      "name": "Circle of Moon",
+      "description": "Transformacao bestial: formas animais mais poderosas.",
+      "skill_ids": ["dire_bear_form", "primal_strike"],
+      "passive_bonuses": [{"stat": "MAX_HP", "percent": 15}]
+    },
+    "option_b": {
+      "subclass_id": "circle_of_land",
+      "name": "Circle of Land",
+      "description": "Magia da natureza: campos persistentes e magias devastadoras.",
+      "skill_ids": ["thorn_wall", "natures_wrath"],
+      "passive_bonuses": [{"stat": "MAGICAL_ATTACK", "percent": 10}]
+    }
+  },
+  "sorcerer": {
+    "option_a": {
+      "subclass_id": "draconic_bloodline",
+      "name": "Draconic Bloodline",
+      "description": "Sangue de dragao: escolha um elemento e domine-o.",
+      "skill_ids": ["dragon_breath", "draconic_aura"],
+      "passive_bonuses": [{"stat": "MAGICAL_ATTACK", "percent": 25}]
+    },
+    "option_b": {
+      "subclass_id": "wild_magic",
+      "name": "Wild Magic",
+      "description": "Caos magico: efeitos aleatorios poderosos e imprevisíveis.",
+      "skill_ids": ["chaos_bolt", "surge_random"],
+      "passive_bonuses": [{"stat": "MAGICAL_ATTACK", "percent": 10}]
+    }
+  },
+  "warlock": {
+    "option_a": {
+      "subclass_id": "fiend_pact",
+      "name": "Fiend Pact",
+      "description": "Pacto infernal: AoE sombrio com roubo de vida.",
+      "skill_ids": ["hellfire_blast", "soul_siphon"],
+      "passive_bonuses": [{"stat": "MAGICAL_ATTACK", "percent": 15}]
+    },
+    "option_b": {
+      "subclass_id": "celestial_pact",
+      "name": "Celestial Pact",
+      "description": "Pacto celestial: hibrido de cura e dano sagrado.",
+      "skill_ids": ["celestial_flame", "healing_light"],
+      "passive_bonuses": [{"stat": "HEALING_RECEIVED", "percent": 15}]
+    }
+  },
+  "artificer": {
+    "option_a": {
+      "subclass_id": "alchemist",
+      "name": "Alchemist",
+      "description": "Mestre alquimista: cria pocoes em combate e otimiza consumiveis.",
+      "skill_ids": ["brew_potion", "volatile_mixture"],
+      "passive_bonuses": [{"stat": "HEALING_RECEIVED", "percent": 10}]
+    },
+    "option_b": {
+      "subclass_id": "armorer",
+      "name": "Armorer",
+      "description": "Engenheiro de armadura: tank mecanizado com defesas absurdas.",
+      "skill_ids": ["power_armor", "reactive_plating"],
+      "passive_bonuses": [{"stat": "PHYSICAL_DEFENSE", "percent": 20}, {"stat": "MAX_HP", "percent": 10}]
+    }
+  }
+}
