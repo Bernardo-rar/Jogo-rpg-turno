@@ -5,10 +5,9 @@ from __future__ import annotations
 from src.core.effects.effect import Effect
 from src.core.effects.modifiable_stat import ModifiableStat
 from src.core.effects.stacking import StackingPolicy
+from src.core.effects.stacking_resolver import StackingResolver
 from src.core.effects.stat_modifier import StatModifier
 from src.core.effects.tick_result import TickResult
-
-DEFAULT_STACKING_POLICY = StackingPolicy.REPLACE
 
 
 class EffectManager:
@@ -23,7 +22,7 @@ class EffectManager:
 
     def __init__(self) -> None:
         self._effects: list[Effect] = []
-        self._stacking_policies: dict[str, StackingPolicy] = {}
+        self._stacking = StackingResolver()
 
     @property
     def active_effects(self) -> list[Effect]:
@@ -39,12 +38,11 @@ class EffectManager:
         self, stacking_key: str, policy: StackingPolicy,
     ) -> None:
         """Configura politica de stacking para uma chave."""
-        self._stacking_policies[stacking_key] = policy
+        self._stacking.set_policy(stacking_key, policy)
 
     def add_effect(self, effect: Effect) -> None:
         """Adiciona efeito aplicando regras de stacking."""
-        policy = self._get_policy(effect.stacking_key)
-        self._apply_stacking(effect, policy)
+        self._stacking.resolve_add(self._effects, effect)
 
     def remove_effect(self, effect: Effect) -> None:
         """Remove efeito especifico. Chama force_expire + on_expire."""
@@ -56,28 +54,23 @@ class EffectManager:
 
     def remove_by_key(self, stacking_key: str) -> int:
         """Remove todos os efeitos com a chave. Retorna qtd removida."""
-        to_remove = self._find_by_key(stacking_key)
+        to_remove = _find_active_by_key(self._effects, stacking_key)
         for effect in to_remove:
             self.remove_effect(effect)
         return len(to_remove)
 
     def tick_all(self) -> list[TickResult]:
         """Ticka todos os efeitos. Auto-expire os que acabaram."""
-        results: list[TickResult] = []
-        for effect in list(self._effects):
-            result = effect.tick()
-            results.append(result)
-        self._cleanup_expired()
+        results = [e.tick() for e in list(self._effects)]
+        _cleanup_expired(self._effects)
         return results
 
     def get_modifiers_for(self, stat: ModifiableStat) -> list[StatModifier]:
         """Todos os modificadores ativos para um stat especifico."""
-        modifiers: list[StatModifier] = []
-        for effect in self.active_effects:
-            for mod in effect.get_modifiers():
-                if mod.stat == stat:
-                    modifiers.append(mod)
-        return modifiers
+        return [
+            mod for e in self.active_effects
+            for mod in e.get_modifiers() if mod.stat == stat
+        ]
 
     def aggregate_modifier(self, stat: ModifiableStat) -> StatModifier:
         """Agrega modificadores de um stat: soma flat + soma percent."""
@@ -99,56 +92,18 @@ class EffectManager:
             effect.expire_safely()
         self._effects.clear()
 
-    def _get_policy(self, stacking_key: str) -> StackingPolicy:
-        """Retorna politica configurada ou DEFAULT (REPLACE)."""
-        return self._stacking_policies.get(
-            stacking_key, DEFAULT_STACKING_POLICY,
-        )
 
-    def _apply_stacking(
-        self, new_effect: Effect, policy: StackingPolicy,
-    ) -> None:
-        """Aplica regra de stacking ao adicionar efeito."""
-        existing = self._find_by_key(new_effect.stacking_key)
-        if not existing or policy == StackingPolicy.STACK:
-            self._add_and_apply(new_effect)
-            return
-        if policy == StackingPolicy.REPLACE:
-            self._replace_existing(existing, new_effect)
-            return
-        self._refresh_existing(existing[0], new_effect)
+def _find_active_by_key(
+    effects: list[Effect], stacking_key: str,
+) -> list[Effect]:
+    return [
+        e for e in effects
+        if e.stacking_key == stacking_key and not e.is_expired
+    ]
 
-    def _find_by_key(self, stacking_key: str) -> list[Effect]:
-        """Encontra efeitos ativos com a chave dada."""
-        return [
-            e for e in self._effects
-            if e.stacking_key == stacking_key and not e.is_expired
-        ]
 
-    def _add_and_apply(self, effect: Effect) -> None:
-        """Adiciona efeito e chama on_apply."""
-        self._effects.append(effect)
-        effect.on_apply()
-
-    def _replace_existing(
-        self, existing: list[Effect], new_effect: Effect,
-    ) -> None:
-        """Remove existentes e adiciona novo (REPLACE policy)."""
-        for old in existing:
-            old.force_expire()
-            old.expire_safely()
-            self._effects.remove(old)
-        self._add_and_apply(new_effect)
-
-    def _refresh_existing(
-        self, existing: Effect, new_effect: Effect,
-    ) -> None:
-        """Reseta duracao do existente (REFRESH policy)."""
-        existing.refresh_duration(new_effect.duration)
-
-    def _cleanup_expired(self) -> None:
-        """Remove efeitos expirados, chamando on_expire uma unica vez."""
-        expired = [e for e in self._effects if e.is_expired]
-        for effect in expired:
-            effect.expire_safely()
-            self._effects.remove(effect)
+def _cleanup_expired(effects: list[Effect]) -> None:
+    expired = [e for e in effects if e.is_expired]
+    for effect in expired:
+        effect.expire_safely()
+        effects.remove(effect)
