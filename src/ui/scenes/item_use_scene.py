@@ -40,10 +40,12 @@ class ItemUseScene:
         fonts: FontManager,
         party: list[Character],
         on_complete: Callable[[dict], None],
+        gold: int = 0,
     ) -> None:
         self._fonts = fonts
         self._party = party
         self._on_complete = on_complete
+        self._gold = gold
         self._inventory = self._resolve_inventory()
         self._usable: list[InventorySlot] = self._refresh_usable()
         self._phase = _Phase.CHOOSE_ITEM
@@ -167,6 +169,11 @@ class ItemUseScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         _draw_header(surface, self._fonts)
+        if self._gold > 0:
+            gold_text = self._fonts.medium.render(
+                f"Gold: {self._gold}", True, colors.TEXT_YELLOW,
+            )
+            surface.blit(gold_text, (layout.WINDOW_WIDTH - gold_text.get_width() - 40, 30))
         _draw_item_list(
             surface, self._fonts, self._usable,
             self._item_index, self._phase == _Phase.CHOOSE_ITEM,
