@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import pygame
 
 from src.ui import colors, layout
@@ -22,59 +24,57 @@ _LEVEL_TITLES: dict[MenuLevel, str] = {
 _PANEL_BOTTOM = layout.WINDOW_HEIGHT - 10
 
 
+@dataclass(frozen=True)
+class ActionPanelState:
+    """Estado para renderizar o action panel."""
+
+    options: list[MenuOption]
+    level: MenuLevel
+    combatant_name: str = ""
+    breadcrumb: str = ""
+    can_go_back: bool = False
+    highlight_index: int = -1
+    description: str = ""
+
+
 def draw_action_panel(
     surface: pygame.Surface,
-    options: list[MenuOption],
-    level: MenuLevel,
+    state: ActionPanelState,
     font: pygame.font.Font,
-    combatant_name: str = "",
-    breadcrumb: str = "",
-    can_go_back: bool = False,
-    highlight_index: int = -1,
-    description: str = "",
 ) -> None:
     """Renderiza o painel de opcoes do menu de acao."""
-    h = _compute_height(
-        len(options), combatant_name, breadcrumb,
-        can_go_back, description,
-    )
+    h = _compute_height(state)
     panel_y = _PANEL_BOTTOM - h
     _draw_panel_bg(surface, panel_y, h)
     x = layout.ACTION_PANEL_X + _PADDING_X
     y = panel_y + _PADDING_Y
-    y = _draw_header(surface, font, x, y, combatant_name, breadcrumb)
-    _draw_title(surface, level, x, y, font)
+    y = _draw_header(surface, font, x, y, state.combatant_name, state.breadcrumb)
+    _draw_title(surface, state.level, x, y, font)
     y += layout.ACTION_LINE_HEIGHT + 4
-    for i, opt in enumerate(options):
-        if i == highlight_index:
+    for i, opt in enumerate(state.options):
+        if i == state.highlight_index:
             _draw_highlight_bar(surface, x, y)
         _draw_option(surface, opt, x, y, font)
         y += layout.ACTION_LINE_HEIGHT
-    if description:
-        _draw_description(surface, font, x, y + 4, description)
-    if can_go_back:
+    if state.description:
+        _draw_description(surface, font, x, y + 4, state.description)
+    if state.can_go_back:
         back_y = panel_y + h - layout.ACTION_LINE_HEIGHT - 4
         _draw_back_hint_at(surface, font, back_y)
 
 
-def _compute_height(
-    n_options: int,
-    name: str,
-    breadcrumb: str,
-    has_back: bool,
-    description: str,
-) -> int:
+def _compute_height(state: ActionPanelState) -> int:
     """Calcula altura do painel baseado no conteudo."""
     h = _PADDING_Y * 2
-    if name:
+    if state.combatant_name:
         h += layout.ACTION_LINE_HEIGHT
-    if breadcrumb:
+    if state.breadcrumb:
         h += layout.ACTION_LINE_HEIGHT
     h += layout.ACTION_LINE_HEIGHT + 4  # title
-    h += n_options * layout.ACTION_LINE_HEIGHT
-    if description:
+    h += len(state.options) * layout.ACTION_LINE_HEIGHT
+    if state.description:
         h += layout.ACTION_LINE_HEIGHT + 4
-    if has_back:
+    if state.can_go_back:
         h += layout.ACTION_LINE_HEIGHT + 4
     return h
 
@@ -108,11 +108,6 @@ def _draw_header(
         surface.blit(crumb, (x, y))
         y += layout.ACTION_LINE_HEIGHT
     return y
-
-
-def _draw_back_hint(surface: pygame.Surface, font: pygame.font.Font) -> None:
-    """Legacy — nao mais usada."""
-    pass
 
 
 def _draw_back_hint_at(

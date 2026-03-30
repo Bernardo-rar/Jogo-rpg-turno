@@ -72,25 +72,32 @@ class _EquipContext:
     catalogs: EquipmentCatalogs
 
 
+@dataclass(frozen=True)
+class EquipmentConfig:
+    """Agrupa dados de inicializacao do EquipmentScene."""
+
+    party: list[Character]
+    equipment_stash: list[LootDrop]
+    catalogs: EquipmentCatalogs
+    on_complete: Callable[[dict], None]
+    gold: int = 0
+
+
 class EquipmentScene:
     """Tela de equipamento com 3 paineis: party, slots, stash."""
 
     def __init__(
         self,
         fonts: FontManager | None,
-        party: list[Character],
-        equipment_stash: list[LootDrop],
-        catalogs: EquipmentCatalogs,
-        on_complete: Callable[[dict], None],
-        gold: int = 0,
+        config: EquipmentConfig,
     ) -> None:
         self._fonts = fonts
-        self._party = party
-        self._stash = equipment_stash
-        self._catalogs = catalogs
-        self._ctx = _EquipContext(stash=equipment_stash, catalogs=catalogs)
-        self._on_complete = on_complete
-        self._gold = gold
+        self._party = config.party
+        self._stash = config.equipment_stash
+        self._catalogs = config.catalogs
+        self._ctx = _EquipContext(stash=config.equipment_stash, catalogs=config.catalogs)
+        self._on_complete = config.on_complete
+        self._gold = config.gold
         self._focus = _Focus.PARTY
         self._party_index = 0
         self._slot_index = 0

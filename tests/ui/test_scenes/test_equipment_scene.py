@@ -19,6 +19,7 @@ from src.core.items.weapon_type import WeaponType
 from src.dungeon.loot.drop_table import LootDrop
 from src.dungeon.run.equipment_catalog import EquipmentCatalogs
 from src.ui.scenes.equipment_scene import (
+    EquipmentConfig,
     EquipmentScene,
     compute_stat_preview,
 )
@@ -93,10 +94,12 @@ def _make_scene(
     completed: list[dict] = []
     scene = EquipmentScene(
         fonts=None,
-        party=party,
-        equipment_stash=stash,
-        catalogs=catalogs,
-        on_complete=completed.append,
+        config=EquipmentConfig(
+            party=party,
+            equipment_stash=stash,
+            catalogs=catalogs,
+            on_complete=completed.append,
+        ),
     )
     return scene, completed
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Callable
 
@@ -10,6 +11,7 @@ import pygame
 from src.dungeon.shop.shop_state import ShopState
 from src.ui import colors, layout
 from src.ui.components.confirm_dialog import ConfirmDialog
+from src.ui.components.text_utils import draw_centered
 from src.ui.font_manager import FontManager
 
 _SHOP_COLOR = (80, 180, 200)
@@ -22,6 +24,17 @@ class _Tab(Enum):
     SELL = auto()
 
 
+@dataclass(frozen=True)
+class ShopCallbacks:
+    """Agrupa callbacks da ShopScene."""
+
+    on_buy: Callable[[int], bool]
+    on_sell: Callable[[int], int]
+    gold_getter: Callable[[], int]
+    loot_getter: Callable[[], list]
+    on_complete: Callable[[dict], None]
+
+
 class ShopScene:
     """Tela de loja: comprar e vender itens."""
 
@@ -29,19 +42,15 @@ class ShopScene:
         self,
         fonts: FontManager,
         shop: ShopState,
-        on_buy: Callable[[int], bool],
-        on_sell: Callable[[int], int],
-        gold_getter: Callable[[], int],
-        loot_getter: Callable[[], list],
-        on_complete: Callable[[dict], None],
+        callbacks: ShopCallbacks,
     ) -> None:
         self._fonts = fonts
         self._shop = shop
-        self._on_buy = on_buy
-        self._on_sell = on_sell
-        self._gold_getter = gold_getter
-        self._loot_getter = loot_getter
-        self._on_complete = on_complete
+        self._on_buy = callbacks.on_buy
+        self._on_sell = callbacks.on_sell
+        self._gold_getter = callbacks.gold_getter
+        self._loot_getter = callbacks.loot_getter
+        self._on_complete = callbacks.on_complete
         self._tab = _Tab.BUY
         self._cursor: int = 0
         self._message: str = ""
@@ -133,7 +142,7 @@ class ShopScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         cx = layout.WINDOW_WIDTH // 2
-        _centered(surface, self._fonts.large, "Loja", cx, 60, _SHOP_COLOR)
+        draw_centered(surface, self._fonts.large, "Loja", cx, 60, _SHOP_COLOR)
         _draw_gold_bar(surface, self._fonts, self._gold_getter())
         _draw_tabs(surface, self._fonts, cx, self._tab)
         if self._tab == _Tab.BUY:
@@ -141,7 +150,7 @@ class ShopScene:
         else:
             _draw_sell_list(surface, self._fonts, self._loot_getter(), self._cursor)
         if self._message:
-            _centered(surface, self._fonts.small, self._message, cx, 600, colors.TEXT_YELLOW)
+            draw_centered(surface, self._fonts.small, self._message, cx, 600, colors.TEXT_YELLOW)
         _draw_controls(surface, self._fonts, cx)
         if self._confirm is not None:
             self._confirm.draw(surface, self._fonts.medium)
@@ -223,7 +232,7 @@ def _draw_controls(
     cx: int,
 ) -> None:
     """Desenha instrucoes de controle."""
-    _centered(
+    draw_centered(
         surface, fonts.small,
         "[W/S] Navegar   [ENTER] Comprar/Vender   [TAB] Aba   [ESC] Sair",
         cx, 650, colors.TEXT_MUTED,
@@ -239,7 +248,3 @@ def _key_to_index(key: int) -> int | None:
     return mapping.get(key)
 
 
-def _centered(surface, font, text, x, y, color):
-    rendered = font.render(text, True, color)
-    rect = rendered.get_rect(center=(x, y))
-    surface.blit(rendered, rect)

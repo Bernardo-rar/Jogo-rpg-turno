@@ -5,6 +5,7 @@ from __future__ import annotations
 from src.dungeon.loot.drop_table import LootDrop
 from src.ui.scenes.combat_reward_scene import (
     CombatRewardScene,
+    RewardSceneConfig,
     humanize_item_id,
 )
 
@@ -27,10 +28,10 @@ class TestCombatRewardScene:
         completed: list[dict] = []
         scene = CombatRewardScene(
             fonts=None,
-            gold_earned=100,
-            drops=(),
-            total_gold=500,
-            on_complete=completed.append,
+            config=RewardSceneConfig(
+                gold_earned=100, drops=(), total_gold=500,
+                on_complete=completed.append,
+            ),
         )
         # Atualiza 2 segundos (mais que suficiente para a animacao)
         for _ in range(120):
@@ -41,10 +42,10 @@ class TestCombatRewardScene:
         completed: list[dict] = []
         scene = CombatRewardScene(
             fonts=None,
-            gold_earned=50,
-            drops=(),
-            total_gold=50,
-            on_complete=completed.append,
+            config=RewardSceneConfig(
+                gold_earned=50, drops=(), total_gold=50,
+                on_complete=completed.append,
+            ),
         )
         # Deve funcionar sem drops
         scene.update(dt_ms=1000)
@@ -54,12 +55,12 @@ class TestCombatRewardScene:
         completed: list[dict] = []
         scene = CombatRewardScene(
             fonts=None,
-            gold_earned=200,
-            drops=(
-                LootDrop(item_type="consumable", item_id="health_potion", quantity=2),
+            config=RewardSceneConfig(
+                gold_earned=200,
+                drops=(LootDrop(item_type="consumable", item_id="health_potion", quantity=2),),
+                total_gold=300,
+                on_complete=completed.append,
             ),
-            total_gold=300,
-            on_complete=completed.append,
         )
         # Atualiza bastante para completar contagem
         for _ in range(120):
@@ -70,10 +71,10 @@ class TestCombatRewardScene:
         completed: list[dict] = []
         scene = CombatRewardScene(
             fonts=None,
-            gold_earned=0,
-            drops=(),
-            total_gold=0,
-            on_complete=completed.append,
+            config=RewardSceneConfig(
+                gold_earned=0, drops=(), total_gold=0,
+                on_complete=completed.append,
+            ),
         )
         scene.update(dt_ms=17)
         assert scene.counting_done is True

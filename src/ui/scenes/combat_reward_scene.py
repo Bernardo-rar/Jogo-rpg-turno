@@ -9,6 +9,7 @@ import pygame
 
 from src.dungeon.loot.drop_table import LootDrop
 from src.ui import colors, layout
+from src.ui.components.text_utils import draw_centered
 from src.ui.font_manager import FontManager
 
 GOLD_COUNT_DURATION_MS = 1000
@@ -28,6 +29,9 @@ class RewardSceneConfig:
     drops: tuple[LootDrop, ...]
     total_gold: int
     on_complete: Callable[[dict], None]
+    xp_earned: int = 0
+    leveled_up: bool = False
+    new_level: int = 0
 
 
 _LOOT_COLOR_MAP: dict[str, tuple[int, int, int]] = {
@@ -55,26 +59,15 @@ class CombatRewardScene:
     def __init__(
         self,
         fonts: FontManager | None,
-        gold_earned: int,
-        drops: tuple[LootDrop, ...],
-        total_gold: int,
-        on_complete: Callable[[dict], None],
-        xp_earned: int = 0,
-        leveled_up: bool = False,
-        new_level: int = 0,
+        config: RewardSceneConfig,
     ) -> None:
         self._fonts = fonts
-        self._config = RewardSceneConfig(
-            gold_earned=gold_earned,
-            drops=drops,
-            total_gold=total_gold,
-            on_complete=on_complete,
-        )
-        self._xp_earned = xp_earned
-        self._leveled_up = leveled_up
-        self._new_level = new_level
+        self._config = config
+        self._xp_earned = config.xp_earned
+        self._leveled_up = config.leveled_up
+        self._new_level = config.new_level
         self._gold_displayed: float = 0.0
-        self._counting_done: bool = gold_earned == 0
+        self._counting_done: bool = config.gold_earned == 0
         self._elapsed_ms: float = 0.0
         self._ready: bool = False
 
@@ -156,7 +149,7 @@ class CombatRewardScene:
         self, surface: pygame.Surface, panel: pygame.Rect,
     ) -> None:
         """Desenha titulo 'Recompensas!' em amarelo."""
-        _centered(
+        draw_centered(
             surface, self._fonts.large,
             "Recompensas!", panel.centerx, panel.top + 35,
             colors.TEXT_YELLOW,
@@ -167,7 +160,7 @@ class CombatRewardScene:
     ) -> None:
         """Desenha gold earned com animacao de contagem."""
         text = f"Gold: {self.gold_displayed}"
-        _centered(
+        draw_centered(
             surface, self._fonts.medium,
             text, panel.centerx, panel.top + 80,
             colors.TEXT_YELLOW,
@@ -180,14 +173,14 @@ class CombatRewardScene:
         if self._xp_earned <= 0:
             return
         text = f"XP: +{self._xp_earned}"
-        _centered(
+        draw_centered(
             surface, self._fonts.medium,
             text, panel.centerx, panel.top + 105,
             (100, 200, 255),
         )
         if self._leveled_up:
             level_text = f"LEVEL UP! -> Lv.{self._new_level}"
-            _centered(
+            draw_centered(
                 surface, self._fonts.medium,
                 level_text, panel.centerx, panel.top + 130,
                 colors.TEXT_YELLOW,
@@ -201,7 +194,7 @@ class CombatRewardScene:
         if not drops:
             return
         y_start = panel.top + 160 if self._xp_earned > 0 else panel.top + 120
-        _centered(
+        draw_centered(
             surface, self._fonts.medium,
             "Loot:", panel.centerx, y_start,
             colors.TEXT_WHITE,
@@ -211,7 +204,7 @@ class CombatRewardScene:
             name = humanize_item_id(drop.item_id)
             qty = f" x{drop.quantity}" if drop.quantity > 1 else ""
             drop_color = color_for_item_type(drop.item_type)
-            _centered(
+            draw_centered(
                 surface, self._fonts.small,
                 f"{name}{qty}", panel.centerx,
                 y_start + 28 + i * DROP_LINE_HEIGHT,
@@ -223,7 +216,7 @@ class CombatRewardScene:
     ) -> None:
         """Desenha total de gold na run."""
         text = f"Gold total: {self._config.total_gold}"
-        _centered(
+        draw_centered(
             surface, self._fonts.medium,
             text, panel.centerx, panel.bottom - 70,
             colors.TEXT_MUTED,
@@ -235,14 +228,10 @@ class CombatRewardScene:
         """Desenha prompt para continuar."""
         if not self._counting_done:
             return
-        _centered(
+        draw_centered(
             surface, self._fonts.small,
             "[ENTER] Continuar", panel.centerx, panel.bottom - 30,
             colors.TEXT_MUTED,
         )
 
 
-def _centered(surface, font, text, x, y, color):
-    rendered = font.render(text, True, color)
-    rect = rendered.get_rect(center=(x, y))
-    surface.blit(rendered, rect)
