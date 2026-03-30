@@ -8,6 +8,7 @@ import pygame
 
 from src.dungeon.run.campfire_actions import CampfireBuff
 from src.ui import colors, layout
+from src.ui.components.text_utils import draw_centered
 from src.ui.font_manager import FontManager
 
 _CAMPFIRE_COLOR = (220, 140, 40)
@@ -47,8 +48,8 @@ class CampfireScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         cx = layout.WINDOW_WIDTH // 2
-        _centered(surface, self._fonts.large, "Fogueira", cx, 120, _CAMPFIRE_COLOR)
-        _centered(
+        draw_centered(surface, self._fonts.large, "Fogueira", cx, 120, _CAMPFIRE_COLOR)
+        draw_centered(
             surface, self._fonts.small,
             "Escolha um beneficio para sua party:",
             cx, 170, colors.TEXT_MUTED,
@@ -69,8 +70,8 @@ def _draw_options(
     y = 250
     for i, buff in enumerate(buffs):
         label = f"[{i + 1}] {buff.name}"
-        _centered(surface, fonts.medium, label, cx, y, colors.TEXT_YELLOW)
-        _centered(surface, fonts.small, buff.description, cx, y + 28, colors.TEXT_WHITE)
+        draw_centered(surface, fonts.medium, label, cx, y, colors.TEXT_YELLOW)
+        draw_centered(surface, fonts.small, buff.description, cx, y + 28, colors.TEXT_WHITE)
         y += _OPTION_SPACING
 
 
@@ -82,8 +83,8 @@ def _draw_result(
 ) -> None:
     """Desenha resultado da escolha."""
     buff_name = result.get("buff_name", "")
-    _centered(surface, fonts.medium, f"{buff_name} ativado!", cx, 300, colors.TEXT_HEAL)
-    _centered(surface, fonts.small, "[ENTER] Continuar", cx, 450, colors.TEXT_MUTED)
+    draw_centered(surface, fonts.medium, f"{buff_name} ativado!", cx, 300, colors.TEXT_HEAL)
+    draw_centered(surface, fonts.small, "[ENTER] Continuar", cx, 450, colors.TEXT_MUTED)
 
 
 def _key_to_index(key: int) -> int | None:
@@ -91,7 +92,3 @@ def _key_to_index(key: int) -> int | None:
     return mapping.get(key)
 
 
-def _centered(surface, font, text, x, y, color):
-    rendered = font.render(text, True, color)
-    rect = rendered.get_rect(center=(x, y))
-    surface.blit(rendered, rect)

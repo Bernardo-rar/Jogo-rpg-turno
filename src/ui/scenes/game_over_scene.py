@@ -7,6 +7,7 @@ from typing import Callable
 import pygame
 
 from src.ui import colors, layout
+from src.ui.components.text_utils import draw_centered
 from src.ui.font_manager import FontManager
 
 
@@ -33,19 +34,15 @@ class GameOverScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         cx = layout.WINDOW_WIDTH // 2
-        _centered(surface, self._fonts.large, "GAME OVER", cx, 250, colors.TEXT_DAMAGE)
-        _centered(
+        draw_centered(surface, self._fonts.large, "GAME OVER", cx, 250, colors.TEXT_DAMAGE)
+        draw_centered(
             surface, self._fonts.medium,
             f"Salas conquistadas: {self._rooms}",
             cx, 340, colors.TEXT_WHITE,
         )
-        _centered(
+        draw_centered(
             surface, self._fonts.small,
             "[ENTER] Menu Principal", cx, 450, colors.TEXT_MUTED,
         )
 
 
-def _centered(surface, font, text, x, y, color):
-    rendered = font.render(text, True, color)
-    rect = rendered.get_rect(center=(x, y))
-    surface.blit(rendered, rect)

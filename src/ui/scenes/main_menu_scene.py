@@ -7,6 +7,7 @@ from typing import Callable
 import pygame
 
 from src.ui import colors, layout
+from src.ui.components.text_utils import draw_centered
 from src.ui.font_manager import FontManager
 
 _TITLE = "RPG TURNO"
@@ -42,32 +43,21 @@ class MainMenuScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         cx = layout.WINDOW_WIDTH // 2
-        _draw_centered(
+        draw_centered(
             surface, self._fonts.large, _TITLE,
             cx, 200, colors.TEXT_WHITE,
         )
-        _draw_centered(
+        draw_centered(
             surface, self._fonts.medium, _SUBTITLE,
             cx, 260, colors.TEXT_MUTED,
         )
-        _draw_centered(
+        draw_centered(
             surface, self._fonts.medium, _OPTION_PLAY,
             cx, 400, colors.TEXT_YELLOW,
         )
-        _draw_centered(
+        draw_centered(
             surface, self._fonts.small, _OPTION_QUIT,
             cx, 450, colors.TEXT_MUTED,
         )
 
 
-def _draw_centered(
-    surface: pygame.Surface,
-    font: pygame.font.Font,
-    text: str,
-    x: int,
-    y: int,
-    color: tuple[int, int, int],
-) -> None:
-    rendered = font.render(text, True, color)
-    rect = rendered.get_rect(center=(x, y))
-    surface.blit(rendered, rect)

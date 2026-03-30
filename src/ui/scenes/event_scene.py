@@ -9,6 +9,7 @@ import pygame
 
 from src.dungeon.events.event_template import EventTemplate
 from src.ui import colors, layout
+from src.ui.components.text_utils import draw_centered
 from src.ui.font_manager import FontManager
 
 _EVENT_COLOR = (120, 160, 220)
@@ -69,7 +70,7 @@ class EventScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         cx = layout.WINDOW_WIDTH // 2
-        _centered(surface, self._fonts.large, self._event.title, cx, 120, _EVENT_COLOR)
+        draw_centered(surface, self._fonts.large, self._event.title, cx, 120, _EVENT_COLOR)
         if self._phase == _Phase.CHOOSING:
             _draw_choosing(surface, self._fonts, cx, self._event)
         else:
@@ -83,11 +84,11 @@ def _draw_choosing(
     event: EventTemplate,
 ) -> None:
     """Desenha descricao e opcoes de escolha."""
-    _centered(surface, fonts.small, event.description, cx, 190, colors.TEXT_WHITE)
+    draw_centered(surface, fonts.small, event.description, cx, 190, colors.TEXT_WHITE)
     y = 280
     for i, choice in enumerate(event.choices):
         label = f"[{i + 1}] {choice.label}"
-        _centered(surface, fonts.medium, label, cx, y + i * _CHOICE_SPACING, colors.TEXT_YELLOW)
+        draw_centered(surface, fonts.medium, label, cx, y + i * _CHOICE_SPACING, colors.TEXT_YELLOW)
 
 
 def _draw_result(
@@ -97,8 +98,8 @@ def _draw_result(
     result_text: str,
 ) -> None:
     """Desenha texto de resultado."""
-    _centered(surface, fonts.medium, result_text, cx, 300, colors.TEXT_WHITE)
-    _centered(surface, fonts.small, "[ENTER] Continuar", cx, 450, colors.TEXT_MUTED)
+    draw_centered(surface, fonts.medium, result_text, cx, 300, colors.TEXT_WHITE)
+    draw_centered(surface, fonts.small, "[ENTER] Continuar", cx, 450, colors.TEXT_MUTED)
 
 
 def _key_to_choice_index(key: int) -> int | None:
@@ -107,7 +108,3 @@ def _key_to_choice_index(key: int) -> int | None:
     return mapping.get(key)
 
 
-def _centered(surface, font, text, x, y, color):
-    rendered = font.render(text, True, color)
-    rect = rendered.get_rect(center=(x, y))
-    surface.blit(rendered, rect)
