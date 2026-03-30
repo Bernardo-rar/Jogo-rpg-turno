@@ -112,12 +112,9 @@ class CombatEngine:
         self._enemies = enemies
         self._handler = turn_handler
         self._reaction_manager = reaction_manager
-        self._passive_manager = passive_manager
         self._synergy_manager = synergy_manager
         all_combatants = party + enemies
-        names = [c.name for c in all_combatants]
-        if len(names) != len(set(names)):
-            raise ValueError("Combatant names must be unique")
+        _validate_unique_names(all_combatants)
         self._turn_order = TurnOrder(all_combatants)
         self._economies = {c.name: ActionEconomy() for c in all_combatants}
         self._participants = {c.name: c for c in all_combatants}
@@ -125,6 +122,9 @@ class CombatEngine:
         self._events: list[CombatEvent] = []
         self._effect_log: list[EffectLogEntry] = []
         self._result: CombatResult | None = None
+        self._passive_dispatcher = _build_passive_dispatcher(
+            passive_manager, self._participants, party, enemies,
+        )
 
     def add_combatant(
         self, character: Character, *, is_enemy: bool,
@@ -142,8 +142,13 @@ class CombatEngine:
         """Incrementa round e reseta turn order."""
         self._round += 1
         self._turn_order.reset()
-        self._fire_round_start_passives()
-        self._refresh_synergy_auras()
+        if self._passive_dispatcher is not None:
+            self._events.extend(
+                self._passive_dispatcher.fire_round_start(self._round),
+            )
+        _refresh_synergy_auras(
+            self._synergy_manager, self._enemies, self._participants,
+        )
 
     def get_next_combatant(self) -> str | None:
         """Retorna nome do proximo combatente ou None se round acabou."""
@@ -151,7 +156,7 @@ class CombatEngine:
         return proto.name if proto is not None else None
 
     def prepare_turn(self, combatant_name: str) -> TurnStepResult:
-        """Fase 1: reset economy, tick cooldowns, process effects, check skip."""
+        """Fase 1: reset economy, tick effects, check skip."""
         combatant = self._participants[combatant_name]
         economy = self._economies[combatant_name]
         economy.reset()
@@ -163,251 +168,53 @@ class CombatEngine:
         self._effect_log.extend(entries)
         skip = should_skip_turn(tick_results)
         if not combatant.is_alive or skip:
-            reason = self._get_skip_reason(combatant, tick_results)
-            if combatant.is_alive and skip:
-                self._log_skip(combatant, tick_results)
-            return TurnStepResult(
-                can_act=False, context=None,
-                effect_entries=entries, skip_reason=reason,
+            return _build_skip_result(
+                combatant, tick_results, entries,
+                self._round, self._effect_log,
             )
-        context = self._build_context(combatant, economy)
+        context = _build_context(
+            combatant, economy,
+            self._party, self._enemies, self._round,
+        )
         return TurnStepResult(
             can_act=True, context=context, effect_entries=entries,
         )
 
     def resolve_turn(self, events: list[CombatEvent]) -> CombatResult | None:
-        """Fase 2: registra eventos, dispara passivas e checa vitoria/derrota."""
+        """Fase 2: registra eventos, dispara passivas e checa vitoria."""
         self._events.extend(events)
-        self._fire_passive_triggers(events)
-        self._fire_synergy_deaths(events)
-        self._process_pending_summons()
-        self._result = self._check_result()
+        if self._passive_dispatcher is not None:
+            self._events.extend(
+                self._passive_dispatcher.fire_event_passives(
+                    events, self._round,
+                ),
+            )
+        _fire_synergy_deaths(
+            self._synergy_manager, events,
+            self._participants, self._events, self._round,
+        )
+        _process_pending_summons(
+            self._handler, self._enemies,
+            self.add_combatant, self._events, self._round,
+        )
+        self._result = _check_result(self._party, self._enemies)
         return self._result
 
     def run_round(self) -> CombatResult | None:
-        """Executa uma rodada. Retorna resultado se acabou, None se continua."""
+        """Executa uma rodada completa."""
         self.start_round()
         name = self.get_next_combatant()
         while name is not None:
-            result = self._execute_combatant_turn_internal(name)
-            if result is not None:
-                return result
+            step = self.prepare_turn(name)
+            if step.can_act:
+                self._events.extend(
+                    self._handler.execute_turn(step.context),
+                )
+            self._result = _check_result(self._party, self._enemies)
+            if self._result is not None:
+                return self._result
             name = self.get_next_combatant()
         return self._result
-
-    def _execute_combatant_turn_internal(
-        self, combatant_name: str,
-    ) -> CombatResult | None:
-        step = self.prepare_turn(combatant_name)
-        if step.can_act:
-            self._execute_handler_from_context(step.context)
-        self._result = self._check_result()
-        return self._result
-
-    def _build_context(
-        self, combatant: Character, economy: ActionEconomy,
-    ) -> TurnContext:
-        allies, enemies = self._get_teams(combatant)
-        return TurnContext(
-            combatant=combatant, allies=allies, enemies=enemies,
-            action_economy=economy, round_number=self._round,
-        )
-
-    def _execute_handler_from_context(self, context: TurnContext) -> None:
-        self._events.extend(self._handler.execute_turn(context))
-
-    def _get_skip_reason(
-        self, combatant: Character, tick_results: list[TickResult],
-    ) -> str:
-        if not combatant.is_alive:
-            return "Dead"
-        return _extract_skip_message(tick_results)
-
-    def _log_skip(
-        self, combatant: Character, tick_results: list[TickResult],
-    ) -> None:
-        msg = _extract_skip_message(tick_results)
-        self._effect_log.append(
-            create_skip_entry(combatant.name, self._round, msg),
-        )
-
-    def _fire_round_start_passives(self) -> None:
-        """Dispara passivas on_round_start para todos os vivos."""
-        if self._passive_manager is None:
-            return
-        all_alive = [c for c in self._participants.values() if c.is_alive]
-        events = self._passive_manager.fire_on_round_start(
-            all_alive, self._round,
-        )
-        self._events.extend(events)
-
-    def _process_pending_summons(self) -> None:
-        """Checks handler for pending summon requests and spawns minions."""
-        handler = self._handler
-        drain = getattr(handler, "drain_pending_summons", None)
-        if drain is None:
-            return
-        for summon_cfg in drain():
-            self._spawn_minion(summon_cfg)
-
-    def _spawn_minion(self, summon_cfg) -> None:
-        """Creates a minion Character from SummonConfig and adds it."""
-        from src.core.attributes.attributes import Attributes
-        from src.core.characters.character_config import CharacterConfig
-        from src.core.characters.class_modifiers import ClassModifiers
-
-        boss_chars = [c for c in self._enemies if c.is_alive]
-        if not boss_chars:
-            return
-        boss = boss_chars[0]
-        minion_hp = max(1, int(boss.max_hp * summon_cfg.hp_scale))
-        minion_atk = max(1, int(boss.attack_power * summon_cfg.atk_scale))
-        idx = len(self._minion_names_from_handler())
-        name = f"{summon_cfg.minion_template_id}_{idx}"
-        mods = ClassModifiers(
-            hit_dice=minion_hp // 4, mod_hp_flat=0, mod_hp_mult=1,
-            mana_multiplier=0, mod_atk_physical=minion_atk // 4,
-            mod_atk_magical=0, mod_def_physical=2, mod_def_magical=2,
-            regen_hp_mod=0, regen_mana_mod=0,
-        )
-        attrs = Attributes()
-        config = CharacterConfig(class_modifiers=mods)
-        minion = Character(name, attrs, config)
-        self.add_combatant(minion, is_enemy=True)
-        boss_handler = self._handler
-        reg = getattr(boss_handler, "register_minion", None)
-        if reg is not None:
-            reg(name)
-        self._events.append(CombatEvent(
-            round_number=self._round,
-            actor_name=boss.name,
-            target_name=name,
-            event_type=EventType.SUMMON,
-            description=f"{name} appears!",
-        ))
-
-    def _minion_names_from_handler(self) -> list[str]:
-        handler = self._handler
-        names = getattr(handler, "_minion_names", [])
-        return list(names)
-
-    def _refresh_synergy_auras(self) -> None:
-        """Refreshes commander auras for alive commanders."""
-        if self._synergy_manager is None:
-            return
-        from src.core.combat.synergy.synergy_behaviors import (
-            apply_commander_aura,
-        )
-        for enemy in self._enemies:
-            if not enemy.is_alive:
-                continue
-            aura_cfg = self._synergy_manager.get_commander_aura(
-                enemy.name,
-            )
-            if aura_cfg is None:
-                continue
-            members = self._synergy_manager.get_synergy_members(
-                enemy.name,
-            )
-            followers = [
-                self._participants[n]
-                for n in members
-                if n != enemy.name and n in self._participants
-            ]
-            apply_commander_aura(followers, aura_cfg)
-
-    def _fire_synergy_deaths(self, events: list[CombatEvent]) -> None:
-        """Dispara synergy on_death para inimigos mortos."""
-        if self._synergy_manager is None:
-            return
-        fired: set[str] = set()
-        for event in events:
-            target = self._participants.get(event.target_name)
-            if target is None or target.is_alive:
-                continue
-            if event.target_name in fired:
-                continue
-            fired.add(event.target_name)
-            self._events.extend(
-                self._synergy_manager.on_death(
-                    event.target_name, self._round,
-                ),
-            )
-
-    def _fire_passive_triggers(
-        self, events: list[CombatEvent],
-    ) -> None:
-        """Dispara passivas de kill, low_hp e critical apos eventos."""
-        if self._passive_manager is None:
-            return
-        self._fire_kill_passives(events)
-        self._fire_damage_passives(events)
-
-    def _fire_kill_passives(
-        self, events: list[CombatEvent],
-    ) -> None:
-        """Detecta mortes nos eventos e dispara on_kill e on_ally_death."""
-        assert self._passive_manager is not None
-        fired: set[str] = set()
-        for event in events:
-            target = self._participants.get(event.target_name)
-            if target is None or target.is_alive:
-                continue
-            if event.target_name in fired:
-                continue
-            fired.add(event.target_name)
-            self._fire_single_kill(event)
-
-    def _fire_single_kill(self, event: CombatEvent) -> None:
-        """Dispara on_kill para o ator e on_ally_death para o time."""
-        assert self._passive_manager is not None
-        actor = self._participants.get(event.actor_name)
-        if actor is not None and actor.is_alive:
-            self._events.extend(
-                self._passive_manager.fire_on_kill(actor, self._round),
-            )
-        dead_char = self._participants.get(event.target_name)
-        if dead_char is not None:
-            self._fire_ally_death(dead_char)
-
-    def _fire_ally_death(self, dead_char: Character) -> None:
-        """Dispara on_ally_death para o time do morto."""
-        assert self._passive_manager is not None
-        _, allies = self._get_teams(dead_char)
-        team = [dead_char] + allies
-        survivors = [c for c in team if c.is_alive]
-        self._events.extend(
-            self._passive_manager.fire_on_ally_death(
-                dead_char.name, survivors, self._round,
-            ),
-        )
-
-    def _fire_damage_passives(self, events: list[CombatEvent]) -> None:
-        """Dispara on_low_hp e on_critical para eventos de dano."""
-        assert self._passive_manager is not None
-        for event in events:
-            if event.damage is None:
-                continue
-            self._fire_low_hp_and_crit(event)
-
-    def _fire_low_hp_and_crit(self, event: CombatEvent) -> None:
-        """Dispara on_low_hp para o alvo e on_critical para o ator."""
-        assert self._passive_manager is not None
-        target = self._participants.get(event.target_name)
-        if target is not None and target.is_alive:
-            self._events.extend(
-                self._passive_manager.fire_on_low_hp(
-                    target, self._round,
-                ),
-            )
-        if event.damage and event.damage.is_critical:
-            actor = self._participants.get(event.actor_name)
-            if actor is not None and actor.is_alive:
-                self._events.extend(
-                    self._passive_manager.fire_on_critical(
-                        actor, self._round,
-                    ),
-                )
 
     def run_combat(self) -> CombatResult:
         """Executa combate completo ate vitoria, derrota ou empate."""
@@ -417,6 +224,17 @@ class CombatEngine:
                 return result
         self._result = CombatResult.DRAW
         return self._result
+
+    def process_damage_reactions(
+        self, events: list[CombatEvent],
+    ) -> list[CombatEvent]:
+        """Checa reacoes para eventos de dano."""
+        if self._reaction_manager is None:
+            return []
+        return _process_reactions(
+            self._reaction_manager, events,
+            self._participants, self._economies, self._round,
+        )
 
     @property
     def round_number(self) -> int:
@@ -439,56 +257,77 @@ class CombatEngine:
         """Nomes dos combatentes vivos na ordem de turno do round atual."""
         return [c.name for c in self._turn_order.get_order()]
 
-    def process_damage_reactions(
-        self, events: list[CombatEvent],
-    ) -> list[CombatEvent]:
-        """Checa reacoes para eventos de dano. Retorna eventos de reacao."""
-        if self._reaction_manager is None:
-            return []
-        reaction_events: list[CombatEvent] = []
-        for event in events:
-            if event.damage is None:
-                continue
-            reaction_events.extend(
-                self._trigger_on_damage(event),
-            )
-        return reaction_events
 
-    def _trigger_on_damage(
-        self, event: CombatEvent,
-    ) -> list[CombatEvent]:
-        """Dispara ON_DAMAGE_RECEIVED para o alvo do dano."""
-        from src.core.combat.reaction_system import ReactionTrigger
+# --- Module-level helpers ---
 
-        target = self._participants.get(event.target_name)
-        if target is None or not target.is_alive:
-            return []
-        economy = self._economies.get(event.target_name)
-        if economy is None:
-            return []
-        assert self._reaction_manager is not None
-        return self._reaction_manager.check_trigger(
-            trigger=ReactionTrigger.ON_DAMAGE_RECEIVED,
-            target=target,
-            economy=economy,
-            round_number=self._round,
-        )
 
-    def _get_teams(
-        self, combatant: Character
-    ) -> tuple[list[Character], list[Character]]:
-        if combatant in self._party:
-            return self._party, self._enemies
-        return self._enemies, self._party
+def _validate_unique_names(combatants: list[Character]) -> None:
+    names = [c.name for c in combatants]
+    if len(names) != len(set(names)):
+        raise ValueError("Combatant names must be unique")
 
-    def _check_result(self) -> CombatResult | None:
-        party_alive = any(c.is_alive for c in self._party)
-        enemies_alive = any(c.is_alive for c in self._enemies)
-        if not enemies_alive:
-            return CombatResult.PARTY_VICTORY
-        if not party_alive:
-            return CombatResult.PARTY_DEFEAT
+
+def _build_passive_dispatcher(
+    passive_manager: PassiveManager | None,
+    participants: dict[str, Character],
+    party: list[Character],
+    enemies: list[Character],
+) -> object | None:
+    """Creates a PassiveEventDispatcher if passive_manager exists."""
+    if passive_manager is None:
         return None
+    from src.core.combat.passive_event_dispatcher import (
+        PassiveEventDispatcher,
+    )
+    return PassiveEventDispatcher(
+        passive_manager, participants, party, enemies,
+    )
+
+
+def _build_context(
+    combatant: Character,
+    economy: ActionEconomy,
+    party: list[Character],
+    enemies: list[Character],
+    round_number: int,
+) -> TurnContext:
+    """Builds a TurnContext for the given combatant."""
+    if combatant in party:
+        allies, foes = party, enemies
+    else:
+        allies, foes = enemies, party
+    return TurnContext(
+        combatant=combatant, allies=allies, enemies=foes,
+        action_economy=economy, round_number=round_number,
+    )
+
+
+def _build_skip_result(
+    combatant: Character,
+    tick_results: list[TickResult],
+    entries: tuple[EffectLogEntry, ...],
+    round_number: int,
+    effect_log: list[EffectLogEntry],
+) -> TurnStepResult:
+    """Builds a skip TurnStepResult and logs if applicable."""
+    if not combatant.is_alive:
+        reason = "Dead"
+    else:
+        reason = _extract_skip_message(tick_results)
+        effect_log.append(
+            create_skip_entry(combatant.name, round_number, reason),
+        )
+    return TurnStepResult(
+        can_act=False, context=None,
+        effect_entries=entries, skip_reason=reason,
+    )
+
+
+def _tick_cooldowns(combatant: Character) -> None:
+    """Decrementa cooldowns do combatente se tiver skill_bar."""
+    bar = combatant.skill_bar
+    if bar is not None:
+        bar.cooldown_tracker.tick()
 
 
 def _extract_skip_message(tick_results: list[TickResult]) -> str:
@@ -497,8 +336,118 @@ def _extract_skip_message(tick_results: list[TickResult]) -> str:
     return skip_msgs[0] if skip_msgs else DEFAULT_SKIP_MESSAGE
 
 
-def _tick_cooldowns(combatant: Character) -> None:
-    """Decrementa cooldowns do combatente se tiver skill_bar."""
-    bar = combatant.skill_bar
-    if bar is not None:
-        bar.cooldown_tracker.tick()
+def _refresh_synergy_auras(
+    synergy_manager: SynergyManager | None,
+    enemies: list[Character],
+    participants: dict[str, Character],
+) -> None:
+    """Refreshes commander auras for alive commanders."""
+    if synergy_manager is None:
+        return
+    from src.core.combat.synergy.synergy_behaviors import (
+        apply_commander_aura,
+    )
+    for enemy in enemies:
+        if not enemy.is_alive:
+            continue
+        aura_cfg = synergy_manager.get_commander_aura(enemy.name)
+        if aura_cfg is None:
+            continue
+        members = synergy_manager.get_synergy_members(enemy.name)
+        followers = [
+            participants[n]
+            for n in members
+            if n != enemy.name and n in participants
+        ]
+        apply_commander_aura(followers, aura_cfg)
+
+
+def _fire_synergy_deaths(
+    synergy_manager: SynergyManager | None,
+    events: list[CombatEvent],
+    participants: dict[str, Character],
+    event_log: list[CombatEvent],
+    round_number: int,
+) -> None:
+    """Fires synergy on_death for dead enemies."""
+    if synergy_manager is None:
+        return
+    fired: set[str] = set()
+    for event in events:
+        target = participants.get(event.target_name)
+        if target is None or target.is_alive:
+            continue
+        if event.target_name in fired:
+            continue
+        fired.add(event.target_name)
+        event_log.extend(
+            synergy_manager.on_death(event.target_name, round_number),
+        )
+
+
+def _process_pending_summons(
+    handler: TurnHandler,
+    enemies: list[Character],
+    add_combatant_fn: object,
+    event_log: list[CombatEvent],
+    round_number: int,
+) -> None:
+    """Checks handler for pending summons and spawns minions."""
+    from src.core.combat.minion_spawner import (
+        SpawnContext,
+        process_pending_summons,
+        spawn_minion,
+    )
+    ctx = SpawnContext(enemies, handler, add_combatant_fn, round_number)
+
+    def _spawn(summon_cfg: object) -> None:
+        result = spawn_minion(summon_cfg, ctx)
+        if result is not None:
+            event_log.append(result)
+
+    process_pending_summons(handler, _spawn)
+
+
+def _check_result(
+    party: list[Character],
+    enemies: list[Character],
+) -> CombatResult | None:
+    """Checks if combat is over."""
+    party_alive = any(c.is_alive for c in party)
+    enemies_alive = any(c.is_alive for c in enemies)
+    if not enemies_alive:
+        return CombatResult.PARTY_VICTORY
+    if not party_alive:
+        return CombatResult.PARTY_DEFEAT
+    return None
+
+
+def _process_reactions(
+    reaction_manager: ReactionHandler,
+    events: list[CombatEvent],
+    participants: dict[str, Character],
+    economies: dict[str, ActionEconomy],
+    round_number: int,
+) -> list[CombatEvent]:
+    """Processes damage reactions for all events."""
+    from src.core.combat.reaction_system import ReactionTrigger
+
+    reaction_events: list[CombatEvent] = []
+    for event in events:
+        if event.damage is None:
+            continue
+        target = participants.get(event.target_name)
+        if target is None or not target.is_alive:
+            continue
+        economy = economies.get(event.target_name)
+        if economy is None:
+            continue
+        reaction_events.extend(
+            reaction_manager.check_trigger(
+                trigger=ReactionTrigger.ON_DAMAGE_RECEIVED,
+                target=target,
+                economy=economy,
+                round_number=round_number,
+            ),
+        )
+    return reaction_events
