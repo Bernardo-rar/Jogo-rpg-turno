@@ -33,11 +33,19 @@ class CleanCodeAnalyzer(ast.NodeVisitor):
 
     def _check_nesting(self, node, depth):
         max_d = depth
+        # elif detection: if parent is an If node and child is the
+        # sole element in parent.orelse, it's an elif — don't nest.
+        elif_children = set()
+        if isinstance(node, ast.If) and len(node.orelse) == 1:
+            child = node.orelse[0]
+            if isinstance(child, ast.If):
+                elif_children.add(id(child))
         for child in ast.iter_child_nodes(node):
             nesting_types = (ast.If, ast.For, ast.While, ast.With,
                              ast.Try, ast.ExceptHandler)
             if isinstance(child, nesting_types):
-                max_d = max(max_d, self._check_nesting(child, depth + 1))
+                inc = 0 if id(child) in elif_children else 1
+                max_d = max(max_d, self._check_nesting(child, depth + inc))
             else:
                 max_d = max(max_d, self._check_nesting(child, depth))
         return max_d
