@@ -91,44 +91,29 @@ class QteOverlay:
         total_w = n * ARROW_SIZE + (n - 1) * ARROW_SPACING
         ox = (sw - total_w) // 2
         oy = sh // 2 - ARROW_SIZE // 2
-        bg_rect = pygame.Rect(
-            ox - OVERLAY_PADDING, oy - OVERLAY_PADDING - 20,
-            total_w + OVERLAY_PADDING * 2,
-            ARROW_SIZE + OVERLAY_PADDING * 2 + 30,
-        )
-        bg = pygame.Surface(bg_rect.size, pygame.SRCALPHA)
-        bg.fill(COLOR_BG)
-        surface.blit(bg, bg_rect.topleft)
-        title = font.render("QTE!", True, COLOR_TIMER)
-        surface.blit(title, (
-            sw // 2 - title.get_width() // 2,
-            oy - OVERLAY_PADDING - 16,
-        ))
+        _draw_qte_background(surface, ox, oy, total_w)
+        _draw_qte_title(surface, font, sw, oy)
+        self._draw_arrows(surface, font, ox, oy)
+        _draw_timer_bar(surface, ox, oy, total_w, self._timer_ratio())
+
+    def _draw_arrows(
+        self, surface: pygame.Surface, font: pygame.font.Font,
+        ox: int, oy: int,
+    ) -> None:
         for i, key_name in enumerate(self._sequence.keys):
             x = ox + i * (ARROW_SIZE + ARROW_SPACING)
-            state = self._states[i]
-            color = self._color_for(state, i)
+            color = self._color_for(self._states[i], i)
             symbol = _ARROW_DISPLAY.get(key_name, "?")
             text = font.render(symbol, True, color)
             tx = x + (ARROW_SIZE - text.get_width()) // 2
             ty = oy + (ARROW_SIZE - text.get_height()) // 2
             surface.blit(text, (tx, ty))
-        timer_y = oy + ARROW_SIZE + 8
-        timer_w = total_w
-        ratio = max(0, 1 - self._elapsed_ms / max(
-            1, self._sequence.time_window_ms,
-        ))
-        fill_w = int(timer_w * ratio)
-        pygame.draw.rect(
-            surface, (60, 60, 60),
-            (ox, timer_y, timer_w, TIMER_BAR_H),
-        )
-        pygame.draw.rect(
-            surface, COLOR_TIMER,
-            (ox, timer_y, fill_w, TIMER_BAR_H),
-        )
 
-    def _color_for(self, state: str, index: int) -> tuple:
+    def _timer_ratio(self) -> float:
+        window = max(1, self._sequence.time_window_ms)
+        return max(0.0, 1.0 - self._elapsed_ms / window)
+
+    def _color_for(self, state: str, index: int) -> tuple[int, ...]:
         if state == "correct":
             return COLOR_CORRECT
         if state == "wrong":
@@ -136,3 +121,42 @@ class QteOverlay:
         if index == self._current_index and not self._done:
             return COLOR_ACTIVE
         return COLOR_PENDING
+
+
+def _draw_qte_background(
+    surface: pygame.Surface, ox: int, oy: int, total_w: int,
+) -> None:
+    bg_rect = pygame.Rect(
+        ox - OVERLAY_PADDING, oy - OVERLAY_PADDING - 20,
+        total_w + OVERLAY_PADDING * 2,
+        ARROW_SIZE + OVERLAY_PADDING * 2 + 30,
+    )
+    bg = pygame.Surface(bg_rect.size, pygame.SRCALPHA)
+    bg.fill(COLOR_BG)
+    surface.blit(bg, bg_rect.topleft)
+
+
+def _draw_qte_title(
+    surface: pygame.Surface, font: pygame.font.Font, sw: int, oy: int,
+) -> None:
+    title = font.render("QTE!", True, COLOR_TIMER)
+    surface.blit(title, (
+        sw // 2 - title.get_width() // 2,
+        oy - OVERLAY_PADDING - 16,
+    ))
+
+
+def _draw_timer_bar(
+    surface: pygame.Surface,
+    ox: int, oy: int, total_w: int, ratio: float,
+) -> None:
+    timer_y = oy + ARROW_SIZE + 8
+    fill_w = int(total_w * ratio)
+    pygame.draw.rect(
+        surface, (60, 60, 60),
+        (ox, timer_y, total_w, TIMER_BAR_H),
+    )
+    pygame.draw.rect(
+        surface, COLOR_TIMER,
+        (ox, timer_y, fill_w, TIMER_BAR_H),
+    )
