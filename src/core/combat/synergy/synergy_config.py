@@ -99,37 +99,28 @@ class SynergyConfig:
 
     @classmethod
     def from_dict(cls, data: dict) -> SynergyConfig:
-        stype = SynergyType[data["type"].upper()]
-        roles = tuple(
-            SynergyRole.from_dict(k, v)
-            for k, v in data.get("roles", {}).items()
-        )
-        ls_raw = data.get("last_survivor")
-        last_surv = (
-            LastSurvivorConfig.from_dict(ls_raw) if ls_raw else None
-        )
-        aura_raw = data.get("aura_buffs")
-        aura = (
-            CommanderAuraConfig.from_dict(aura_raw) if aura_raw else None
-        )
-        death_raw = data.get("on_commander_death")
-        death_debuff = (
-            DeathEffect.from_dict(death_raw) if death_raw else None
-        )
         return cls(
             synergy_id=str(data["synergy_id"]),
-            synergy_type=stype,
-            roles=roles,
-            pack_same_target_bonus_pct=float(
-                data.get("same_target_bonus_pct", 0.0),
-            ),
-            last_survivor=last_surv,
-            commander_aura=aura,
-            commander_death_debuff=death_debuff,
-            combo_damage_bonus_pct=float(
-                data.get("combo_damage_bonus_pct", 0.0),
-            ),
+            synergy_type=SynergyType[data["type"].upper()],
+            roles=_parse_roles(data),
+            pack_same_target_bonus_pct=float(data.get("same_target_bonus_pct", 0.0)),
+            last_survivor=_parse_opt(data, "last_survivor", LastSurvivorConfig),
+            commander_aura=_parse_opt(data, "aura_buffs", CommanderAuraConfig),
+            commander_death_debuff=_parse_opt(data, "on_commander_death", DeathEffect),
+            combo_damage_bonus_pct=float(data.get("combo_damage_bonus_pct", 0.0)),
         )
+
+
+def _parse_roles(data: dict) -> tuple[SynergyRole, ...]:
+    return tuple(
+        SynergyRole.from_dict(k, v)
+        for k, v in data.get("roles", {}).items()
+    )
+
+
+def _parse_opt(data: dict, key: str, factory: type):
+    raw = data.get(key)
+    return factory.from_dict(raw) if raw else None
 
 
 @dataclass(frozen=True)

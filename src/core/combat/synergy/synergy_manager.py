@@ -208,29 +208,38 @@ def _apply_death_effects(
     round_number: int,
 ) -> list[CombatEvent]:
     """Applies DeathEffects as StatBuffs and returns events."""
-    from src.core.combat.combat_engine import CombatEvent, EventType
-
     events: list[CombatEvent] = []
     for de in effects:
-        try:
-            stat = ModifiableStat[de.stat]
-        except KeyError:
-            continue
-        if de.percent >= 0:
-            buff = create_percent_buff(
-                stat=stat, percent=de.percent, duration=de.duration,
-            )
-        else:
-            buff = create_percent_debuff(
-                stat=stat, percent=abs(de.percent), duration=de.duration,
-            )
-        target.effect_manager.add_effect(buff)
-        etype = EventType.BUFF if de.percent > 0 else EventType.DEBUFF
-        events.append(CombatEvent(
-            round_number=round_number,
-            actor_name=target.name,
-            target_name=target.name,
-            event_type=etype,
-            description=f"Synergy: {de.stat} {de.percent:+.0f}%",
-        ))
+        event = _apply_single_death_effect(target, de, round_number)
+        if event is not None:
+            events.append(event)
     return events
+
+
+def _apply_single_death_effect(
+    target: Character, de: DeathEffect, round_number: int,
+) -> CombatEvent | None:
+    """Applies one DeathEffect and returns the event."""
+    from src.core.combat.combat_engine import CombatEvent, EventType
+
+    try:
+        stat = ModifiableStat[de.stat]
+    except KeyError:
+        return None
+    buff = _create_synergy_effect(stat, de)
+    target.effect_manager.add_effect(buff)
+    etype = EventType.BUFF if de.percent > 0 else EventType.DEBUFF
+    return CombatEvent(
+        round_number=round_number,
+        actor_name=target.name,
+        target_name=target.name,
+        event_type=etype,
+        description=f"Synergy: {de.stat} {de.percent:+.0f}%",
+    )
+
+
+def _create_synergy_effect(stat: ModifiableStat, de: DeathEffect):
+    """Creates buff or debuff based on DeathEffect sign."""
+    if de.percent >= 0:
+        return create_percent_buff(stat=stat, percent=de.percent, duration=de.duration)
+    return create_percent_debuff(stat=stat, percent=abs(de.percent), duration=de.duration)

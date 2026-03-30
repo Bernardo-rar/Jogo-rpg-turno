@@ -46,39 +46,46 @@ class BossMechanicConfig:
 
     @classmethod
     def from_dict(cls, data: dict) -> BossMechanicConfig:
-        charged = tuple(
-            ChargedAttackConfig.from_dict(c)
-            for c in data.get("charged_attacks", [])
-        )
-        summons = tuple(
-            SummonConfig.from_dict(s)
-            for s in data.get("summons", [])
-        )
-        emp_raw = data.get("empower_bar")
-        empower = _parse_empower(emp_raw) if emp_raw else None
-        fields = tuple(
-            BossFieldConfig.from_dict(f)
-            for f in data.get("field_effects", [])
-        )
-        trans_raw = data.get("transformation")
-        transform = (
-            TransformationConfig.from_dict(trans_raw)
-            if trans_raw else None
-        )
         return cls(
-            charged_attacks=charged,
-            charge_every_n_rounds=int(
-                data.get("charge_every_n_rounds", 4),
-            ),
-            summons=summons,
+            charged_attacks=_parse_charged(data),
+            charge_every_n_rounds=int(data.get("charge_every_n_rounds", 4)),
+            summons=_parse_summons(data),
             max_minions_alive=int(data.get("max_minions_alive", 2)),
-            summon_cooldown_rounds=int(
-                data.get("summon_cooldown_rounds", 5),
-            ),
-            empower_bar=empower,
-            field_effects=fields,
-            transformation=transform,
+            summon_cooldown_rounds=int(data.get("summon_cooldown_rounds", 5)),
+            empower_bar=_parse_empower_opt(data.get("empower_bar")),
+            field_effects=_parse_fields(data),
+            transformation=_parse_transform_opt(data.get("transformation")),
         )
+
+
+def _parse_charged(data: dict) -> tuple[ChargedAttackConfig, ...]:
+    return tuple(
+        ChargedAttackConfig.from_dict(c)
+        for c in data.get("charged_attacks", [])
+    )
+
+
+def _parse_summons(data: dict) -> tuple[SummonConfig, ...]:
+    return tuple(
+        SummonConfig.from_dict(s) for s in data.get("summons", [])
+    )
+
+
+def _parse_fields(data: dict) -> tuple[BossFieldConfig, ...]:
+    return tuple(
+        BossFieldConfig.from_dict(f)
+        for f in data.get("field_effects", [])
+    )
+
+
+def _parse_empower_opt(raw: dict | None) -> EmpowerBarConfig | None:
+    return _parse_empower(raw) if raw else None
+
+
+def _parse_transform_opt(
+    raw: dict | None,
+) -> TransformationConfig | None:
+    return TransformationConfig.from_dict(raw) if raw else None
 
 
 def _parse_empower(data: dict) -> EmpowerBarConfig:

@@ -50,33 +50,50 @@ class EncounterFactory:
         """Gera inimigos para cada slot do template."""
         if rng is None:
             rng = Random()
-        enemies: list[Character] = []
-        handlers: dict[str, TurnHandler] = {}
-        bindings: list[SynergyBinding] = []
-        suffix_counter: dict[str, int] = {}
-        for slot in template.slots:
-            chosen = self._pick_template(slot, rng)
-            if chosen is None:
-                continue
-            if slot.is_elite:
-                chosen = self._apply_elite(chosen, rng)
-            count = suffix_counter.get(chosen.enemy_id, 0)
-            suffix_counter[chosen.enemy_id] = count + 1
-            enemy = self._enemy_factory.create(chosen, suffix=str(count))
-            enemies.append(enemy)
-            handlers[enemy.name] = create_handler(slot.archetype)
-            if template.synergy_id:
-                bindings.append(SynergyBinding(
-                    combatant_name=enemy.name,
-                    synergy_id=template.synergy_id,
-                    role_key=slot.synergy_role,
-                ))
+        enemies, handlers, bindings = self._create_all_slots(
+            template, rng,
+        )
         handler = DispatchTurnHandler(handlers, BasicAttackHandler())
         return EncounterResult(
             enemies=tuple(enemies),
             handler=handler,
             synergy_bindings=tuple(bindings),
         )
+
+    def _create_all_slots(
+        self, template: EncounterTemplate, rng: Random,
+    ) -> tuple[list, dict, list]:
+        enemies: list[Character] = []
+        handlers: dict[str, TurnHandler] = {}
+        bindings: list[SynergyBinding] = []
+        suffix_counter: dict[str, int] = {}
+        for slot in template.slots:
+            result = self._create_slot(slot, suffix_counter, rng)
+            if result is None:
+                continue
+            enemy, ai_handler = result
+            enemies.append(enemy)
+            handlers[enemy.name] = ai_handler
+            if template.synergy_id:
+                bindings.append(SynergyBinding(
+                    combatant_name=enemy.name,
+                    synergy_id=template.synergy_id,
+                    role_key=slot.synergy_role,
+                ))
+        return enemies, handlers, bindings
+
+    def _create_slot(
+        self, slot: EncounterSlot, counters: dict, rng: Random,
+    ) -> tuple[Character, TurnHandler] | None:
+        chosen = self._pick_template(slot, rng)
+        if chosen is None:
+            return None
+        if slot.is_elite:
+            chosen = self._apply_elite(chosen, rng)
+        count = counters.get(chosen.enemy_id, 0)
+        counters[chosen.enemy_id] = count + 1
+        enemy = self._enemy_factory.create(chosen, suffix=str(count))
+        return enemy, create_handler(slot.archetype)
 
     def _pick_template(
         self,
