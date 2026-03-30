@@ -126,6 +126,10 @@ def _check_subclass(result: dict) -> SceneTransition:
 
 
 def _on_subclass_choice(result: dict) -> SceneTransition:
+    if "_subclass_char_idx" in result:
+        return SceneTransition(
+            target=SceneRequest.SUBCLASS_CHOICE, data=result,
+        )
     return _check_talent(result)
 
 
