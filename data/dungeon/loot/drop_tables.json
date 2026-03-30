@@ -2,8 +2,8 @@
   "tier1": {
     "drop_count": {"min": 1, "max": 2},
     "pool": [
-      {"item_type": "consumable", "item_id": "health_potion", "weight": 30},
-      {"item_type": "consumable", "item_id": "mana_potion", "weight": 25},
+      {"item_type": "consumable", "item_id": "health_potion_small", "weight": 30},
+      {"item_type": "consumable", "item_id": "mana_potion_small", "weight": 25},
       {"item_type": "consumable", "item_id": "antidote", "weight": 15},
       {"item_type": "consumable", "item_id": "molotov", "weight": 10},
       {"item_type": "weapon", "item_id": "flame_sword", "weight": 3},
@@ -14,10 +14,10 @@
   "tier1_elite": {
     "drop_count": {"min": 2, "max": 3},
     "pool": [
-      {"item_type": "consumable", "item_id": "health_potion", "weight": 22},
-      {"item_type": "consumable", "item_id": "mana_potion", "weight": 18},
+      {"item_type": "consumable", "item_id": "health_potion_small", "weight": 22},
+      {"item_type": "consumable", "item_id": "mana_potion_small", "weight": 18},
       {"item_type": "consumable", "item_id": "antidote", "weight": 10},
-      {"item_type": "consumable", "item_id": "turtle_shell", "weight": 10},
+      {"item_type": "consumable", "item_id": "magic_turtle_shell", "weight": 10},
       {"item_type": "consumable", "item_id": "molotov", "weight": 10},
       {"item_type": "weapon", "item_id": "flame_sword", "weight": 7},
       {"item_type": "weapon", "item_id": "ice_staff", "weight": 5},
@@ -30,9 +30,9 @@
   "boss1": {
     "drop_count": {"min": 2, "max": 3},
     "pool": [
-      {"item_type": "consumable", "item_id": "health_potion", "weight": 15},
-      {"item_type": "consumable", "item_id": "mana_potion", "weight": 15},
-      {"item_type": "consumable", "item_id": "turtle_shell", "weight": 10},
+      {"item_type": "consumable", "item_id": "health_potion_small", "weight": 15},
+      {"item_type": "consumable", "item_id": "mana_potion_small", "weight": 15},
+      {"item_type": "consumable", "item_id": "magic_turtle_shell", "weight": 10},
       {"item_type": "weapon", "item_id": "flame_sword", "weight": 10},
       {"item_type": "weapon", "item_id": "ice_staff", "weight": 8},
       {"item_type": "weapon", "item_id": "thunder_bow", "weight": 6},

@@ -3,8 +3,8 @@
     "gold": {"min": 20, "max": 50},
     "drop_count": {"min": 1, "max": 2},
     "pool": [
-      {"item_type": "consumable", "item_id": "health_potion", "weight": 25, "quantity": 1},
-      {"item_type": "consumable", "item_id": "mana_potion", "weight": 20, "quantity": 1},
+      {"item_type": "consumable", "item_id": "health_potion_small", "weight": 25, "quantity": 1},
+      {"item_type": "consumable", "item_id": "mana_potion_small", "weight": 20, "quantity": 1},
       {"item_type": "consumable", "item_id": "smoke_bomb", "weight": 12, "quantity": 1},
       {"item_type": "consumable", "item_id": "molotov", "weight": 8, "quantity": 1},
       {"item_type": "weapon", "item_id": "flame_sword", "weight": 8, "quantity": 1},
