@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Callable, TYPE_CHECKING
 
@@ -50,24 +51,27 @@ class _Focus(Enum):
     MENTAL = auto()
 
 
+@dataclass(frozen=True)
+class LevelUpConfig:
+    """Parametros de inicializacao do LevelUpScene."""
+
+    party: list[Character]
+    physical_points: int
+    mental_points: int
+    level_system: LevelUpSystem
+    on_complete: Callable[[dict], None]
+
+
 class LevelUpScene:
     """Tela de distribuicao de pontos pos-level up."""
 
-    def __init__(
-        self,
-        fonts: FontManager,
-        party: list[Character],
-        physical_points: int,
-        mental_points: int,
-        level_system: LevelUpSystem,
-        on_complete: Callable[[dict], None],
-    ) -> None:
+    def __init__(self, fonts: FontManager, config: LevelUpConfig) -> None:
         self._fonts = fonts
-        self._party = party
-        self._phys_total = physical_points
-        self._mental_total = mental_points
-        self._level_system = level_system
-        self._on_complete = on_complete
+        self._party = config.party
+        self._phys_total = config.physical_points
+        self._mental_total = config.mental_points
+        self._level_system = config.level_system
+        self._on_complete = config.on_complete
         self._char_index = 0
         self._focus = _Focus.PHYSICAL
         self._attr_index = 0
@@ -77,120 +81,18 @@ class LevelUpScene:
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
             return
-        key = event.key
-        if key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
-            return
-        if key == pygame.K_RETURN:
-            self._confirm()
-            return
-        if key == pygame.K_TAB:
-            self._toggle_focus()
-            return
-        if key in (pygame.K_UP, pygame.K_w):
-            self._move_attr(-1)
-        elif key in (pygame.K_DOWN, pygame.K_s):
-            self._move_attr(1)
-        elif key in (pygame.K_RIGHT, pygame.K_d):
-            self._add_point()
-        elif key in (pygame.K_LEFT, pygame.K_a):
-            self._remove_point()
-        elif key == pygame.K_r:
-            self._auto_distribute()
-
-    def _current_char(self) -> Character:
-        return self._party[self._char_index]
-
-    def _auto_distribute(self) -> None:
-        """Distribui pontos automaticamente por prioridade da classe."""
-        configs = load_recommended()
-        class_id = _get_class_id(self._current_char())
-        config = configs.get(class_id)
-        if config is None:
-            return
-        self._phys_dist = auto_distribute(self._phys_total, config.physical)
-        self._mental_dist = auto_distribute(self._mental_total, config.mental)
-
-    def _toggle_focus(self) -> None:
-        if self._focus == _Focus.PHYSICAL:
-            self._focus = _Focus.MENTAL
-            self._attr_index = 0
-        else:
-            self._focus = _Focus.PHYSICAL
-            self._attr_index = 0
-
-    def _move_attr(self, delta: int) -> None:
-        attrs = self._current_attrs()
-        limit = len(attrs) - 1
-        self._attr_index = max(0, min(limit, self._attr_index + delta))
-
-    def _add_point(self) -> None:
-        remaining = self._remaining()
-        if remaining <= 0:
-            return
-        attr = self._selected_attr()
-        dist = self._current_dist()
-        dist[attr] = dist.get(attr, 0) + 1
-
-    def _remove_point(self) -> None:
-        attr = self._selected_attr()
-        dist = self._current_dist()
-        if dist.get(attr, 0) > 0:
-            dist[attr] -= 1
-
-    def _confirm(self) -> None:
-        phys_remaining = self._phys_total - _sum_dist(self._phys_dist)
-        mental_remaining = self._mental_total - _sum_dist(self._mental_dist)
-        if phys_remaining > 0 or mental_remaining > 0:
-            return
-        self._apply_current_char()
-        if self._char_index < len(self._party) - 1:
-            self._char_index += 1
-            self._reset_distribution()
-            return
-        self._on_complete({})
-
-    def _apply_current_char(self) -> None:
-        char = self._current_char()
-        if self._phys_total > 0:
-            self._level_system.distribute_physical_points(
-                char, dict(self._phys_dist),
-            )
-        if self._mental_total > 0:
-            self._level_system.distribute_mental_points(
-                char, dict(self._mental_dist),
-            )
-
-    def _reset_distribution(self) -> None:
-        """Reseta distribuição pra próximo char."""
-        self._focus = _Focus.PHYSICAL
-        self._attr_index = 0
-        self._phys_dist = _zero_dist(_PHYSICAL_LIST)
-        self._mental_dist = _zero_dist(_MENTAL_LIST)
-
-    def _current_attrs(self) -> list[AttributeType]:
-        if self._focus == _Focus.PHYSICAL:
-            return _PHYSICAL_LIST
-        return _MENTAL_LIST
-
-    def _selected_attr(self) -> AttributeType:
-        return self._current_attrs()[self._attr_index]
-
-    def _current_dist(self) -> dict[AttributeType, int]:
-        if self._focus == _Focus.PHYSICAL:
-            return self._phys_dist
-        return self._mental_dist
-
-    def _remaining(self) -> int:
-        if self._focus == _Focus.PHYSICAL:
-            return self._phys_total - _sum_dist(self._phys_dist)
-        return self._mental_total - _sum_dist(self._mental_dist)
+        _handle_key(self, event.key)
 
     def update(self, dt_ms: int) -> bool:
         return True
 
+    @property
+    def current_char(self) -> Character:
+        return self._party[self._char_index]
+
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
-        char = self._current_char()
+        char = self.current_char
         char_label = f"{char.name} ({self._char_index + 1}/{len(self._party)})"
         _draw_title(surface, self._fonts, char.level, char_label)
         _draw_section(
@@ -209,6 +111,116 @@ class LevelUpScene:
         )
         _draw_controls(surface, self._fonts)
         _draw_remaining(surface, self._fonts, self)
+
+
+def _handle_key(s: LevelUpScene, key: int) -> None:
+    """Dispatch de input para a LevelUpScene."""
+    if key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
+        return
+    if key == pygame.K_RETURN:
+        _confirm(s)
+        return
+    if key == pygame.K_TAB:
+        _toggle_focus(s)
+        return
+    _handle_nav(s, key)
+
+
+def _handle_nav(s: LevelUpScene, key: int) -> None:
+    if key in (pygame.K_UP, pygame.K_w):
+        _move_attr(s, -1)
+    elif key in (pygame.K_DOWN, pygame.K_s):
+        _move_attr(s, 1)
+    elif key in (pygame.K_RIGHT, pygame.K_d):
+        _add_point(s)
+    elif key in (pygame.K_LEFT, pygame.K_a):
+        _remove_point(s)
+    elif key == pygame.K_r:
+        _auto_distribute(s)
+
+
+def _current_attrs(s: LevelUpScene) -> list[AttributeType]:
+    if s._focus == _Focus.PHYSICAL:
+        return _PHYSICAL_LIST
+    return _MENTAL_LIST
+
+
+def _current_dist(s: LevelUpScene) -> dict[AttributeType, int]:
+    if s._focus == _Focus.PHYSICAL:
+        return s._phys_dist
+    return s._mental_dist
+
+
+def _remaining(s: LevelUpScene) -> int:
+    if s._focus == _Focus.PHYSICAL:
+        return s._phys_total - _sum_dist(s._phys_dist)
+    return s._mental_total - _sum_dist(s._mental_dist)
+
+
+def _toggle_focus(s: LevelUpScene) -> None:
+    if s._focus == _Focus.PHYSICAL:
+        s._focus = _Focus.MENTAL
+    else:
+        s._focus = _Focus.PHYSICAL
+    s._attr_index = 0
+
+
+def _move_attr(s: LevelUpScene, delta: int) -> None:
+    limit = len(_current_attrs(s)) - 1
+    s._attr_index = max(0, min(limit, s._attr_index + delta))
+
+
+def _add_point(s: LevelUpScene) -> None:
+    if _remaining(s) <= 0:
+        return
+    attr = _current_attrs(s)[s._attr_index]
+    dist = _current_dist(s)
+    dist[attr] = dist.get(attr, 0) + 1
+
+
+def _remove_point(s: LevelUpScene) -> None:
+    attr = _current_attrs(s)[s._attr_index]
+    dist = _current_dist(s)
+    if dist.get(attr, 0) > 0:
+        dist[attr] -= 1
+
+
+def _confirm(s: LevelUpScene) -> None:
+    phys_rem = s._phys_total - _sum_dist(s._phys_dist)
+    mental_rem = s._mental_total - _sum_dist(s._mental_dist)
+    if phys_rem > 0 or mental_rem > 0:
+        return
+    _apply_char(s)
+    if s._char_index < len(s._party) - 1:
+        s._char_index += 1
+        _reset_dist(s)
+        return
+    s._on_complete({})
+
+
+def _apply_char(s: LevelUpScene) -> None:
+    char = s.current_char
+    if s._phys_total > 0:
+        s._level_system.distribute_physical_points(char, dict(s._phys_dist))
+    if s._mental_total > 0:
+        s._level_system.distribute_mental_points(char, dict(s._mental_dist))
+
+
+def _reset_dist(s: LevelUpScene) -> None:
+    s._focus = _Focus.PHYSICAL
+    s._attr_index = 0
+    s._phys_dist = _zero_dist(_PHYSICAL_LIST)
+    s._mental_dist = _zero_dist(_MENTAL_LIST)
+
+
+def _auto_distribute(s: LevelUpScene) -> None:
+    configs = load_recommended()
+    class_id = _get_class_id(s.current_char)
+    config = configs.get(class_id)
+    if config is None:
+        return
+    s._phys_dist = auto_distribute(s._phys_total, config.physical)
+    s._mental_dist = auto_distribute(s._mental_total, config.mental)
 
 
 def _get_class_id(char: Character) -> str:

@@ -63,7 +63,7 @@ class LoadoutScene:
             slot_count = self._config.base_slot_count
             mgr = LoadoutManager(slot_count, budget)
             pool = build_skill_pool(cid, char.level)
-            auto_fill_loadout(pool, mgr)
+            _populate_from_current(mgr, char)
             self._managers[char.name] = mgr
             self._pools[char.name] = pool
 
@@ -76,94 +76,7 @@ class LoadoutScene:
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
             return
-        key = event.key
-        if key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
-            self._confirm_all()
-            return
-        if key == pygame.K_RETURN:
-            self._handle_confirm()
-            return
-        if key == pygame.K_TAB:
-            self._cycle_focus()
-            return
-        if key == pygame.K_r:
-            self._auto_fill_current()
-            return
-        self._handle_nav(key)
-
-    def _handle_nav(self, key: int) -> None:
-        if key in (pygame.K_UP, pygame.K_w):
-            self._nav(-1)
-        elif key in (pygame.K_DOWN, pygame.K_s):
-            self._nav(1)
-        elif key in (pygame.K_LEFT, pygame.K_a):
-            if self._focus == _Focus.CHAR:
-                self._nav(-1)
-        elif key in (pygame.K_RIGHT, pygame.K_d):
-            if self._focus == _Focus.CHAR:
-                self._nav(1)
-        elif key == pygame.K_DELETE:
-            self._remove_from_slot()
-
-    def _nav(self, delta: int) -> None:
-        if self._focus == _Focus.CHAR:
-            limit = len(self._party) - 1
-            self._char_index = _clamp(self._char_index + delta, 0, limit)
-            self._slot_index = 0
-            self._pool_index = 0
-        elif self._focus == _Focus.SLOT:
-            mgr = self._current_manager()
-            limit = len(mgr.slots) - 1
-            self._slot_index = _clamp(self._slot_index + delta, 0, limit)
-        elif self._focus == _Focus.POOL:
-            pool = self._current_pool()
-            limit = max(0, len(pool) - 1)
-            self._pool_index = _clamp(self._pool_index + delta, 0, limit)
-            _adjust_scroll(self)
-
-    def _cycle_focus(self) -> None:
-        order = [_Focus.CHAR, _Focus.SLOT, _Focus.POOL]
-        idx = order.index(self._focus)
-        self._focus = order[(idx + 1) % len(order)]
-
-    def _handle_confirm(self) -> None:
-        if self._focus == _Focus.POOL:
-            self._add_from_pool()
-        elif self._focus == _Focus.SLOT:
-            self._remove_from_slot()
-        elif self._focus == _Focus.CHAR:
-            self._cycle_focus()
-
-    def _add_from_pool(self) -> None:
-        pool = self._current_pool()
-        if not pool or self._pool_index >= len(pool):
-            return
-        skill = pool[self._pool_index]
-        self._current_manager().add_skill(self._slot_index, skill)
-
-    def _remove_from_slot(self) -> None:
-        mgr = self._current_manager()
-        slots = mgr.slots
-        if self._slot_index >= len(slots):
-            return
-        slot = slots[self._slot_index]
-        if not slot.skills:
-            return
-        mgr.remove_skill(self._slot_index, slot.skills[-1].skill_id)
-
-    def _auto_fill_current(self) -> None:
-        pool = self._current_pool()
-        mgr = self._current_manager()
-        auto_fill_loadout(pool, mgr)
-
-    def _confirm_all(self) -> None:
-        """Aplica loadouts a todos os personagens e sai."""
-        for char in self._party:
-            mgr = self._managers.get(char.name)
-            if mgr is not None:
-                bar = mgr.build_skill_bar()
-                char._skill_bar = bar
-        self._on_complete({})
+        _handle_key(self, event.key)
 
     def update(self, dt_ms: int) -> bool:
         return True
@@ -171,47 +84,154 @@ class LoadoutScene:
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(colors.BG_DARK)
         _draw_title(surface, self._fonts)
-        self._draw_char_tabs(surface)
-        self._draw_slots(surface)
-        self._draw_pool(surface)
+        _draw_char_tabs(surface, self._fonts, self._party, self._char_index, self._focus)
+        _draw_slots_panel(surface, self._fonts, self._current_manager(), self._focus, self._slot_index)
+        _draw_pool_panel(surface, self._fonts, self._current_pool(), self._current_manager(), self._focus, self._pool_index, self._pool_scroll)
         _draw_controls(surface, self._fonts)
 
-    def _draw_char_tabs(self, surface: pygame.Surface) -> None:
-        x = _SLOT_PANEL_X
-        for i, char in enumerate(self._party):
-            sel = self._focus == _Focus.CHAR and i == self._char_index
-            active = i == self._char_index
-            color = colors.TEXT_YELLOW if sel else (
-                colors.PARTY_COLOR if active else colors.TEXT_MUTED
-            )
-            cid = type(char).__name__
-            label = f"  {char.name} ({cid})" if active else f"  {char.name}"
-            text = self._fonts.small.render(label, True, color)
-            surface.blit(text, (x + i * 120, 60))
 
-    def _draw_slots(self, surface: pygame.Surface) -> None:
-        mgr = self._current_manager()
-        header = self._fonts.medium.render("Slots", True, colors.PARTY_COLOR)
-        surface.blit(header, (_SLOT_PANEL_X, _LIST_Y - 30))
-        for i, slot in enumerate(mgr.slots):
-            sel = self._focus == _Focus.SLOT and i == self._slot_index
-            _draw_slot(surface, self._fonts, _SLOT_PANEL_X, _LIST_Y + i * 80, slot, i, sel)
+def _handle_key(s: LoadoutScene, key: int) -> None:
+    if key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
+        _confirm_all(s)
+        return
+    if key == pygame.K_RETURN:
+        _handle_confirm(s)
+        return
+    if key == pygame.K_TAB:
+        _cycle_focus(s)
+        return
+    if key == pygame.K_r:
+        _auto_fill_current(s)
+        return
+    _handle_nav(s, key)
 
-    def _draw_pool(self, surface: pygame.Surface) -> None:
-        pool = self._current_pool()
-        header = self._fonts.medium.render("Available Skills", True, colors.PARTY_COLOR)
-        surface.blit(header, (_POOL_PANEL_X, _LIST_Y - 30))
-        mgr = self._current_manager()
-        used = mgr._assigned_ids
-        end = self._pool_scroll + _MAX_POOL_VISIBLE
-        for i, skill in enumerate(pool[self._pool_scroll:end]):
-            real_i = self._pool_scroll + i
-            sel = self._focus == _Focus.POOL and real_i == self._pool_index
-            available = skill.skill_id not in used
-            _draw_pool_skill(
-                surface, self._fonts, _POOL_PANEL_X,
-                _LIST_Y + i * _LINE_H, skill, sel, available,
-            )
+
+def _handle_nav(s: LoadoutScene, key: int) -> None:
+    if key in (pygame.K_UP, pygame.K_w):
+        _nav(s, -1)
+    elif key in (pygame.K_DOWN, pygame.K_s):
+        _nav(s, 1)
+    elif key in (pygame.K_LEFT, pygame.K_a) and s._focus == _Focus.CHAR:
+        _nav(s, -1)
+    elif key in (pygame.K_RIGHT, pygame.K_d) and s._focus == _Focus.CHAR:
+        _nav(s, 1)
+    elif key == pygame.K_DELETE:
+        _remove_from_slot(s)
+
+
+def _nav(s: LoadoutScene, delta: int) -> None:
+    if s._focus == _Focus.CHAR:
+        limit = len(s._party) - 1
+        s._char_index = _clamp(s._char_index + delta, 0, limit)
+        s._slot_index = 0
+        s._pool_index = 0
+    elif s._focus == _Focus.SLOT:
+        limit = len(s._current_manager().slots) - 1
+        s._slot_index = _clamp(s._slot_index + delta, 0, limit)
+    elif s._focus == _Focus.POOL:
+        limit = max(0, len(s._current_pool()) - 1)
+        s._pool_index = _clamp(s._pool_index + delta, 0, limit)
+        _adjust_scroll(s)
+
+
+def _cycle_focus(s: LoadoutScene) -> None:
+    order = [_Focus.CHAR, _Focus.SLOT, _Focus.POOL]
+    idx = order.index(s._focus)
+    s._focus = order[(idx + 1) % len(order)]
+
+
+def _handle_confirm(s: LoadoutScene) -> None:
+    if s._focus == _Focus.POOL:
+        _add_from_pool(s)
+    elif s._focus == _Focus.SLOT:
+        _remove_from_slot(s)
+    elif s._focus == _Focus.CHAR:
+        _cycle_focus(s)
+
+
+def _add_from_pool(s: LoadoutScene) -> None:
+    pool = s._current_pool()
+    if not pool or s._pool_index >= len(pool):
+        return
+    s._current_manager().add_skill(s._slot_index, pool[s._pool_index])
+
+
+def _remove_from_slot(s: LoadoutScene) -> None:
+    mgr = s._current_manager()
+    slots = mgr.slots
+    if s._slot_index >= len(slots):
+        return
+    slot = slots[s._slot_index]
+    if slot.skills:
+        mgr.remove_skill(s._slot_index, slot.skills[-1].skill_id)
+
+
+def _auto_fill_current(s: LoadoutScene) -> None:
+    auto_fill_loadout(s._current_pool(), s._current_manager())
+
+
+def _populate_from_current(mgr: LoadoutManager, char) -> None:
+    """Populates manager with the char's existing skill bar skills."""
+    bar = char.skill_bar
+    if bar is None:
+        return
+    for slot_idx, slot in enumerate(bar.slots):
+        if slot_idx >= len(mgr.slots):
+            break
+        for skill in slot.skills:
+            mgr.add_skill(slot_idx, skill)
+
+
+def _confirm_all(s: LoadoutScene) -> None:
+    for char in s._party:
+        mgr = s._managers.get(char.name)
+        if mgr is not None:
+            char._skill_bar = mgr.build_skill_bar()
+    s._on_complete({})
+
+
+def _draw_char_tabs(
+    surface: pygame.Surface, fonts: FontManager,
+    party: list, char_index: int, focus: _Focus,
+) -> None:
+    x = _SLOT_PANEL_X
+    for i, char in enumerate(party):
+        sel = focus == _Focus.CHAR and i == char_index
+        active = i == char_index
+        color = colors.TEXT_YELLOW if sel else (
+            colors.PARTY_COLOR if active else colors.TEXT_MUTED
+        )
+        cid = type(char).__name__
+        label = f"  {char.name} ({cid})" if active else f"  {char.name}"
+        text = fonts.small.render(label, True, color)
+        surface.blit(text, (x + i * 120, 60))
+
+
+def _draw_slots_panel(
+    surface: pygame.Surface, fonts: FontManager,
+    mgr: LoadoutManager, focus: _Focus, slot_index: int,
+) -> None:
+    header = fonts.medium.render("Slots", True, colors.PARTY_COLOR)
+    surface.blit(header, (_SLOT_PANEL_X, _LIST_Y - 30))
+    for i, slot in enumerate(mgr.slots):
+        sel = focus == _Focus.SLOT and i == slot_index
+        _draw_slot(surface, fonts, _SLOT_PANEL_X, _LIST_Y + i * 80, slot, i, sel)
+
+
+def _draw_pool_panel(
+    surface: pygame.Surface, fonts: FontManager,
+    pool: list[Skill], mgr: LoadoutManager,
+    focus: _Focus, pool_index: int, pool_scroll: int,
+) -> None:
+    header = fonts.medium.render("Available Skills", True, colors.PARTY_COLOR)
+    surface.blit(header, (_POOL_PANEL_X, _LIST_Y - 30))
+    used = mgr._assigned_ids
+    end = pool_scroll + _MAX_POOL_VISIBLE
+    for i, skill in enumerate(pool[pool_scroll:end]):
+        real_i = pool_scroll + i
+        sel = focus == _Focus.POOL and real_i == pool_index
+        available = skill.skill_id not in used
+        _draw_pool_skill(surface, fonts, _POOL_PANEL_X, _LIST_Y + i * _LINE_H, skill, sel, available)
 
 
 def _clamp(value: int, low: int, high: int) -> int:
